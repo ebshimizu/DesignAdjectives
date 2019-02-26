@@ -10,6 +10,9 @@ class Training:
         self.data = data
         self.score = score
 
+    def __str__(self):
+        return "X: {0}, y: {1}".format(self.data, self.score)
+
 
 class DSStatus:
     def __init__(self, code=0, message="Success"):
