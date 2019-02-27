@@ -1,10 +1,16 @@
 from dsTypes import *
 import os
 import torch
-import matplotlib.pyplot as plt
 import pyro
 import pyro.contrib.gp as gp
 import pyro.distributions as dist
+
+import graphUtils
+
+# TODO: Visualization/debug functions for snippets
+# Next: Server connectivity
+# Then: Integration with Compositor library for demo/toy application (no ui)
+# what if design intent is just sampling from the prior distribution over the preference function
 
 # debug
 pyro.enable_validation(True)
@@ -15,6 +21,8 @@ class Snippet:
         self.name = name
         self.data = []
         self.filter = []
+        self.optSteps = 1000
+        self.learningRate = 0.005
 
     # param filter is a list of which parameter vector indices are to be used
     # for sampling and training
@@ -74,24 +82,22 @@ class Snippet:
         # generate y vector
         y = self.getYTrain()
 
-        print(y)
         # TODO: allow gpr settings per-snippet?
         self.gpr = gp.models.GPRegression(X, y, kernel)
 
         # hyperparams
-        optimizer = torch.optim.Adam(self.gpr.parameters(), lr=0.005)
+        optimizer = torch.optim.Adam(self.gpr.parameters(), lr=self.learningRate)
         loss_fn = pyro.infer.Trace_ELBO().differentiable_loss
-        losses = []
-        num_steps = 1000
-        for i in range(num_steps):
+        self.losses = []
+        for i in range(self.optSteps):
             optimizer.zero_grad()
             loss = loss_fn(self.gpr.model, self.gpr.guide)
             loss.backward()
             optimizer.step()
-            losses.append(loss.item())
+            self.losses.append(loss.item())
 
         # debug
-        plt.plot(losses)
+        # plt.plot(losses)
         print("variance: {0}".format(self.gpr.kernel.variance.item()))
         print("lengthscale: {0}".format(self.gpr.kernel.lengthscale.item()))
         print("noise: {0}".format(self.gpr.noise.item()))
@@ -100,11 +106,30 @@ class Snippet:
             code=0, message="Training for snippet {0} complete.".format(self.name)
         )
 
-    def eval(self, item):
-        return 0  # TODO: Implement evaluation against trained GPR
+    def plotLastLoss(self):
+        graphUtils.plotLoss(self.losses)
 
+    def plot1D(self, x, dim, rmin=0, rmax=1, n=100):
+        graphUtils.plot1DPredictions(
+            x, self.gpr, paramIdx=dim, rmin=rmin, rmax=rmax, n=n
+        )
+
+    def predict(self, items):
+        Xtest = torch.tensor(items)
+        with torch.no_grad():
+            if type(self.gpr) == gp.models.VariationalSparseGP:
+                mean, cov = self.gpr(Xtest, full_cov=True)
+            else:
+                mean, cov = self.gpr(Xtest, full_cov=True, noiseless=False)
+
+        return {"mean": mean, "cov": cov}
+
+    # remember that gpr samples are functions.
+    # there should be another function for actually sampling
+    # for new designs.
     def sample(self, count=1):
-        return 0  # TODO: Implement snipper sampling option
+        samples = [self.gpr.iter_sample() for i in range(0, count)]
+        return samples
 
     def setDefaultFilter(self):
         # assumption: all data is the same vector length
