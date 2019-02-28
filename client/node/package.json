@@ -1,0 +1,12 @@
+{
+  "name": "design-snippets-node",
+  "productName": "design-snippets-node",
+  "version": "0.0.1-alpha",
+  "description": "Design Snippets node client",
+  "author": "falindrith",
+  "dependencies": {
+    "socket.io-client": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {}
+}
