@@ -106,3 +106,4 @@ venv.bak/
 core/test.py
 client/node/node_modules/*
 server/node_modules
+client/node/test.png
