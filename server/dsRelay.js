@@ -1,7 +1,16 @@
-const io = require("socket.io")(5234);
 const winston = require("winston");
 const { spawn } = require("child_process");
 const { format } = require("logform");
+const process = require("process");
+const args = require("minimist")(process.argv.slice(2), {
+  default: {
+    python: "python3",
+    detached: false,
+    port: 5234
+  }
+});
+
+const io = require("socket.io")(args.port);
 
 const alignedWithColorsAndTime = format.combine(
   format.colorize(),
@@ -29,13 +38,20 @@ const logger = winston.createLogger({
   ]
 });
 
-logger.info("Attempting to initialize Design Snippets Server...");
+logger.info(
+  `Attempting to initialize Design Snippets Server on port ${args.port}`
+);
 
-// spawn child process for server
-const snippetServer = spawn("python3", ["./dsServer.py"]);
-snippetServer.on("close", code => {
-  logger.info(`Snippet Server closed with code ${code}`);
-});
+if (!args.detached) {
+  // spawn child process for server
+  const snippetServer = spawn(args.python, ["./dsServer.py"]);
+  snippetServer.stdout.on("data", data => {
+    console.log(`${data}`);
+  });
+  snippetServer.on("close", code => {
+    logger.info(`Snippet Server closed with code ${code}`);
+  });
+}
 
 var snippetSocket;
 
@@ -73,9 +89,9 @@ io.on("connect", function(socket) {
         data.fn,
         data.args
       );
-      snippetSocket.emit(data.fn, data.args, function(result) {
+      snippetSocket.emit(data.fn, data.args, function(err, result) {
         logger.log("verbose", "Relayed action returned %j", result);
-        clientCB(result);
+        clientCB(err, result);
       });
     } else {
       logger.warn("Unable to process action. No snippet server connected");

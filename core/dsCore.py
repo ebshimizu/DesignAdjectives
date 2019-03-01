@@ -36,5 +36,5 @@ class SnippetServer:
         else:
             return None
 
-    def listSnippets(self, name):
-        return self.snippets.keys()
+    def listSnippets(self):
+        return list(self.snippets.keys())

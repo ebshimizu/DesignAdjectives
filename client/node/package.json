@@ -5,7 +5,8 @@
   "description": "Design Snippets node client",
   "author": "falindrith",
   "dependencies": {
-    "socket.io-client": "^2.2.0"
+    "socket.io-client": "^2.2.0",
+    "bluebird": "^3.5.3"
   },
   "devDependencies": {},
   "scripts": {}

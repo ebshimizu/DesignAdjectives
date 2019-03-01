@@ -21,3 +21,8 @@ class DSStatus:
 
     def __str__(self):
         return "Status {0}: {1}".format(self.code, self.message)
+
+
+# assumes items have an x (vector) and y value
+def objToTraining(items):
+    xs = [Training(i.x, i.y) for i in items]

@@ -98,13 +98,14 @@ class Snippet:
 
         # debug
         # plt.plot(losses)
-        print("variance: {0}".format(self.gpr.kernel.variance.item()))
-        print("lengthscale: {0}".format(self.gpr.kernel.lengthscale.item()))
-        print("noise: {0}".format(self.gpr.noise.item()))
+        retData = {}
+        retData["variance"] = self.gpr.kernel.variance.item()
+        retData["lengthscale"] = self.gpr.kernel.lengthscale.item()
+        retData["noise"] = self.gpr.noise.item()
+        retData["code"] = 0
+        retData["message"] = "Snippet {0} training complete".format(self.name)
 
-        return DSStatus(
-            code=0, message="Training for snippet {0} complete.".format(self.name)
-        )
+        return retData
 
     def plotLastLoss(self):
         graphUtils.plotLoss(self.losses)

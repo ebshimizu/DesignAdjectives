@@ -1,18 +1,88 @@
-const socket = require("socket.io-client")("http://localhost:5234");
+var Promise = require("bluebird");
+const sio = require("socket.io-client");
+var socket;
 
-socket.on("connect", function() {
-  console.log("connected");
-});
+function Training(x, y) {
+  return { x, y };
+}
 
-socket.on("getType", function(cb) {
-  cb("client");
-});
+class dsDriver {
+  constructor(port = 5234) {
+    this.addr = `http://localhost:${port}`;
+    socket = sio(this.addr);
+    socket.emitAsync = Promise.promisify(socket.emit);
 
-setTimeout(() => {
-  console.log("attempting send");
-  socket.emit("action", { fn: "add snippet", args: { name: "test" } }, function(
-    resp
-  ) {
-    console.log(resp);
-  });
-}, 2000);
+    this.bind();
+  }
+
+  bind() {
+    const self = this;
+
+    socket.on("connect", function() {
+      console.log(`Snippets Node Driver connected to ${self.addr}`);
+    });
+
+    socket.on("getType", function(cb) {
+      cb("client");
+    });
+
+    socket.on("disconnect", function() {
+      console.log(`Snippets Node Driver disconnected from ${self.addr}`);
+    });
+  }
+
+  // most functions in this driver will be using the async/await format to pretend
+  // like this is synchronous
+  async exec(fn, args) {
+    try {
+      const res = await socket.emitAsync("action", { fn, args });
+      return res;
+    } catch (e) {
+      console.log(`Error: ${e}`);
+    }
+  }
+
+  // and here's a function that'll use the traditional callbacks if needed
+  execCb(fn, args, cb) {
+    socket.emit("action", { fn, args }, cb);
+  }
+
+  // the following functions are basically convenience functions
+  async addSnippet(name) {
+    const res = await this.exec("add snippet", { name });
+    return res;
+  }
+
+  async deleteSnippet(name) {
+    const res = await this.exec("delete snippet", { name });
+    return res;
+  }
+
+  async listSnippets() {
+    const res = await this.exec("list snippets", {});
+    return res;
+  }
+
+  async setData(name, data) {
+    const res = await this.exec("snippet set data", { name, data });
+    return res;
+  }
+
+  async addData(name, x, y) {
+    const res = await this.exec("snippet add data", { name, x, y });
+    return res;
+  }
+
+  async removeData(name, index) {
+    const res = await this.exec("snippet remove data", { name, index });
+    return res;
+  }
+
+  async train(name) {
+    const res = await this.exec("snippet train", { name });
+    return res;
+  }
+}
+
+exports.dsDriver = dsDriver;
+exports.Training = Training;
