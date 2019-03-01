@@ -1,0 +1,3 @@
+[submodule "client/node/node-compositor"]
+	path = client/node/node-compositor
+	url = git@github.com:ebshimizu/node-compositor.git
