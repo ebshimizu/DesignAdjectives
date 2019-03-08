@@ -64,21 +64,29 @@ class dsDriver {
   }
 
   async setData(name, data) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
     const res = await this.exec("snippet set data", { name, data });
     return res;
   }
 
   async addData(name, x, y) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
     const res = await this.exec("snippet add data", { name, x, y });
     return res;
   }
 
   async removeData(name, index) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
     const res = await this.exec("snippet remove data", { name, index });
     return res;
   }
 
   async train(name) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
     const res = await this.exec("snippet train", { name });
     return res;
   }

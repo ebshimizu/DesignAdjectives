@@ -88,7 +88,7 @@ def setData(args):
 def addData(args):
     s = snippetServer.getSnippet(args["name"])
     if s:
-        s.addData(Training(args["x"], args["y"]))
+        s.addData(dsTypes.Training(args["x"], args["y"]))
         return None, True
     else:
         return None, False

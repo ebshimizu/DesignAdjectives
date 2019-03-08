@@ -1,23 +1,58 @@
 const comp = require("./node-compositor/build/Release/compositor");
 comp.setLogLevel(1);
 
+const dsDriver = require("./driver/dsNodeDriver");
+
 // load test image (shapes)
 c = new comp.Compositor(
-  "shapes.dark",
+  "shapes3.dark",
   "C:/Users/Falindrith/Dropbox/Documents/research/sliders_project/test_images/shapes/"
 );
 
-c.render(c.getContext()).save("test.png");
-console.log(JSON.parse(c.getContext().layerKey(c)));
+const ss = new dsDriver.dsDriver();
 
-// make a few configs, vectorize
+// let vec = c.getContext().layerVector(c);
+// vec[1] = 0.25;
+// console.log(c.contextFromVector(vec).layerVector(c));
+// c.renderContext(c.contextFromVector(vec)).save("test2.png");
 
-// send to snippets thing
+async function main() {
+  // make a few configs, vectorize
+  let x1 = c.getContext().layerVector(c);
+  x1[1] = 0.3;
 
-// attempt to train
+  let x2 = c.getContext().layerVector(c);
+  x2[1] = 0.34;
 
-// display loss func/1D graph
+  let x3 = c.getContext().layerVector(c);
+  x3[1] = 0.28;
 
-// eval a few test cases?
+  let x4 = c.getContext().layerVector(c);
+  x4[1] = 0.7;
 
-// sample some new suggested designs
+  // make a snippet
+  await ss.deleteSnippet("rectangle hue"); // this is for debug stuff lol
+  await ss.addSnippet("rectangle hue");
+
+  // send to snippets thing
+  await ss.addData("rectangle hue", x1, 1);
+  await ss.addData("rectangle hue", x2, 1);
+  await ss.addData("rectangle hue", x3, 1);
+  await ss.addData("rectangle hue", x4, 0);
+
+  // attempt to train
+
+  // display loss func/1D graph
+
+  // eval a few test cases?
+
+  // sample some new suggested designs
+}
+
+(async () => {
+  try {
+    await main();
+  } catch (e) {
+    console.log(e);
+  }
+})();
