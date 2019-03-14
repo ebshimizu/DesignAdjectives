@@ -124,6 +124,16 @@ def snippetPlotLastLoss(args):
         return None, False
 
 
+@sio.on("snippet plot1D")
+def snippetPlot1D(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        s.plot1D(args["x"], args["dim"], args["rmin"], args["rmax"], args["n"])
+        return None, True
+    else:
+        return None, False
+
+
 sio.connect("http://localhost:5234")
 
 logger.info("Design Snippets server launched")

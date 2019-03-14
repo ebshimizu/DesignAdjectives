@@ -35,14 +35,17 @@ async function main() {
   await ss.addSnippet("rectangle hue");
 
   // send to snippets thing
-  await ss.addData("rectangle hue", x1, 1);
-  await ss.addData("rectangle hue", x2, 1);
-  await ss.addData("rectangle hue", x3, 1);
-  await ss.addData("rectangle hue", x4, 0);
+  await ss.addData("rectangle hue", x1, 1.0);
+  await ss.addData("rectangle hue", x2, 1.0);
+  await ss.addData("rectangle hue", x3, 1.0);
+  await ss.addData("rectangle hue", x4, 0.0);
 
   // attempt to train
+  await ss.train("rectangle hue");
 
   // display loss func/1D graph
+  //await ss.showLoss("rectangle hue");
+  await ss.plot1D("rectangle hue", x1, 1);
 
   // eval a few test cases?
 

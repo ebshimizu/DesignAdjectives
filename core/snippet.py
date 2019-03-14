@@ -21,7 +21,7 @@ class Snippet:
         self.name = name
         self.data = []
         self.filter = []
-        self.optSteps = 1000
+        self.optSteps = 2000
         self.learningRate = 0.005
 
     # param filter is a list of which parameter vector indices are to be used
@@ -49,7 +49,7 @@ class Snippet:
         return torch.tensor(X)
 
     def getYTrain(self):
-        y = [i.score for i in self.data]
+        y = [float(i.score) for i in self.data]
 
         return torch.tensor(y)
 

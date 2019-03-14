@@ -32,7 +32,7 @@ def plot1DPredictions(x, model, paramIdx=0, rmin=0, rmax=1, n=100):
     plt.plot(XTest.numpy(), mean.numpy(), "r", lw=2)  # plot the mean
     plt.fill_between(
         torch.reshape(
-            XTest, (-1,)
+            XRange, (-1,)
         ).numpy(),  # plot the two-sigma uncertainty about the mean
         (mean - 2.0 * sd).numpy(),
         (mean + 2.0 * sd).numpy(),

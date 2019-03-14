@@ -90,6 +90,27 @@ class dsDriver {
     const res = await this.exec("snippet train", { name });
     return res;
   }
+
+  async showLoss(name) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
+    const res = await this.exec("snippet plotLastLoss", { name });
+    return res;
+  }
+
+  async plot1D(name, x, dim, rmin = 0.0, rmax = 1.0, n = 100) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
+    const res = await this.exec("snippet plot1D", {
+      name,
+      x,
+      dim,
+      rmin,
+      rmax,
+      n
+    });
+    return res;
+  }
 }
 
 exports.dsDriver = dsDriver;
