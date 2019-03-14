@@ -134,6 +134,26 @@ def snippetPlot1D(args):
         return None, False
 
 
+@sio.on("snippet setProp")
+def snippetSetProp(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        setattr(s, args["propName"], args["val"])
+        return None, True
+    else:
+        return None, False
+
+
+@sio.on("snippet getProp")
+def snippetGetProp(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        val = getattr(s, args["propName"])
+        return None, val
+    else:
+        return None, False
+
+
 sio.connect("http://localhost:5234")
 
 logger.info("Design Snippets server launched")

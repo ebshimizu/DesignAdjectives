@@ -40,6 +40,8 @@ async function main() {
   await ss.addData("rectangle hue", x3, 1.0);
   await ss.addData("rectangle hue", x4, 0.0);
 
+  // property testing
+
   // attempt to train
   await ss.train("rectangle hue");
 

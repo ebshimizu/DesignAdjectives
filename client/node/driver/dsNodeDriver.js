@@ -111,6 +111,20 @@ class dsDriver {
     });
     return res;
   }
+
+  async setProp(name, propName, val) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
+    const res = await this.exec("snippet setProp", { name, propName, val });
+    return res;
+  }
+
+  async getProp(name, propName) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
+    const res = await this.exec("snippet getProp", { name, propName });
+    return res;
+  }
 }
 
 exports.dsDriver = dsDriver;
