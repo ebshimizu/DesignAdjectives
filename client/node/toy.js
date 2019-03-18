@@ -41,12 +41,15 @@ async function main() {
   await ss.addData("rectangle hue", x4, 0.0);
 
   // property testing
+  await ss.setProp("rectangle hue", "optSteps", 3000);
+  let optSteps = await ss.getProp("rectangle hue", "optSteps");
+  console.log(optSteps);
 
   // attempt to train
   await ss.train("rectangle hue");
 
   // display loss func/1D graph
-  //await ss.showLoss("rectangle hue");
+  await ss.showLoss("rectangle hue");
   await ss.plot1D("rectangle hue", x1, 1);
 
   // eval a few test cases?

@@ -154,6 +154,24 @@ def snippetGetProp(args):
         return None, False
 
 
+@sio.on("snippet predict")
+def snippetPredict(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        val = s.predict(args["data"])
+        return None, val
+    else:
+        return None, False
+
+
+@sio.on("snippet sample")
+def snippetSample(args):
+    return None, "unimplemented"
+    # s = snippetServer.getSnippet(args["name"])
+    # if s:
+    # val = s.predict(args["n"])
+
+
 sio.connect("http://localhost:5234")
 
 logger.info("Design Snippets server launched")

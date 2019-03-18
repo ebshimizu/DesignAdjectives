@@ -13,7 +13,11 @@ import graphUtils
 # what if design intent is just sampling from the prior distribution over the preference function
 
 # debug
-pyro.enable_validation(True)
+# pyro.enable_validation(True)
+
+# use gpu by default?
+# torch.set_default_tensor_type(torch.cuda.FloatTensor)
+# torch.cuda.init()
 
 
 class Snippet:
@@ -70,6 +74,7 @@ class Snippet:
             self.setDefaultFilter()
 
         # TODO: allow kernel settings per-snippet?
+        # for retraining, use exising variance/lengthscale
         kernel = gp.kernels.RBF(
             input_dim=len(self.filter),
             variance=torch.tensor(5.0),
@@ -123,7 +128,7 @@ class Snippet:
             else:
                 mean, cov = self.gpr(Xtest, full_cov=True, noiseless=False)
 
-        return {"mean": mean, "cov": cov}
+        return {"mean": mean.item(), "cov": cov.item()}
 
     # remember that gpr samples are functions.
     # there should be another function for actually sampling
