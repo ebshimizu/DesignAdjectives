@@ -112,6 +112,27 @@ class dsDriver {
     return res;
   }
 
+  async predictOne(name, x) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
+    const res = await this.predict(name, [x]);
+    return res;
+  }
+
+  async predict(name, data) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
+    const res = await this.exec("snippet predict", { name, data });
+    return res;
+  }
+
+  async sample(name, n = 1) {
+    if (typeof name !== "string") throw "Missing Snippet Name";
+
+    const res = await this.exec("snippet sample", { name, n });
+    return res;
+  }
+
   async setProp(name, propName, val) {
     if (typeof name !== "string") throw "Missing Snippet Name";
 

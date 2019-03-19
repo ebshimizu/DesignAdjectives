@@ -158,6 +158,7 @@ def snippetGetProp(args):
 def snippetPredict(args):
     s = snippetServer.getSnippet(args["name"])
     if s:
+        print(args["data"])
         val = s.predict(args["data"])
         return None, val
     else:
@@ -166,10 +167,12 @@ def snippetPredict(args):
 
 @sio.on("snippet sample")
 def snippetSample(args):
-    return None, "unimplemented"
-    # s = snippetServer.getSnippet(args["name"])
-    # if s:
-    # val = s.predict(args["n"])
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        val = s.sample(args["n"])
+        return None, val
+    else:
+        return None, False
 
 
 sio.connect("http://localhost:5234")

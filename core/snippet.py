@@ -1,4 +1,5 @@
 from dsTypes import *
+from samplers import *
 import os
 import torch
 import pyro
@@ -7,13 +8,10 @@ import pyro.distributions as dist
 
 import graphUtils
 
-# TODO: Visualization/debug functions for snippets
-# Next: Server connectivity
-# Then: Integration with Compositor library for demo/toy application (no ui)
 # what if design intent is just sampling from the prior distribution over the preference function
 
 # debug
-# pyro.enable_validation(True)
+pyro.enable_validation(True)
 
 # use gpu by default?
 # torch.set_default_tensor_type(torch.cuda.FloatTensor)
@@ -27,6 +25,8 @@ class Snippet:
         self.filter = []
         self.optSteps = 2000
         self.learningRate = 0.005
+        self.lossTolerance = -1e2
+        self.gpr = None
 
     # param filter is a list of which parameter vector indices are to be used
     # for sampling and training
@@ -75,11 +75,14 @@ class Snippet:
 
         # TODO: allow kernel settings per-snippet?
         # for retraining, use exising variance/lengthscale
-        kernel = gp.kernels.RBF(
-            input_dim=len(self.filter),
-            variance=torch.tensor(5.0),
-            lengthscale=torch.tensor(10.0),
-        )
+        if self.gpr:
+            kernel = self.gpr.kernel
+        else:
+            kernel = gp.kernels.RBF(
+                input_dim=len(self.filter),
+                variance=torch.tensor(5.0),
+                lengthscale=torch.tensor(10.0),
+            )
 
         # generate X matrix
         X = self.getXTrain()
@@ -100,6 +103,11 @@ class Snippet:
             loss.backward()
             optimizer.step()
             self.losses.append(loss.item())
+
+            # short-circuit past an arbitrary threshold
+            if loss.item() < self.lossTolerance:
+                print("Loss tolerance met early, breaking. Loss {0}".format(loss))
+                break
 
         # debug
         # plt.plot(losses)
@@ -134,8 +142,7 @@ class Snippet:
     # there should be another function for actually sampling
     # for new designs.
     def sample(self, count=1):
-        samples = [self.gpr.iter_sample() for i in range(0, count)]
-        return samples
+        return []
 
     def setDefaultFilter(self):
         # assumption: all data is the same vector length

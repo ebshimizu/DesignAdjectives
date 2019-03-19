@@ -50,11 +50,16 @@ async function main() {
 
   // display loss func/1D graph
   await ss.showLoss("rectangle hue");
-  await ss.plot1D("rectangle hue", x1, 1);
+  //await ss.plot1D("rectangle hue", x1, 0);
 
   // eval a few test cases?
+  let t1 = c.getContext().layerVector(c);
+  t1[1] = 0.32;
+  let r = await ss.predictOne("rectangle hue", t1);
+  console.log(r);
 
   // sample some new suggested designs
+  await ss.sample("rectangle hue", 1);
 }
 
 (async () => {
