@@ -97,6 +97,11 @@ io.on("connect", function(socket) {
       logger.warn("Unable to process action. No snippet server connected");
     }
   });
+
+  socket.on("single sample", function(data) {
+    logger.info(`Relaying sample from ${data.name}`);
+    io.sockets.emit("single sample", data.data, data.name);
+  });
 });
 
 logger.info("Initialized Design Snippets relay server on port 5234");

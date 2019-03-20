@@ -10,6 +10,9 @@ c = new comp.Compositor(
 );
 
 const ss = new dsDriver.dsDriver();
+ss.sampleCallback = function(data, snippetName) {
+  c.renderContext(c.contextFromVector(data.x)).save(`sample${data.idx}.png`);
+};
 
 // let vec = c.getContext().layerVector(c);
 // vec[1] = 0.25;
@@ -41,15 +44,13 @@ async function main() {
   await ss.addData("rectangle hue", x4, 0.0);
 
   // property testing
-  await ss.setProp("rectangle hue", "optSteps", 3000);
-  let optSteps = await ss.getProp("rectangle hue", "optSteps");
-  console.log(optSteps);
+  await ss.setProp("rectangle hue", "optSteps", 1000);
 
   // attempt to train
   await ss.train("rectangle hue");
 
   // display loss func/1D graph
-  await ss.showLoss("rectangle hue");
+  //await ss.showLoss("rectangle hue");
   //await ss.plot1D("rectangle hue", x1, 0);
 
   // eval a few test cases?
@@ -59,7 +60,15 @@ async function main() {
   console.log(r);
 
   // sample some new suggested designs
-  await ss.sample("rectangle hue", 1);
+  let samples = await ss.sample("rectangle hue", {
+    qMin: 0.75,
+    epsilon: 0.1,
+    n: 20,
+    burn: 1000,
+    stride: 1
+  });
+
+  console.log(samples);
 }
 
 (async () => {

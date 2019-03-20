@@ -9,12 +9,13 @@ import eventlet
 sys.path.append("../core")
 import dsCore
 import dsTypes
+import samplers
 
 # logging setup
 import logging
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="[%(levelname)-5.5s] %(asctime)s [%(threadName)-12.12s]  %(message)s",
     handlers=[logging.FileHandler("server.log"), logging.StreamHandler()],
 )
@@ -30,6 +31,11 @@ sys.excepthook = logExc
 snippetServer = dsCore.SnippetServer()
 
 sio = socketio.Client()
+
+
+def sampleSingleResult(data, name):
+    data["x"] = data["x"]
+    sio.emit("single sample", {"data": data, "name": name})
 
 
 @sio.on("connect")
@@ -169,8 +175,13 @@ def snippetPredict(args):
 def snippetSample(args):
     s = snippetServer.getSnippet(args["name"])
     if s:
-        val = s.sample(args["n"])
-        return None, val
+        samples = samplers.metropolis(
+            s,
+            s.x0(),
+            cb=lambda data: sampleSingleResult(data, args["name"]),
+            **args["data"]
+        )
+        return None, samples
     else:
         return None, False
 

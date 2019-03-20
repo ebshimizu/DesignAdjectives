@@ -11,6 +11,7 @@ class dsDriver {
     this.addr = `http://localhost:${port}`;
     socket = sio(this.addr);
     socket.emitAsync = Promise.promisify(socket.emit);
+    this.sampleCallback = null;
 
     this.bind();
   }
@@ -29,6 +30,20 @@ class dsDriver {
     socket.on("disconnect", function() {
       console.log(`Snippets Node Driver disconnected from ${self.addr}`);
     });
+
+    socket.on("single sample", function(data, snippetName) {
+      self.sampleReturned(data, snippetName);
+    });
+  }
+
+  // Calls a user provided callback function when a sample gets returned
+  // in process
+  sampleReturned(data, snippetName) {
+    console.log(
+      `Received sample for snippet ${snippetName} with id ${data.idx}`
+    );
+
+    if (this.sampleCallback) this.sampleCallback(data, snippetName);
   }
 
   // most functions in this driver will be using the async/await format to pretend
@@ -126,10 +141,10 @@ class dsDriver {
     return res;
   }
 
-  async sample(name, n = 1) {
+  async sample(name, params) {
     if (typeof name !== "string") throw "Missing Snippet Name";
 
-    const res = await this.exec("snippet sample", { name, n });
+    const res = await this.exec("snippet sample", { name, data: params });
     return res;
   }
 

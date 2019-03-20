@@ -144,6 +144,13 @@ class Snippet:
     def sample(self, count=1):
         return []
 
+    def x0(self):
+        if self.data:
+            # NOTE: CHANGE LATER THIS ASSUMES FIRST EXAMPLE IS POSITIVE
+            return self.data[0].data
+        else:
+            return 0
+
     def setDefaultFilter(self):
         # assumption: all data is the same vector length
         if len(self.data) > 0:
