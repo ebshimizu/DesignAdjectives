@@ -39,6 +39,10 @@ class dsDriver {
     socket.on("sampler complete", function(data, snippetName) {
       self.samplerComplete(data, snippetName);
     });
+
+    socket.on("no server", function() {
+      console.log("No server connected. Unable to use snippet functions.");
+    });
   }
 
   // Calls a user provided callback function when a sample gets returned

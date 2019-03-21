@@ -60,6 +60,10 @@ logger.info("Initializing socket.io");
 io.on("connect", function(socket) {
   logger.info(`connection from ${socket.id}`);
 
+  if (!snippetSocket) {
+    socket.emit("no server");
+  }
+
   // determine if client or server connected
   socket.emit("getType", function(type) {
     if (type === "server") {
