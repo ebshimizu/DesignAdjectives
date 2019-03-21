@@ -28,6 +28,8 @@ def logExc(exctype, value, tb):
 
 sys.excepthook = logExc
 
+currentSampler = None
+
 snippetServer = dsCore.SnippetServer()
 
 sio = socketio.Client()
@@ -36,6 +38,10 @@ sio = socketio.Client()
 def sampleSingleResult(data, name):
     data["x"] = data["x"]
     sio.emit("single sample", {"data": data, "name": name})
+
+
+def sampleFinal(data, name):
+    sio.emit("sampler complete", {"data": data, "name": name})
 
 
 @sio.on("connect")
@@ -173,17 +179,42 @@ def snippetPredict(args):
 
 @sio.on("snippet sample")
 def snippetSample(args):
-    s = snippetServer.getSnippet(args["name"])
-    if s:
-        samples = samplers.metropolis(
-            s,
-            s.x0(),
-            cb=lambda data: sampleSingleResult(data, args["name"]),
-            **args["data"]
-        )
-        return None, samples
+    global currentSampler
+    if currentSampler is None or (not currentSampler.is_alive()):
+        s = snippetServer.getSnippet(args["name"])
+        if s:
+            currentSampler = samplers.Metropolis(
+                s,
+                s.x0(),
+                name=args["name"],
+                cb=lambda data: sampleSingleResult(data, args["name"]),
+                final=sampleFinal,
+                **args["data"],
+            )
+            currentSampler.start()
+            return None, True
+        else:
+            return None, False
     else:
-        return None, False
+        return "sampler is already running", False
+
+
+@sio.on("stop sampler")
+def stopSampler(args):
+    global currentSampler
+    if currentSampler and currentSampler.is_alive():
+        currentSampler.stop()
+        currentSampler.join()
+        logger.info("Sampler thread for {0} stopped".format(currentSampler.name))
+        return None, True
+    else:
+        return None, True
+
+
+@sio.on("sampler running")
+def samplerRunning(args):
+    global currentSampler
+    return None, currentSampler and currentSampler.is_alive()
 
 
 sio.connect("http://localhost:5234")

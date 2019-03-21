@@ -109,3 +109,4 @@ server/node_modules
 client/node/test.png
 client/node/test2.png
 *.prof
+client/node/*.png

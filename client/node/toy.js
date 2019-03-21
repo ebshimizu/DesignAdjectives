@@ -14,6 +14,11 @@ ss.sampleCallback = function(data, snippetName) {
   c.renderContext(c.contextFromVector(data.x)).save(`sample${data.idx}.png`);
 };
 
+ss.sampleFinalCallback = function(data, snippetName) {
+  console.log(`Sampler complete for ${snippetName}`);
+  console.log(data);
+};
+
 // let vec = c.getContext().layerVector(c);
 // vec[1] = 0.25;
 // console.log(c.contextFromVector(vec).layerVector(c));
@@ -60,15 +65,13 @@ async function main() {
   console.log(r);
 
   // sample some new suggested designs
-  let samples = await ss.sample("rectangle hue", {
+  let samplesStarted = await ss.sample("rectangle hue", {
     qMin: 0.75,
     epsilon: 0.1,
     n: 20,
     burn: 1000,
     stride: 1
   });
-
-  console.log(samples);
 }
 
 (async () => {

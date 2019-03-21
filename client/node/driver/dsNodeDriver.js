@@ -12,6 +12,7 @@ class dsDriver {
     socket = sio(this.addr);
     socket.emitAsync = Promise.promisify(socket.emit);
     this.sampleCallback = null;
+    this.sampleFinalCallback = null;
 
     this.bind();
   }
@@ -34,6 +35,10 @@ class dsDriver {
     socket.on("single sample", function(data, snippetName) {
       self.sampleReturned(data, snippetName);
     });
+
+    socket.on("sampler complete", function(data, snippetName) {
+      self.samplerComplete(data, snippetName);
+    });
   }
 
   // Calls a user provided callback function when a sample gets returned
@@ -44,6 +49,12 @@ class dsDriver {
     );
 
     if (this.sampleCallback) this.sampleCallback(data, snippetName);
+  }
+
+  samplerComplete(data, snippetName) {
+    console.log(`Received final snippet data from ${snippetName}`);
+
+    if (this.sampleFinalCallback) this.sampleFinalCallback(data, snippetName);
   }
 
   // most functions in this driver will be using the async/await format to pretend
@@ -159,6 +170,16 @@ class dsDriver {
     if (typeof name !== "string") throw "Missing Snippet Name";
 
     const res = await this.exec("snippet getProp", { name, propName });
+    return res;
+  }
+
+  async stopSampler() {
+    const res = await this.exec("stop sampler");
+    return res;
+  }
+
+  async samplerRunning() {
+    const res = await this.exec("sampler running");
     return res;
   }
 }

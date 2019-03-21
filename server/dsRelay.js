@@ -102,6 +102,11 @@ io.on("connect", function(socket) {
     logger.info(`Relaying sample from ${data.name}`);
     io.sockets.emit("single sample", data.data, data.name);
   });
+
+  socket.on("sampler complete", function(data) {
+    logger.info(`Relaying final sample data from ${data.name}`);
+    io.sockets.emit("sampler complete", data.data, data.name);
+  });
 });
 
 logger.info("Initialized Design Snippets relay server on port 5234");
