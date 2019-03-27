@@ -1,6 +1,7 @@
 <template>
   <div id="test-area">
     <button @click="loadTestFile()">Load Test File</button>
+    <button @click="paramSetTest()">Set Param 0 to 0.78</button>
     <ul id="param-list">
       <li v-for="param in parameters" :key="param.id">{{ param.name }}: {{ param.value }}</li>
     </ul>
@@ -17,6 +18,9 @@ export default {
         dir:
           'C:/Users/Falindrith/Dropbox/Documents/research/sliders_project/test_images/shapes/'
       });
+    },
+    paramSetTest() {
+      this.$store.dispatch('SET_PARAM', { id: 0, val: 0.78 });
     }
   },
   computed: {

@@ -32,5 +32,21 @@ export const CompositorBackend = {
     }
 
     return params;
+  },
+
+  // given: parameter id, value to set to, current state object for the element
+  // It is up to the backend driver to determine how it would
+  // like to perform the update.
+  setParam(id, val, _) {
+    const vec = c.getContext().layerVector(c);
+    vec[id] = val;
+    c.setContext(c.contextFromVector(vec));
+  },
+
+  // the render function. at minimum this takes a canvas target and a set of render settings.
+  // render settings should attempt to be mostly consistent, but i suspect this might cause some
+  // problems eventually
+  renderer(canvasTarget, settings) {
+    // this right now is a nullop
   }
 };
