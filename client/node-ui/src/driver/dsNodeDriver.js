@@ -1,6 +1,7 @@
-var Promise = require("bluebird");
-const sio = require("socket.io-client");
-var socket;
+const Promise = require('bluebird');
+const sio = require('socket.io-client');
+
+let socket;
 
 function Training(x, y) {
   return { x, y };
@@ -20,28 +21,28 @@ class dsDriver {
   bind() {
     const self = this;
 
-    socket.on("connect", function() {
+    socket.on('connect', function() {
       console.log(`Snippets Node Driver connected to ${self.addr}`);
     });
 
-    socket.on("getType", function(cb) {
-      cb("client");
+    socket.on('getType', function(cb) {
+      cb('client');
     });
 
-    socket.on("disconnect", function() {
+    socket.on('disconnect', function() {
       console.log(`Snippets Node Driver disconnected from ${self.addr}`);
     });
 
-    socket.on("single sample", function(data, snippetName) {
+    socket.on('single sample', function(data, snippetName) {
       self.sampleReturned(data, snippetName);
     });
 
-    socket.on("sampler complete", function(data, snippetName) {
+    socket.on('sampler complete', function(data, snippetName) {
       self.samplerComplete(data, snippetName);
     });
 
-    socket.on("no server", function() {
-      console.log("No server connected. Unable to use snippet functions.");
+    socket.on('no server', function() {
+      console.log('No server connected. Unable to use snippet functions.');
     });
   }
 
@@ -65,7 +66,7 @@ class dsDriver {
   // like this is synchronous
   async exec(fn, args) {
     try {
-      const res = await socket.emitAsync("action", { fn, args });
+      const res = await socket.emitAsync('action', { fn, args });
       return res;
     } catch (e) {
       console.log(`Error: ${e}`);
@@ -74,64 +75,64 @@ class dsDriver {
 
   // and here's a function that'll use the traditional callbacks if needed
   execCb(fn, args, cb) {
-    socket.emit("action", { fn, args }, cb);
+    socket.emit('action', { fn, args }, cb);
   }
 
   // the following functions are basically convenience functions
   async addSnippet(name) {
-    const res = await this.exec("add snippet", { name });
+    const res = await this.exec('add snippet', { name });
     return res;
   }
 
   async deleteSnippet(name) {
-    const res = await this.exec("delete snippet", { name });
+    const res = await this.exec('delete snippet', { name });
     return res;
   }
 
   async listSnippets() {
-    const res = await this.exec("list snippets", {});
+    const res = await this.exec('list snippets', {});
     return res;
   }
 
   async setData(name, data) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet set data", { name, data });
+    const res = await this.exec('snippet set data', { name, data });
     return res;
   }
 
   async addData(name, x, y) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet add data", { name, x, y });
+    const res = await this.exec('snippet add data', { name, x, y });
     return res;
   }
 
   async removeData(name, index) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet remove data", { name, index });
+    const res = await this.exec('snippet remove data', { name, index });
     return res;
   }
 
   async train(name) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet train", { name });
+    const res = await this.exec('snippet train', { name });
     return res;
   }
 
   async showLoss(name) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet plotLastLoss", { name });
+    const res = await this.exec('snippet plotLastLoss', { name });
     return res;
   }
 
   async plot1D(name, x, dim, rmin = 0.0, rmax = 1.0, n = 100) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet plot1D", {
+    const res = await this.exec('snippet plot1D', {
       name,
       x,
       dim,
@@ -143,47 +144,47 @@ class dsDriver {
   }
 
   async predictOne(name, x) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
     const res = await this.predict(name, [x]);
     return res;
   }
 
   async predict(name, data) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet predict", { name, data });
+    const res = await this.exec('snippet predict', { name, data });
     return res;
   }
 
   async sample(name, params) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet sample", { name, data: params });
+    const res = await this.exec('snippet sample', { name, data: params });
     return res;
   }
 
   async setProp(name, propName, val) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet setProp", { name, propName, val });
+    const res = await this.exec('snippet setProp', { name, propName, val });
     return res;
   }
 
   async getProp(name, propName) {
-    if (typeof name !== "string") throw "Missing Snippet Name";
+    if (typeof name !== 'string') throw 'Missing Snippet Name';
 
-    const res = await this.exec("snippet getProp", { name, propName });
+    const res = await this.exec('snippet getProp', { name, propName });
     return res;
   }
 
   async stopSampler() {
-    const res = await this.exec("stop sampler");
+    const res = await this.exec('stop sampler');
     return res;
   }
 
   async samplerRunning() {
-    const res = await this.exec("sampler running");
+    const res = await this.exec('sampler running');
     return res;
   }
 }
