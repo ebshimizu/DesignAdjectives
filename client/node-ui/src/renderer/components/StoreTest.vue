@@ -5,12 +5,20 @@
     <ul id="param-list">
       <li v-for="param in parameters" :key="param.id">{{ param.name }}: {{ param.value }}</li>
     </ul>
+    <div class="canvas-container">
+      <main-render-canvas></main-render-canvas>
+    </div>
   </div>
 </template>
 
 <script>
+import MainRenderCanvas from './MainRenderCanvas';
+
 export default {
   name: 'store-test',
+  components: {
+    MainRenderCanvas
+  },
   methods: {
     loadTestFile() {
       this.$store.dispatch('LOAD_NEW_FILE', {

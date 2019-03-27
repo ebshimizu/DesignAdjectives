@@ -48,5 +48,6 @@ export const CompositorBackend = {
   // problems eventually
   renderer(canvasTarget, settings) {
     // this right now is a nullop
+    console.log('render trigger');
   }
 };

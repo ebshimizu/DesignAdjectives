@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import StoreTest from '@/components/StoreTest'; export default { name:
-'snippets-ui', components: { StoreTest } };
+import StoreTest from '@/components/StoreTest';
+export default { name: 'snippets-ui', components: { StoreTest } };
 </script>
 
 <style lang="scss" scoped>
