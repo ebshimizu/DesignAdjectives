@@ -18,8 +18,8 @@ export function createStore(backend, type) {
       paramsAsArray: state => {
         return state.parameters.map(p => p.value);
       },
-      renderer: _ => (canvasTarget, settings) => {
-        return backend.renderer(canvasTarget, settings);
+      renderer: _ => {
+        return backend.renderer;
       }
     },
     mutations: {

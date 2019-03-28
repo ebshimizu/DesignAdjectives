@@ -7,15 +7,17 @@
 <script>
 export default {
   name: 'main-render-canvas',
-  mounted: function() {
-    this.$store.watch(
-      (state, _) => state.compositor.parameters,
-      (newVal, oldVal) => {
-        this.$store.state.compositor.renderer(this.$refs.canvas, {
-          size: 'full'
-        });
-      }
-    );
+  computed: {
+    params() {
+      return this.$store.state.compositor.parameters;
+    }
+  },
+  watch: {
+    params() {
+      this.$store.getters.renderer(this.$refs.canvas, {
+        size: 'full'
+      });
+    }
   }
 };
 </script>
