@@ -77,9 +77,13 @@ export const CompositorBackend = {
   // this is an async function
   async renderer(canvasTarget, settings) {
     const size = 'size' in settings ? settings.size : 'full';
+    const state =
+      'state' in settings
+        ? c.contextFromVector(settings.state)
+        : c.getContext();
 
     try {
-      const img = await renderPromise(c.getContext(), size);
+      const img = await renderPromise(state, size);
       drawImage(img, canvasTarget);
     } catch (e) {
       console.log(e);
