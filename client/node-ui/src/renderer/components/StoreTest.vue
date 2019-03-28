@@ -1,9 +1,8 @@
 <template>
   <div id="test-area">
     <button @click="loadTestFile()">Load Test File</button>
-    <button @click="paramSetTest()">Set Param 0 to 0.78</button>
     <ul id="param-list">
-      <li v-for="param in parameters" :key="param.id">{{ param.name }}: {{ param.value }}</li>
+      <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
     </ul>
     <div class="canvas-container">
       <main-render-canvas></main-render-canvas>
@@ -13,11 +12,13 @@
 
 <script>
 import MainRenderCanvas from './MainRenderCanvas';
+import ParameterControl from './ParameterControls/ParameterControl';
 
 export default {
   name: 'store-test',
   components: {
-    MainRenderCanvas
+    MainRenderCanvas,
+    ParameterControl
   },
   methods: {
     loadTestFile() {
@@ -26,9 +27,6 @@ export default {
         dir:
           'C:/Users/Falindrith/Dropbox/Documents/research/sliders_project/test_images/shapes/'
       });
-    },
-    paramSetTest() {
-      this.$store.dispatch('SET_PARAM', { id: 0, val: 0.78 });
     }
   },
   computed: {
@@ -42,5 +40,13 @@ export default {
 <style lang="scss" scoped>
 #param-list {
   color: #ffffff;
+}
+
+.canvas-container {
+  position: absolute;
+  left: 400px;
+  top: 0;
+  width: 500px;
+  height: 500px;
 }
 </style>
