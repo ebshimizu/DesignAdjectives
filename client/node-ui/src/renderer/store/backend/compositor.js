@@ -7,6 +7,34 @@ compositor.setLogLevel(1);
 
 let c = new compositor.Compositor();
 
+// Helpers for the compositor function
+function drawImage(image, canvas) {
+  // canvas size should be set by image
+  canvas.width = image.width();
+  canvas.height = image.height();
+
+  var ctx = canvas.getContext('2d');
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  var imDat = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  image.writeToImageData(imDat);
+
+  createImageBitmap(imDat).then(function(imbit) {
+    ctx.drawImage(imbit, 0, 0, canvas.width, canvas.height);
+  });
+}
+
+function renderPromise(context, size) {
+  return new Promise((resolve, reject) => {
+    c.asyncRenderContext(context, size, function(err, img) {
+      if (err) reject(new Error('Failed to render image'));
+
+      resolve(img);
+    });
+  });
+}
+
 export const CompositorBackend = {
   // config may have additional fields, would recommend adding to the object
   // as additional backends get constructed.
@@ -45,9 +73,16 @@ export const CompositorBackend = {
 
   // the render function. at minimum this takes a canvas target and a set of render settings.
   // render settings should attempt to be mostly consistent, but i suspect this might cause some
-  // problems eventually
-  renderer(canvasTarget, settings) {
-    // this right now is a nullop
-    console.log('render trigger');
+  // problems eventually.
+  // this is an async function
+  async renderer(canvasTarget, settings) {
+    const size = 'size' in settings ? settings.size : 'full';
+
+    try {
+      const img = await renderPromise(c.getContext(), size);
+      drawImage(img, canvasTarget);
+    } catch (e) {
+      console.log(e);
+    }
   }
 };
