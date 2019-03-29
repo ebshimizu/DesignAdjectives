@@ -1,18 +1,20 @@
 <template>
-  <div id="app">
+  <div id="app" class="bg-black">
     <store-test></store-test>
-    <parameter-controls></parameter-controls>
+    <div class="h-screen w-1/4 absolute pin-r pin-t overflow-hidden">
+      <parameter-panel></parameter-panel>
+    </div>
   </div>
 </template>
 
 <script>
 import StoreTest from '@/components/StoreTest';
-import ParameterControls from '@/components/ParameterControls';
+import ParameterPanel from '@/components/ParameterPanel';
 import '@/assets/tailwind.css';
 
 export default {
   name: 'snippets-ui',
-  components: { StoreTest, ParameterControls }
+  components: { StoreTest, ParameterPanel }
 };
 </script>
 
@@ -22,11 +24,11 @@ export default {
 #app {
   width: 100vw;
   height: 100vh;
-  background-color: $bg-color;
   margin: 0;
   padding: 0;
   left: 0;
   top: 0;
   position: absolute;
+  overflow: hidden;
 }
 </style>

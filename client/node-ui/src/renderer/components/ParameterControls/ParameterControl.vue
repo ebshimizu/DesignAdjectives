@@ -1,8 +1,9 @@
 <template>
-  <div class="parameter-control">
-    <div class="label">{{ param.name }}</div>
-    <div class="slider">
+  <div class="text-grey-lightest font-mono font-sm w-full border-b border-grey-lightest p-2 h-16">
+    <div class="label w-full text-xs">{{ param.name }}</div>
+    <div class="flex my-1">
       <input
+        class="w-5/6 mx-2"
         type="range"
         v-model="localVal"
         v-bind:max="param.max"
@@ -10,9 +11,8 @@
         v-on:change="commitChange"
         step="0.01"
       >
-    </div>
-    <div class="text-input">
       <input
+        class="w-1/6 mx-2 rounded-sm p-1 text-sm text-grey-light bg-grey-darkest"
         type="number"
         v-model="localVal"
         v-on:change="commitChange"

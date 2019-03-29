@@ -1,9 +1,13 @@
 <template>
-  <div class="param-list">
-    <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
-    <button
-      class="bg-blue hover:bg-blue-light text-white font-bold py-2 px-4 border-b-4 border-blue-dark hover:border-blue rounded"
-    >Button</button>
+  <div
+    class="h-full w-full flex flex-col border-l border-grey-lightest text-grey-lightest overflow-hidden"
+  >
+    <div
+      class="w-full h-10 flex-no-shrink font-sans text-center flex items-center justify-center text-lg border-b border-grey-lightest"
+    >Parameter List</div>
+    <div class="overflow-auto">
+      <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
+    </div>
   </div>
 </template>
 
