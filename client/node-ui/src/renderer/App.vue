@@ -8,6 +8,7 @@
 <script>
 import StoreTest from '@/components/StoreTest';
 import ParameterControls from '@/components/ParameterControls';
+import '@/assets/tailwind.css';
 
 export default {
   name: 'snippets-ui',
