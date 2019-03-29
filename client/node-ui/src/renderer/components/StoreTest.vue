@@ -1,9 +1,6 @@
 <template>
   <div id="test-area">
     <button @click="loadTestFile()">Load Test File</button>
-    <ul id="param-list">
-      <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
-    </ul>
     <div class="canvas-container">
       <main-render-canvas></main-render-canvas>
     </div>
@@ -27,11 +24,6 @@ export default {
         dir:
           'C:/Users/Falindrith/Dropbox/Documents/research/sliders_project/test_images/shapes/'
       });
-    }
-  },
-  computed: {
-    parameters() {
-      return this.$store.state.compositor.parameters;
     }
   }
 };

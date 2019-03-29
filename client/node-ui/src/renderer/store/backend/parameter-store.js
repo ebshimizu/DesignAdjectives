@@ -8,7 +8,8 @@ export function createStore(backend, type) {
   return {
     state: {
       type,
-      parameters: []
+      parameters: [],
+      backend
     },
     getters: {
       param: state => id => {
@@ -18,23 +19,33 @@ export function createStore(backend, type) {
       paramsAsArray: state => {
         return state.parameters.map(p => p.value);
       },
-      renderer: _ => {
-        return backend.renderer;
+      renderer: state => {
+        return state.backend.renderer;
       }
     },
     mutations: {
       LOAD_NEW_FILE(state, config) {
-        backend.loadNew(config);
+        state.backend.loadNew(config);
 
         // at this point we need to re-load all of the parameter data
         state.parameters = backend.getParams();
       },
       SET_PARAM(state, config) {
-        backend.setParam(config.id, config.val, state.parameters[config.id]);
+        state.backend.setParam(
+          config.id,
+          config.val,
+          state.parameters[config.id]
+        );
 
         // this seems painfully inefficient, but it might be performant enough to
         // not be a problem?
         // otherwise there needs to be a Vue.set to replace the parameter object?
+        state.parameters = backend.getParams();
+      },
+      CHANGE_BACKEND(state, config) {
+        // bit of a dangerous function but whatever
+        state.backend = config.backend;
+        state.type = config.type;
         state.parameters = backend.getParams();
       }
     },

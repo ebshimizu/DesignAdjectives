@@ -35,7 +35,6 @@ export default {
   },
   methods: {
     commitChange() {
-      console.log('updating state');
       this.$store.dispatch('SET_PARAM', {
         id: this.param.id,
         val: parseFloat(this.localVal)

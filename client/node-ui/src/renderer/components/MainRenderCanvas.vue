@@ -9,7 +9,7 @@ export default {
   name: 'main-render-canvas',
   computed: {
     params() {
-      return this.$store.state.compositor.parameters;
+      return this.$store.state.paramStore.parameters;
     }
   },
   watch: {

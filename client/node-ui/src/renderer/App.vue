@@ -1,12 +1,18 @@
 <template>
   <div id="app">
     <store-test></store-test>
+    <parameter-controls></parameter-controls>
   </div>
 </template>
 
 <script>
 import StoreTest from '@/components/StoreTest';
-export default { name: 'snippets-ui', components: { StoreTest } };
+import ParameterControls from '@/components/ParameterControls';
+
+export default {
+  name: 'snippets-ui',
+  components: { StoreTest, ParameterControls }
+};
 </script>
 
 <style lang="scss" scoped>
