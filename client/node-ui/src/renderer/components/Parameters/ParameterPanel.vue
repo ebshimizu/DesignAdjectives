@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import Tab from './Tabs/Tab';
-import Tabs from './Tabs/Tabs';
+import Tab from '../Tabs/Tab';
+import Tabs from '../Tabs/Tabs';
 import ParameterControls from './ParameterControls';
 
 export default {

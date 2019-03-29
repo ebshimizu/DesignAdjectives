@@ -9,7 +9,7 @@
 
 <script>
 import StoreTest from '@/components/StoreTest';
-import ParameterPanel from '@/components/ParameterPanel';
+import ParameterPanel from '@/components/Parameters/ParameterPanel';
 import '@/assets/tailwind.css';
 
 export default {

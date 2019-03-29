@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import ParameterControl from './ParameterControls/ParameterControl';
+import ParameterControl from './ParameterControl';
 
 export default {
   name: 'parameter-controls',
