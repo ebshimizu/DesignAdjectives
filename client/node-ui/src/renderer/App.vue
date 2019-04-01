@@ -1,8 +1,10 @@
 <template>
   <div id="app" class="bg-black">
     <main-menu></main-menu>
-    <div class="h-screen w-1/4 absolute pin-r pin-t overflow-hidden">
-      <parameter-panel></parameter-panel>
+    <div class="main-content">
+      <div class="h-full w-1/4 absolute pin-r pin-t overflow-hidden">
+        <parameter-panel></parameter-panel>
+      </div>
     </div>
   </div>
 </template>
@@ -31,5 +33,11 @@ export default {
   top: 0;
   position: absolute;
   overflow: hidden;
+}
+
+.main-content {
+  margin-top: 2.2rem;
+  height: calc(100vh - 2.2rem);
+  position: relative;
 }
 </style>

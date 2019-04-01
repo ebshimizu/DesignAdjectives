@@ -1,8 +1,8 @@
 <template>
   <div class="fixed pin-t w-full border-b border-grey-lightest bg-grey-darkest">
-    <ul class="list-reset flex">
+    <ul class="list-reset flex z-50">
       <menu-group name="File">
-        <menu-item>Open</menu-item>
+        <menu-item @click.native="open()">Open</menu-item>
         <menu-item>Save</menu-item>
       </menu-group>
       <menu-group name="Snippets">
@@ -21,6 +21,11 @@ export default {
   components: {
     MenuGroup,
     MenuItem
+  },
+  methods: {
+    open() {
+      console.log('TODO: PUT OPEN HERE');
+    }
   }
-}
+};
 </script>
