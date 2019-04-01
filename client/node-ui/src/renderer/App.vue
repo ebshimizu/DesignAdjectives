@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="bg-black">
-    <store-test></store-test>
+    <main-menu></main-menu>
     <div class="h-screen w-1/4 absolute pin-r pin-t overflow-hidden">
       <parameter-panel></parameter-panel>
     </div>
@@ -10,11 +10,12 @@
 <script>
 import StoreTest from '@/components/StoreTest';
 import ParameterPanel from '@/components/Parameters/ParameterPanel';
+import MainMenu from '@/components/Menus/MainMenu';
 import '@/assets/tailwind.css';
 
 export default {
   name: 'snippets-ui',
-  components: { StoreTest, ParameterPanel }
+  components: { StoreTest, ParameterPanel, MainMenu }
 };
 </script>
 
