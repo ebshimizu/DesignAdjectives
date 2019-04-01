@@ -33,11 +33,13 @@ export default {
   top: 0;
   position: absolute;
   overflow: hidden;
+  z-index: -10;
 }
 
 .main-content {
   margin-top: 2.2rem;
   height: calc(100vh - 2.2rem);
   position: relative;
+  z-index: -5;
 }
 </style>
