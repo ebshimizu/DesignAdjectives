@@ -1,8 +1,8 @@
 <template>
-  <div class="h-full w-full flex flex-col">
-    <ul class="h-10">
-      <li v-for="(tab, i) in tabs" :key="i" :class="{visible: tab.visible}">
-        <a href="#" @click="showTab(i)">{{ tab.title }}</a>
+  <div class="h-full w-full flex flex-col border-t">
+    <ul class="h-10 list-reset flex border-b border-l border-grey-lightest">
+      <li v-for="(tab, i) in tabs" :key="i" :class="{visible: tab.visible}" class="pr-1 border-r bg-grey-darkest hover:bg-grey-dark">
+        <a href="#" :class="{visible: tab.visible}" class="inline-block py-2 px-4 font-semibold no-underline text-yellow" @click="showTab(i)">{{ tab.title }}</a>
       </li>
     </ul>
     <div class="h-full flex-shrink overflow-hidden">
@@ -39,3 +39,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+li.visible {
+  background-color: #8795a1;
+}
+</style>

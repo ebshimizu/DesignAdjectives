@@ -9,13 +9,11 @@
 
 <script>
 import MainRenderCanvas from './MainRenderCanvas';
-import ParameterControl from './ParameterControls/ParameterControl';
 
 export default {
   name: 'store-test',
   components: {
-    MainRenderCanvas,
-    ParameterControl
+    MainRenderCanvas
   },
   methods: {
     loadTestFile() {
