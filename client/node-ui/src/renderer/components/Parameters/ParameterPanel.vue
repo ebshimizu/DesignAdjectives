@@ -4,7 +4,6 @@
       <tab title="Params">
         <parameter-controls></parameter-controls>
       </tab>
-      <tab title="test"></tab>
     </tabs>
   </div>
 </template>
