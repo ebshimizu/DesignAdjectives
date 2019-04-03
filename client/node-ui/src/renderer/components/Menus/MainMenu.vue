@@ -15,6 +15,7 @@
 <script>
 import MenuGroup from './MenuGroup';
 import MenuItem from './MenuItem';
+import path from 'path';
 
 export default {
   name: 'main-menu',
@@ -24,7 +25,24 @@ export default {
   },
   methods: {
     open() {
-      console.log('TODO: PUT OPEN HERE');
+      this.$electron.remote.dialog.showOpenDialog(
+        {
+          title: 'Open File',
+          properties: ['openFile']
+        },
+        paths => {
+          // only want one path
+          if (paths.length > 0) {
+            const file = path.basename(paths[0]);
+            const dir = `${path.dirname(paths[0])}/`;
+
+            this.$store.dispatch('LOAD_NEW_FILE', {
+              filename: file,
+              dir
+            });
+          }
+        }
+      );
     }
   }
 };
