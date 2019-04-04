@@ -6,7 +6,7 @@
   >
     {{ name }}
     <ul
-      class="dropdown list-reset bg-grey-darkest border border-grey-lightest"
+      class="dropdown list-reset bg-grey-darkest border border-grey-lightest shadow-md"
       v-show="isVisible && items.length > 0"
     >
       <slot/>

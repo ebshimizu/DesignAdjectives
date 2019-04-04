@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed pin-t w-full border-b border-grey-lightest bg-grey-darkest">
+  <div class="fixed pin-t w-full border-b border-grey-lightest bg-grey-darkest shadow">
     <ul class="list-reset flex z-50">
       <menu-group name="File">
         <menu-item @click.native="open()">Open</menu-item>
