@@ -32,7 +32,7 @@ export default {
         },
         paths => {
           // only want one path
-          if (paths.length > 0) {
+          if (paths && paths.length > 0) {
             const file = path.basename(paths[0]);
             const dir = `${path.dirname(paths[0])}/`;
 
