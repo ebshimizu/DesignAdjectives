@@ -44,6 +44,6 @@ export default {
   position: absolute;
   top: calc(2.2rem - 1px);
   left: 0;
-  min-width: 8rem;
+  width: 12rem;
 }
 </style>

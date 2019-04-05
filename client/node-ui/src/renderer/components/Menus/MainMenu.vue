@@ -6,6 +6,7 @@
         <menu-item>Save</menu-item>
       </menu-group>
       <menu-group name="Snippets">
+        <menu-item @click.native="connect()">Connect to Server</menu-item>
         <menu-item>List Snippets</menu-item>
       </menu-group>
     </ul>
@@ -43,6 +44,9 @@ export default {
           }
         }
       );
+    },
+    connect() {
+      this.$store.dispatch('CONNECT');
     }
   }
 };

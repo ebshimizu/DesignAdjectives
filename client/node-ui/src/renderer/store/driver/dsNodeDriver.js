@@ -3,17 +3,20 @@ const sio = require('socket.io-client');
 
 let socket;
 
-function Training(x, y) {
+export function Training(x, y) {
   return { x, y };
 }
 
-class dsDriver {
+export class DsDriver {
   constructor(port = 5234) {
     this.addr = `http://localhost:${port}`;
     socket = sio(this.addr);
     socket.emitAsync = Promise.promisify(socket.emit);
     this.sampleCallback = null;
+    this.connectCallback = null;
     this.sampleFinalCallback = null;
+    this.connected = false;
+    this.snippetServerOnline = false;
 
     this.bind();
   }
@@ -23,14 +26,20 @@ class dsDriver {
 
     socket.on('connect', function() {
       console.log(`Snippets Node Driver connected to ${self.addr}`);
+      self.connected = true;
+
+      if (self.connectCallback)
+        self.connectCallback(self.connected, self.snippetServerOnline);
     });
 
     socket.on('getType', function(cb) {
+      // eslint-disable-next-line standard/no-callback-literal
       cb('client');
     });
 
     socket.on('disconnect', function() {
       console.log(`Snippets Node Driver disconnected from ${self.addr}`);
+      self.connected = false;
     });
 
     socket.on('single sample', function(data, snippetName) {
@@ -43,7 +52,28 @@ class dsDriver {
 
     socket.on('no server', function() {
       console.log('No server connected. Unable to use snippet functions.');
+      self.snippetServerOnline = false;
+
+      if (self.connectCallback)
+        self.connectCallback(self.connected, self.snippetServerOnline);
     });
+
+    socket.on('server ok', function() {
+      console.log('Snippet server online');
+      self.snippetServerOnline = true;
+
+      if (self.connectCallback)
+        self.connectCallback(self.connected, self.snippetServerOnline);
+    });
+  }
+
+  disconnect() {
+    socket.close();
+    this.connected = false;
+    this.snippetServerOnline = false;
+
+    if (this.connectCallback)
+      this.connectCallback(this.connected, this.snippetServerOnline);
   }
 
   // Calls a user provided callback function when a sample gets returned
@@ -95,42 +125,42 @@ class dsDriver {
   }
 
   async setData(name, data) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet set data', { name, data });
     return res;
   }
 
   async addData(name, x, y) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet add data', { name, x, y });
     return res;
   }
 
   async removeData(name, index) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet remove data', { name, index });
     return res;
   }
 
   async train(name) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet train', { name });
     return res;
   }
 
   async showLoss(name) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet plotLastLoss', { name });
     return res;
   }
 
   async plot1D(name, x, dim, rmin = 0.0, rmax = 1.0, n = 100) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet plot1D', {
       name,
@@ -144,35 +174,35 @@ class dsDriver {
   }
 
   async predictOne(name, x) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.predict(name, [x]);
     return res;
   }
 
   async predict(name, data) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet predict', { name, data });
     return res;
   }
 
   async sample(name, params) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet sample', { name, data: params });
     return res;
   }
 
   async setProp(name, propName, val) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet setProp', { name, propName, val });
     return res;
   }
 
   async getProp(name, propName) {
-    if (typeof name !== 'string') throw 'Missing Snippet Name';
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     const res = await this.exec('snippet getProp', { name, propName });
     return res;
@@ -189,5 +219,4 @@ class dsDriver {
   }
 }
 
-exports.dsDriver = dsDriver;
-exports.Training = Training;
+export default DsDriver;
