@@ -39,6 +39,14 @@ export default {
       // async stuff might happen in an action? like call a sampling function
       // which then registers a callback with the driver that commits new samples to the state
     },
+    DISCONNECT(state) {
+      if (driver) {
+        driver.connectCallback = null;
+        driver.disconnect();
+        state.connected = false;
+        state.serverOnline = false;
+      }
+    },
     STATUS_UPDATE(state, status) {
       state.connected = status.connected;
       state.serverOnline = status.serverOnline;
@@ -69,6 +77,9 @@ export default {
       if (name in state.snippets) {
         Vue.set(state.snippets[data.name], 'trainData', data.trainData);
       }
+    },
+    SET_ACTIVE_SNIPPET(state, id) {
+      state.activeSnippet = id;
     }
   },
   actions: {
@@ -76,6 +87,7 @@ export default {
       try {
         context.commit('NEW_SNIPPET', data.name);
         await driver.addSnippet(data.name);
+        context.commit('SET_ACTIVE_SNIPPET', data.name);
       } catch (e) {
         console.log(e);
       }
@@ -110,13 +122,24 @@ export default {
     async SYNC(context) {
       // todo: yeh fill this in
     },
-    CONNECT(context) {
+    async CONNECT(context) {
       context.commit('CONNECT');
 
       // bind status callbacks
       driver.connectCallback = function(connected, serverOnline) {
         context.commit('STATUS_UPDATE', { connected, serverOnline });
       };
+
+      // reset the server state completely
+      await driver.reset();
+
+      // sync the current snippet state?
+    },
+    DISCONNECT(context) {
+      context.commit('DISCONNECT');
+    },
+    SET_ACTIVE_SNIPPET(context, data) {
+      context.commit('SET_ACTIVE_SNIPPET', data);
     }
   }
 };

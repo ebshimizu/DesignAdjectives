@@ -1,16 +1,14 @@
 <template>
-  <div class="fixed pin-t w-full border-b border-grey-lightest bg-grey-darkest shadow">
-    <ul class="list-reset flex z-50">
-      <menu-group name="File">
-        <menu-item @click.native="open()">Open</menu-item>
-        <menu-item>Save</menu-item>
-      </menu-group>
-      <menu-group name="Snippets">
-        <menu-item @click.native="connect()">Connect to Server</menu-item>
-        <menu-item>List Snippets</menu-item>
-      </menu-group>
-    </ul>
-  </div>
+  <ul class="list-reset flex z-50 font-sans">
+    <menu-group name="File">
+      <menu-item @click.native="open()">Open</menu-item>
+      <menu-item>Save</menu-item>
+    </menu-group>
+    <menu-group name="Snippets">
+      <menu-item @click.native="connect()">{{ connected }} Server</menu-item>
+      <menu-item>List Snippets</menu-item>
+    </menu-group>
+  </ul>
 </template>
 
 <script>
@@ -23,6 +21,11 @@ export default {
   components: {
     MenuGroup,
     MenuItem
+  },
+  computed: {
+    connected() {
+      return this.$store.getters.ready ? 'Disconnect' : 'Connect';
+    }
   },
   methods: {
     open() {
@@ -46,7 +49,9 @@ export default {
       );
     },
     connect() {
-      this.$store.dispatch('CONNECT');
+      this.$store.getters.ready
+        ? this.$store.dispatch('DISCONNECT')
+        : this.$store.dispatch('CONNECT');
     }
   }
 };

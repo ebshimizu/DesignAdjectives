@@ -1,3 +1,31 @@
 @tailwind preflight;
 @tailwind components;
 @tailwind utilities;
+
+.btn {
+  @apply font-bold py-2 px-4 mb-2 rounded cursor-pointer flex justify-center items-center text-center;
+}
+
+.btn-blue {
+  @apply bg-blue text-white;
+}
+
+.btn-blue:hover {
+  @apply bg-blue-dark;
+}
+
+.btn-green {
+  @apply bg-green text-white;
+}
+
+.btn-green:hover {
+  @apply bg-green-dark;
+}
+
+.btn-red {
+  @apply bg-red;
+}
+
+.btn-red:hover {
+  @apply bg-red-dark;
+}

@@ -38,3 +38,6 @@ class SnippetServer:
 
     def listSnippets(self):
         return list(self.snippets.keys())
+
+    def deleteAllSnippets(self):
+        self.snippets = {}

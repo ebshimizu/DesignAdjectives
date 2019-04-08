@@ -217,6 +217,13 @@ def samplerRunning(args):
     return None, currentSampler and currentSampler.is_alive()
 
 
+@sio.on("reset")
+def reset(args):
+    snippetServer.deleteAllSnippets()
+    logger.info("Server Reset Complete")
+    return None, True
+
+
 sio.connect("http://localhost:5234")
 
 logger.info("Design Snippets server launched")

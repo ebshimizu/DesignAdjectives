@@ -40,6 +40,8 @@ export class DsDriver {
     socket.on('disconnect', function() {
       console.log(`Snippets Node Driver disconnected from ${self.addr}`);
       self.connected = false;
+      self.snippetServerOnline = false;
+      self.connectCallback(self.connected, self.snippetServerOnline);
     });
 
     socket.on('single sample', function(data, snippetName) {
@@ -216,6 +218,11 @@ export class DsDriver {
   async samplerRunning() {
     const res = await this.exec('sampler running');
     return res;
+  }
+
+  async reset() {
+    await this.exec('reset');
+    console.log('Server reset performed');
   }
 }
 

@@ -1,13 +1,18 @@
 <template>
-  <div id="app" class="bg-black">
-    <main-menu></main-menu>
-    <div class="main-content">
-      <div class="h-full w-3/4 absolute pin-l pin-t overflow-hidden">
+  <div id="app" class="bg-black flex flex-col">
+    <div class="flex-none w-full border-b border-grey-lightest bg-grey-darkest shadow">
+      <main-menu></main-menu>
+    </div>
+    <div class="relative h-full flex-shrink flex-no-grow main-content flex flex-row">
+      <div class="h-full w-3/4 overflow-hidden">
         <main-render-canvas></main-render-canvas>
       </div>
-      <div class="h-full w-1/4 absolute pin-r pin-t overflow-hidden">
+      <div class="h-full w-1/4 flex-none overflow-hidden">
         <parameter-panel></parameter-panel>
       </div>
+    </div>
+    <div class="flex-none w-full h-6 border-t border-grey-lightest bg-grey-darkest">
+      <status-bar></status-bar>
     </div>
   </div>
 </template>
@@ -17,11 +22,18 @@ import StoreTest from '@/components/StoreTest';
 import ParameterPanel from '@/components/Parameters/ParameterPanel';
 import MainMenu from '@/components/Menus/MainMenu';
 import MainRenderCanvas from '@/components/MainRenderCanvas';
+import StatusBar from '@/components/StatusBar';
 import '@/assets/tailwind.css';
 
 export default {
   name: 'snippets-ui',
-  components: { StoreTest, ParameterPanel, MainMenu, MainRenderCanvas }
+  components: {
+    StoreTest,
+    ParameterPanel,
+    MainMenu,
+    MainRenderCanvas,
+    StatusBar
+  }
 };
 </script>
 
@@ -41,9 +53,6 @@ export default {
 }
 
 .main-content {
-  margin-top: 2.2rem;
-  height: calc(100vh - 2.2rem);
-  position: relative;
   z-index: -5;
 }
 </style>
