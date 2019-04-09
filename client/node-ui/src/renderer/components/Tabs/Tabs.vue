@@ -1,8 +1,18 @@
 <template>
-  <div class="h-full w-full flex flex-col border-t">
-    <ul class="h-10 list-reset flex border-b border-l border-grey-lightest">
-      <li v-for="(tab, i) in tabs" :key="i" :class="{visible: tab.visible}" class="pr-1 border-r bg-grey-darkest hover:bg-grey-dark">
-        <a href="#" :class="{visible: tab.visible}" class="inline-block py-2 px-4 font-semibold no-underline text-yellow" @click="showTab(i)">{{ tab.title }}</a>
+  <div class="font-sans h-full w-full flex flex-col border-t">
+    <ul class="h-10 list-reset flex border-b border-l border-grey-lightest bg-blue-darkest">
+      <li
+        v-for="(tab, i) in tabs"
+        :key="i"
+        :class="{visible: tab.visible}"
+        class="pr-1 border-r bg-grey-darkest hover:bg-grey-dark font-bold"
+      >
+        <a
+          href="#"
+          :class="{visible: tab.visible}"
+          class="inline-block py-2 px-4 font-semibold no-underline text-yellow"
+          @click="showTab(i)"
+        >{{ tab.title }}</a>
       </li>
     </ul>
     <div class="h-full flex-shrink overflow-hidden">

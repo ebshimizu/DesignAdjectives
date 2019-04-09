@@ -4,8 +4,17 @@
       <main-menu></main-menu>
     </div>
     <div class="relative h-full flex-shrink flex-no-grow main-content flex flex-row">
-      <div class="h-full w-3/4 overflow-hidden">
-        <main-render-canvas></main-render-canvas>
+      <div class="h-full w-3/4 overflow-hidden flex flex-col">
+        <div class="flex-1 h-1 w-full">
+          <main-render-canvas></main-render-canvas>
+        </div>
+        <div class="sampler-panel w-full flex-no-shrink">
+          <tabs>
+            <tab title="Snippet Inspector">
+              <snippet-inspector></snippet-inspector>
+            </tab>
+          </tabs>
+        </div>
       </div>
       <div class="h-full w-1/4 flex-none overflow-hidden">
         <parameter-panel></parameter-panel>
@@ -23,6 +32,9 @@ import ParameterPanel from '@/components/Parameters/ParameterPanel';
 import MainMenu from '@/components/Menus/MainMenu';
 import MainRenderCanvas from '@/components/MainRenderCanvas';
 import StatusBar from '@/components/StatusBar';
+import Tabs from '@/components/Tabs/Tabs';
+import Tab from '@/components/Tabs/Tab';
+import SnippetInspector from '@/components/Snippets/SnippetInspector';
 import '@/assets/tailwind.css';
 
 export default {
@@ -32,7 +44,10 @@ export default {
     ParameterPanel,
     MainMenu,
     MainRenderCanvas,
-    StatusBar
+    StatusBar,
+    Tab,
+    Tabs,
+    SnippetInspector
   }
 };
 </script>
@@ -54,5 +69,9 @@ export default {
 
 .main-content {
   z-index: -5;
+}
+
+.sampler-panel {
+  height: 35%;
 }
 </style>

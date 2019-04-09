@@ -2,11 +2,11 @@
   <li
     @click="toggle()"
     v-on:mouseleave="hide()"
-    class="text-grey-lightest inline-block px-4 py-2 cursor-pointer hover:bg-grey-darker bg-grey-darkest relative"
+    class="text-grey-lightest font-bold inline-block px-4 py-2 cursor-pointer hover:bg-grey-darker bg-grey-darkest relative"
   >
     {{ name }}
     <ul
-      class="dropdown list-reset bg-grey-darkest border border-grey-lightest shadow-md"
+      class="dropdown list-reset bg-grey-darkest border border-grey-lightest shadow-md font-normal font-sm"
       v-show="isVisible && items.length > 0"
     >
       <slot/>

@@ -32,8 +32,8 @@
       <div class="w-full ml-2 flex text-sm flex-wrap flex-row">
         <div class="btn btn-green w-1/5 mr-2 flex-grow" @click="showNewModal()">New</div>
         <div class="btn btn-red w-1/5 mr-2 flex-grow" @click="deleteSnippet()">Delete</div>
-        <div class="btn btn-blue w-1/5 mr-2 flex-grow">Add +</div>
-        <div class="btn btn-blue w-1/5 mr-2 flex-grow">Add -</div>
+        <div class="btn btn-blue w-1/5 mr-2 flex-grow" @click="addExample(1)">Add +</div>
+        <div class="btn btn-blue w-1/5 mr-2 flex-grow" @click="addExample(-1)">Add -</div>
         <div class="btn btn-blue w-1/5 mr-2">Train</div>
       </div>
     </div>
@@ -109,6 +109,18 @@ export default {
       if (this.activeSnippet !== '') {
         this.$store.dispatch('DELETE_SNIPPET', { name: this.activeSnippet });
         this.activeSnippet = '';
+      }
+    },
+    addExample(y) {
+      // check active
+      if (this.activeSnippet !== '') {
+        // snapshot current state
+        const x = this.$store.getters.paramsAsArray;
+
+        this.$store.dispatch('ADD_EXAMPLE', {
+          name: this.activeSnippet,
+          point: { x, y }
+        });
       }
     }
   }

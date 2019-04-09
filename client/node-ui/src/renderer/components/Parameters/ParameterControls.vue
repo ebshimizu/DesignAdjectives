@@ -2,13 +2,10 @@
   <div
     class="h-full w-full flex flex-col border-l border-grey-lightest text-grey-lightest overflow-hidden"
   >
-    <div
-      class="w-full h-10 flex-no-shrink font-sans text-center flex items-center justify-center text-lg border-b border-r border-grey-lightest"
-    >Parameter List</div>
     <div class="overflow-auto flex flex-grow flex-col-reverse flex-shrink">
       <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
     </div>
-    <div class="overflow-auto flex-no-shrink">
+    <div class="overflow-auto flex-no-shrink border-t border-grey-lightest">
       <snippets-panel></snippets-panel>
     </div>
   </div>

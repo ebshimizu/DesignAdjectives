@@ -2,11 +2,9 @@
   <ul class="list-reset flex z-50 font-sans">
     <menu-group name="File">
       <menu-item @click.native="open()">Open</menu-item>
-      <menu-item>Save</menu-item>
     </menu-group>
     <menu-group name="Snippets">
       <menu-item @click.native="connect()">{{ connected }} Server</menu-item>
-      <menu-item>List Snippets</menu-item>
     </menu-group>
   </ul>
 </template>

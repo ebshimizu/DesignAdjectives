@@ -7,6 +7,7 @@ let driver = null;
 
 // this state maintains a list of snippet objects and sync's to the server as needed.
 // data format is same as server
+// snippet.data format: [{ x: vec, y: val }]
 export default {
   state: {
     port: 5234,
@@ -19,6 +20,9 @@ export default {
   getters: {
     ready: state => {
       return state.connected && state.serverOnline;
+    },
+    currentParamState: state => {
+      return driver.getCurrentState();
     }
   },
   mutations: {
@@ -53,11 +57,10 @@ export default {
     },
     NEW_SNIPPET(state, name) {
       if (!(name in state.snippets)) {
-        Vue.set(state.snippets, name, {
-          name,
-          data: [],
-          trainData: {}
-        });
+        Vue.set(state.snippets, name, {});
+        Vue.set(state.snippets[name], 'name', name);
+        Vue.set(state.snippets[name], 'data', []);
+        Vue.set(state.snippets[name], 'trainData', {});
       }
     },
     DELETE_SNIPPET(state, name) {
@@ -128,6 +131,14 @@ export default {
       // bind status callbacks
       driver.connectCallback = function(connected, serverOnline) {
         context.commit('STATUS_UPDATE', { connected, serverOnline });
+      };
+
+      driver.sampleCallback = function(data, name) {
+        // context.commit('ADD_SAMPLE', ___);
+      };
+
+      driver.sampleFinalCallback = function(data, name) {
+        // context.commit('STOP_SAMPLE', ___);
       };
 
       // reset the server state completely
