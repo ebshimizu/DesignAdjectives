@@ -41,7 +41,9 @@ export class DsDriver {
       console.log(`Snippets Node Driver disconnected from ${self.addr}`);
       self.connected = false;
       self.snippetServerOnline = false;
-      self.connectCallback(self.connected, self.snippetServerOnline);
+
+      if (self.connectCallback)
+        self.connectCallback(self.connected, self.snippetServerOnline);
     });
 
     socket.on('single sample', function(data, snippetName) {

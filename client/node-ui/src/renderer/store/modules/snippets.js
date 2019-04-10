@@ -45,7 +45,6 @@ export default {
     },
     DISCONNECT(state) {
       if (driver) {
-        driver.connectCallback = null;
         driver.disconnect();
         state.connected = false;
         state.serverOnline = false;
