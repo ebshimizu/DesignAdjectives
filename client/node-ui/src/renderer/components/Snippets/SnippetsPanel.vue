@@ -34,7 +34,7 @@
         <div class="btn btn-red w-1/5 mr-2 flex-grow" @click="deleteSnippet()">Delete</div>
         <div class="btn btn-blue w-1/5 mr-2 flex-grow" @click="addExample(1)">Add +</div>
         <div class="btn btn-blue w-1/5 mr-2 flex-grow" @click="addExample(-1)">Add -</div>
-        <div class="btn btn-blue w-1/5 mr-2">Train</div>
+        <div class="btn btn-blue w-1/5 mr-2" @click="train()">Train</div>
       </div>
     </div>
     <div
@@ -121,6 +121,11 @@ export default {
           name: this.activeSnippet,
           point: { x, y }
         });
+      }
+    },
+    train() {
+      if (this.activeSnippet !== '') {
+        this.$store.dispatch('TRAIN', this.activeSnippet);
       }
     }
   }

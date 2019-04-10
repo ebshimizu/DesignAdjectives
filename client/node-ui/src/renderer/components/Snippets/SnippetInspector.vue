@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row w-full h-full">
+  <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
     <exemplar
       v-for="(ex, idx) in localExemplarList"
       :key="activeSnippet + idx"

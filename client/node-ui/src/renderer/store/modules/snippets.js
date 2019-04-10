@@ -89,7 +89,7 @@ export default {
     async NEW_SNIPPET(context, data) {
       try {
         context.commit('NEW_SNIPPET', data.name);
-        await driver.addSnippet(data.name);
+        // await driver.addSnippet(data.name);
         context.commit('SET_ACTIVE_SNIPPET', data.name);
       } catch (e) {
         console.log(e);
@@ -105,8 +105,11 @@ export default {
     },
     async TRAIN(context, name) {
       try {
-        // sync?
-        // await driver.setData(name, context.state[name].data);
+        // ensure snippet exists
+        await driver.addSnippet(name);
+        // sync data
+        await driver.setData(name, context.state.snippets[name].data);
+
         // train
         const trainData = await driver.train(name);
         context.commit('ADD_TRAINED_DATA', { name, trainData });
@@ -117,7 +120,15 @@ export default {
     async ADD_EXAMPLE(context, data) {
       try {
         context.commit('ADD_EXAMPLE', data);
-        await driver.addData(data.name, data.point.x, data.point.y);
+        // await driver.addData(data.name, data.point.x, data.point.y);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async DELETE_EXAMPLE(context, data) {
+      try {
+        context.commit('DELETE_EXAMPLE', data);
+        // await driver.removeData(data.name, data.index);
       } catch (e) {
         console.log(e);
       }
