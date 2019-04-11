@@ -27,7 +27,8 @@ export default {
   },
   data() {
     return {
-      localExemplarList: []
+      localExemplarList: [],
+      localTrainData: {}
     };
   },
   computed: {
@@ -58,7 +59,7 @@ export default {
     trainData() {
       const filtered = {};
       if (this.activeSnippetObject) {
-        for (key of Object.keys(this.activeSnippetObject.trainData)) {
+        for (const key of Object.keys(this.activeSnippetObject.trainData)) {
           if (key !== 'code' && key !== 'message') {
             filtered[key] = this.activeSnippetObject.trainData[key];
           }
@@ -71,6 +72,12 @@ export default {
   watch: {
     exemplarList: function(val) {
       this.localExemplarList = val;
+    },
+    trainData: {
+      handler: function(val) {
+        this.localTrainData = val;
+      },
+      deep: true
     }
   }
 };

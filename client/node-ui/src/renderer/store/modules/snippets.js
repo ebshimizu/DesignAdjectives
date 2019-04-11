@@ -76,7 +76,7 @@ export default {
       }
     },
     ADD_TRAINED_DATA(state, data) {
-      if (name in state.snippets) {
+      if (data.name in state.snippets) {
         Vue.set(state.snippets[data.name], 'trainData', data.trainData);
       }
     },
