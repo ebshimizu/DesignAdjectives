@@ -12,7 +12,7 @@ export default {
   state: {
     port: 5234,
     snippets: {},
-    activeSnippet: '',
+    activeSnippet: {},
     log: [],
     connected: false,
     serverOnline: false
@@ -60,6 +60,7 @@ export default {
         Vue.set(state.snippets[name], 'name', name);
         Vue.set(state.snippets[name], 'data', []);
         Vue.set(state.snippets[name], 'trainData', {});
+        Vue.set(state.snippets[name], 'trained', false);
       }
     },
     DELETE_SNIPPET(state, name) {
@@ -77,11 +78,27 @@ export default {
     },
     ADD_TRAINED_DATA(state, data) {
       if (data.name in state.snippets) {
-        Vue.set(state.snippets[data.name], 'trainData', data.trainData);
+        state.snippets[data.name].trainData = data.trainData;
+        state.snippets[data.name].trained = true;
+        Vue.set(
+          state.snippets,
+          data.name,
+          Object.assign({}, state.snippets[data.name])
+        );
       }
     },
     SET_ACTIVE_SNIPPET(state, id) {
-      state.activeSnippet = id;
+      if (id in state.snippets)
+        state.activeSnippet = Object.assign({}, state.snippets[id]);
+      else state.activeSnippet = {};
+    },
+    UPDATE_ACTIVE_SNIPPET(state) {
+      if (state.activeSnippet.name in state.snippets)
+        state.activeSnippet = Object.assign(
+          {},
+          state.snippets[state.activeSnippet.name]
+        );
+      else state.activeSnippet = {};
     }
   },
   actions: {
@@ -97,6 +114,7 @@ export default {
     async DELETE_SNIPPET(context, data) {
       try {
         context.commit('DELETE_SNIPPET', data.name);
+        context.commit('UPDATE_ACTIVE_SNIPPET');
         await driver.deleteSnippet(data.name);
       } catch (e) {
         console.log(e);
@@ -112,6 +130,7 @@ export default {
         // train
         const trainData = await driver.train(name);
         context.commit('ADD_TRAINED_DATA', { name, trainData });
+        context.commit('UPDATE_ACTIVE_SNIPPET');
       } catch (e) {
         console.log(e);
       }
@@ -119,6 +138,7 @@ export default {
     async ADD_EXAMPLE(context, data) {
       try {
         context.commit('ADD_EXAMPLE', data);
+        context.commit('UPDATE_ACTIVE_SNIPPET');
         // await driver.addData(data.name, data.point.x, data.point.y);
       } catch (e) {
         console.log(e);
@@ -127,6 +147,7 @@ export default {
     async DELETE_EXAMPLE(context, data) {
       try {
         context.commit('DELETE_EXAMPLE', data);
+        context.commit('UPDATE_ACTIVE_SNIPPET');
         // await driver.removeData(data.name, data.index);
       } catch (e) {
         console.log(e);

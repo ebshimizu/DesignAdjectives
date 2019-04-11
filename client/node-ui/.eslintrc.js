@@ -8,7 +8,7 @@ module.exports = {
     browser: true,
     node: true
   },
-  extends: ['standard', 'prettier'],
+  extends: ['standard', 'prettier', 'prettier/standard'],
   globals: {
     __static: true
   },

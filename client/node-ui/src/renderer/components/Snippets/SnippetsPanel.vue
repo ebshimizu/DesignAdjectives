@@ -78,7 +78,7 @@ export default {
     },
     activeSnippet: {
       get() {
-        return this.$store.state.snippets.activeSnippet;
+        return this.$store.state.snippets.activeSnippet.name;
       },
       set(newVal) {
         this.$store.dispatch('SET_ACTIVE_SNIPPET', newVal);

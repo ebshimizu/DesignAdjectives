@@ -2,15 +2,23 @@
   <div class="flex flex-row h-full w-full overflow-hidden">
     <div class="w-64 border-r border-grey-lightest font-sans overflow-auto text-grey-lightest">
       <div class="border-b border-blue-darkest bg-blue-lighter text-blue-dark px-2 py-1 text-sm">
-        <div class="font-bold">{{ activeSnippet !== '' ? activeSnippet : '[No Active Snippet]' }}</div>
+        <div class="font-bold">{{ activeSnippet.name ? activeSnippet.name : '[No Active Snippet]' }}</div>
         <div class="my-1">{{ status }}</div>
+      </div>
+      <div
+        class="border-b border-grey-lightest px-2 py-1"
+        v-for="(val, key) in trainData"
+        :key="key"
+      >
+        <div class="font-bold tracking-wide uppercase text-xs mb-1">{{ key }}</div>
+        <div class="font-mono text-sm">{{ val }}</div>
       </div>
     </div>
     <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
       <exemplar
-        v-for="(ex, idx) in localExemplarList"
-        :key="activeSnippet + idx"
-        v-bind:snippet-name="activeSnippet"
+        v-for="(ex, idx) in activeSnippet.data"
+        :key="activeSnippet.name + idx"
+        v-bind:snippet-name="activeSnippet.name"
         v-bind:id="idx"
       ></exemplar>
     </div>
@@ -25,59 +33,28 @@ export default {
   components: {
     Exemplar
   },
-  data() {
-    return {
-      localExemplarList: [],
-      localTrainData: {}
-    };
-  },
   computed: {
     activeSnippet() {
       return this.$store.state.snippets.activeSnippet;
     },
-    activeSnippetObject() {
-      if (this.activeSnippet in this.$store.state.snippets.snippets) {
-        return this.$store.state.snippets.snippets[this.activeSnippet];
-      }
-
-      return null;
-    },
-    exemplarList() {
-      if (this.activeSnippetObject) {
-        return this.activeSnippetObject.data;
-      } else {
-        return [];
-      }
-    },
     status() {
-      if (this.activeSnippetObject) {
-        return Object.keys(this.activeSnippetObject.trainData).length > 0
-          ? 'Trained'
-          : 'Not Trained';
-      }
+      return this.activeSnippet.trained ? 'Trained' : 'Not Trained';
     },
     trainData() {
-      const filtered = {};
-      if (this.activeSnippetObject) {
-        for (const key of Object.keys(this.activeSnippetObject.trainData)) {
+      if (this.activeSnippet.trained) {
+        const filtered = {};
+        const val = this.activeSnippet.trainData;
+
+        for (const key of Object.keys(val)) {
           if (key !== 'code' && key !== 'message') {
-            filtered[key] = this.activeSnippetObject.trainData[key];
+            filtered[key] = val[key];
           }
         }
+
+        return filtered;
       }
 
-      return filtered;
-    }
-  },
-  watch: {
-    exemplarList: function(val) {
-      this.localExemplarList = val;
-    },
-    trainData: {
-      handler: function(val) {
-        this.localTrainData = val;
-      },
-      deep: true
+      return {};
     }
   }
 };
