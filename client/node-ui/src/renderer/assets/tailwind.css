@@ -6,8 +6,17 @@
   @apply font-bold py-2 px-4 mb-2 rounded cursor-pointer flex justify-center items-center text-center;
 }
 
+.btn.disabled {
+  @apply cursor-not-allowed;
+}
+
 .btn-blue {
   @apply bg-blue text-white;
+}
+
+.btn-blue.disabled,
+.btn-blue:hover.disabled {
+  @apply bg-blue-darkest;
 }
 
 .btn-blue:hover {
@@ -16,6 +25,11 @@
 
 .btn-green {
   @apply bg-green text-white;
+}
+
+.btn-green.disabled,
+.btn-green:hover.disabled {
+  @apply bg-green-darkest;
 }
 
 .btn-green:hover {

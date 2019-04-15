@@ -15,7 +15,12 @@ export default {
     activeSnippet: {},
     log: [],
     connected: false,
-    serverOnline: false
+    serverOnline: false,
+    serverStatus: {
+      action: 'IDLE',
+      message: ''
+    },
+    samples: []
   },
   getters: {
     ready: state => {
@@ -23,6 +28,15 @@ export default {
     },
     currentParamState: state => {
       return driver.getCurrentState();
+    },
+    training: state => {
+      return state.serverStatus.action === 'TRAIN';
+    },
+    sampling: state => {
+      return state.serverStatus.action === 'SAMPLE';
+    },
+    status: state => {
+      return state.serverStatus.action;
     }
   },
   mutations: {
@@ -69,22 +83,23 @@ export default {
     ADD_EXAMPLE(state, data) {
       if (data.name in state.snippets) {
         state.snippets[data.name].data.push(data.point);
+
+        state.snippets[data.name].trainData = {};
+        state.snippets[data.name].trained = false;
       }
     },
     DELETE_EXAMPLE(state, data) {
       if (data.name in state.snippets) {
         state.snippets[data.name].data.splice(data.index, 1);
+
+        state.snippets[data.name].trainData = {};
+        state.snippets[data.name].trained = false;
       }
     },
     ADD_TRAINED_DATA(state, data) {
       if (data.name in state.snippets) {
         state.snippets[data.name].trainData = data.trainData;
         state.snippets[data.name].trained = true;
-        Vue.set(
-          state.snippets,
-          data.name,
-          Object.assign({}, state.snippets[data.name])
-        );
       }
     },
     SET_ACTIVE_SNIPPET(state, id) {
@@ -99,10 +114,28 @@ export default {
           state.snippets[state.activeSnippet.name]
         );
       else state.activeSnippet = {};
+    },
+    CLEAR_SAMPLES(state) {
+      state.samples = [];
+    },
+    ADD_SAMPLE(state, sample) {
+      state.samples.push(sample);
+    },
+    SET_SERVER_STATUS_IDLE(state) {
+      state.serverStatus.action = 'IDLE';
+      state.serverStatus.message = '';
+    },
+    SET_SERVER_STATUS_TRAIN(state, name) {
+      state.serverStatus.action = 'TRAIN';
+      state.serverStatus.message = `Training ${name}`;
+    },
+    SET_SERVER_STATUS_SAMPLE(state, name) {
+      state.serverStatus.action = 'SAMPLE';
+      state.serverStatus.message = `Sampling ${name}`;
     }
   },
   actions: {
-    async NEW_SNIPPET(context, data) {
+    NEW_SNIPPET(context, data) {
       try {
         context.commit('NEW_SNIPPET', data.name);
         // await driver.addSnippet(data.name);
@@ -111,17 +144,19 @@ export default {
         console.log(e);
       }
     },
-    async DELETE_SNIPPET(context, data) {
+    DELETE_SNIPPET(context, data) {
       try {
         context.commit('DELETE_SNIPPET', data.name);
         context.commit('UPDATE_ACTIVE_SNIPPET');
-        await driver.deleteSnippet(data.name);
+        // await driver.deleteSnippet(data.name);
       } catch (e) {
         console.log(e);
       }
     },
     async TRAIN(context, name) {
       try {
+        context.commit('SET_SERVER_STATUS_TRAIN', name);
+
         // ensure snippet exists
         await driver.addSnippet(name);
         // sync data
@@ -134,8 +169,10 @@ export default {
       } catch (e) {
         console.log(e);
       }
+
+      context.commit('SET_SERVER_STATUS_IDLE', name);
     },
-    async ADD_EXAMPLE(context, data) {
+    ADD_EXAMPLE(context, data) {
       try {
         context.commit('ADD_EXAMPLE', data);
         context.commit('UPDATE_ACTIVE_SNIPPET');
@@ -144,7 +181,7 @@ export default {
         console.log(e);
       }
     },
-    async DELETE_EXAMPLE(context, data) {
+    DELETE_EXAMPLE(context, data) {
       try {
         context.commit('DELETE_EXAMPLE', data);
         context.commit('UPDATE_ACTIVE_SNIPPET');
@@ -165,17 +202,34 @@ export default {
       };
 
       driver.sampleCallback = function(data, name) {
-        // context.commit('ADD_SAMPLE', ___);
+        context.commit('ADD_SAMPLE', data);
       };
 
       driver.sampleFinalCallback = function(data, name) {
-        // context.commit('STOP_SAMPLE', ___);
+        context.dispatch('STOP_SAMPLER');
       };
 
       // reset the server state completely
       await driver.reset();
 
       // sync the current snippet state?
+    },
+    async START_SAMPLER(context, data) {
+      try {
+        context.commit('SET_SERVER_STATUS_SAMPLE');
+        context.commit('CLEAR_SAMPLES');
+        await driver.sample(data.name, data.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async STOP_SAMPLER(context) {
+      try {
+        await driver.stopSampler();
+        context.commit('SET_SERVER_STATUS_IDLE');
+      } catch (e) {
+        console.log(e);
+      }
     },
     DISCONNECT(context) {
       context.commit('DISCONNECT');

@@ -106,6 +106,12 @@ class Metropolis(SamplerThread):
             if fx["mean"] == 0:
                 a = 1
 
+            logger.debug(
+                "[{0}/{1} ct: {2}] a: {3} mean: {4}".format(
+                    count, self.limit, count, a, fxp["mean"]
+                )
+            )
+
             # accept?
             if random.random() < a:
                 # check burnin

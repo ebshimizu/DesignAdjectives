@@ -13,6 +13,9 @@
             <tab title="Snippet Inspector">
               <snippet-inspector></snippet-inspector>
             </tab>
+            <tab title="Sampler">
+              <sampler-panel></sampler-panel>
+            </tab>
           </tabs>
         </div>
       </div>
@@ -35,6 +38,7 @@ import StatusBar from '@/components/StatusBar';
 import Tabs from '@/components/Tabs/Tabs';
 import Tab from '@/components/Tabs/Tab';
 import SnippetInspector from '@/components/Snippets/SnippetInspector';
+import SamplerPanel from '@/components/Samples/SamplerPanel';
 import '@/assets/tailwind.css';
 
 export default {
@@ -47,7 +51,8 @@ export default {
     StatusBar,
     Tab,
     Tabs,
-    SnippetInspector
+    SnippetInspector,
+    SamplerPanel
   }
 };
 </script>

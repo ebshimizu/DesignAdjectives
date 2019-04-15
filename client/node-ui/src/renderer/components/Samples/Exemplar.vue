@@ -10,7 +10,7 @@
       <div v-show="showActions" class="absolute pin-b pin-l w-full flex flex-row p-4">
         <div
           @click="removeExample()"
-          class="cursor-pointer rounded bg-red-darker p-2 font-sans text-grey-lightest"
+          class="cursor-pointer rounded bg-red-dark p-2 font-sans text-grey-lightest"
         >Remove</div>
       </div>
       <canvas ref="canvas" class="exemplarCanvas"/>

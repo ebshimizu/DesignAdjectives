@@ -34,7 +34,11 @@
         <div class="btn btn-red w-1/5 mr-2 flex-grow" @click="deleteSnippet()">Delete</div>
         <div class="btn btn-blue w-1/5 mr-2 flex-grow" @click="addExample(1)">Add +</div>
         <div class="btn btn-blue w-1/5 mr-2 flex-grow" @click="addExample(-1)">Add -</div>
-        <div class="btn btn-blue w-1/5 mr-2" @click="train()">Train</div>
+        <div
+          class="btn btn-blue w-1/5 mr-2"
+          :class="{ disabled: isTraining }"
+          @click="train()"
+        >{{ isTraining ? 'Training...' : 'Train' }}</div>
       </div>
     </div>
     <div
@@ -83,6 +87,9 @@ export default {
       set(newVal) {
         this.$store.dispatch('SET_ACTIVE_SNIPPET', newVal);
       }
+    },
+    isTraining() {
+      return this.$store.getters.training;
     }
   },
   methods: {
@@ -124,7 +131,7 @@ export default {
       }
     },
     train() {
-      if (this.activeSnippet !== '') {
+      if (this.activeSnippet !== '' && !this.isTraining) {
         this.$store.dispatch('TRAIN', this.activeSnippet);
       }
     }
