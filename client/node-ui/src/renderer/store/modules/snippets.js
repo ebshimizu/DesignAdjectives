@@ -1,5 +1,7 @@
 import { DsDriver } from '../driver/dsNodeDriver';
 import Vue from 'Vue';
+import fs from 'fs-extra';
+import settings from 'electron-settings';
 
 // main app should not be allowed to access the driver object directly,
 // would be able to invoke things outside of mutations/actions
@@ -132,6 +134,21 @@ export default {
     SET_SERVER_STATUS_SAMPLE(state, name) {
       state.serverStatus.action = 'SAMPLE';
       state.serverStatus.message = `Sampling ${name}`;
+    },
+    EXPORT_SNIPPETS(state, file) {
+      const data = JSON.stringify(state.snippets, undefined, 2);
+      try {
+        fs.writeFileSync(file, data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    CACHE_SNIPPETS(state, key) {
+      settings.set(key, state.snippets);
+    },
+    LOAD_SNIPPETS(state, key) {
+      if (settings.has(key)) state.snippets = settings.get(key);
+      else state.snippets = {};
     }
   },
   actions: {

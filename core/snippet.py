@@ -27,6 +27,9 @@ class Snippet:
         self.learningRate = 0.005
         self.lossTolerance = -1e2
         self.gpr = None
+        self.kernelMode = "RBF"
+        self.kernel = {"variance": 1.0, "lengthscale": 1.0}
+        self.dirtyKernel = False
 
     # param filter is a list of which parameter vector indices are to be used
     # for sampling and training
@@ -42,6 +45,32 @@ class Snippet:
     def removeData(self, index):
         if index < len(self.data):
             del self.data[index]
+
+    def changeKernelMode(self, mode):
+        self.kernelMode = mode
+        self.dirtyKernel = True
+
+    def getNewKernel(self):
+        # check types, RBF is only valid one for now
+        return gp.kernels.RBF(
+            input_dim=len(self.filter),
+            variance=torch.tensor(self.kernel.variance),
+            lengthscale=torch.tensor(self.kernel.lengthscale),
+        )
+
+    def setKernelParams(self, data):
+        self.kernel = data
+
+    def loadGPR(self):
+        # generate X matrix
+        X = self.getXTrain()
+
+        # generate y vector
+        y = self.getYTrain()
+
+        # load kernel settings
+        # after this line, should be ok to eval (only relies on kernel params and input data)
+        self.gpr = gp.models.GPRegression(X, y, self.getNewKernel())
 
     def getXTrain(self):
         # returns training data vector. Row-wise (?)
@@ -75,14 +104,10 @@ class Snippet:
 
         # TODO: allow kernel settings per-snippet?
         # for retraining, use exising variance/lengthscale
-        if self.gpr:
+        if self.gpr and ~self.dirtyKernel:
             kernel = self.gpr.kernel
         else:
-            kernel = gp.kernels.RBF(
-                input_dim=len(self.filter),
-                variance=torch.tensor(5.0),
-                lengthscale=torch.tensor(10.0),
-            )
+            kernel = self.getNewKernel()
 
         # generate X matrix
         X = self.getXTrain()
@@ -115,6 +140,7 @@ class Snippet:
         retData["variance"] = self.gpr.kernel.variance.item()
         retData["lengthscale"] = self.gpr.kernel.lengthscale.item()
         retData["noise"] = self.gpr.noise.item()
+        retData["type"] = self.kernelMode
         retData["code"] = 0
         retData["message"] = "Snippet {0} training complete".format(self.name)
 
