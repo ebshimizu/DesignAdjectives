@@ -54,8 +54,8 @@ class Snippet:
         # check types, RBF is only valid one for now
         return gp.kernels.RBF(
             input_dim=len(self.filter),
-            variance=torch.tensor(self.kernel.variance),
-            lengthscale=torch.tensor(self.kernel.lengthscale),
+            variance=torch.tensor(self.kernel["variance"]),
+            lengthscale=torch.tensor(self.kernel["lengthscale"]),
         )
 
     def setKernelParams(self, data):

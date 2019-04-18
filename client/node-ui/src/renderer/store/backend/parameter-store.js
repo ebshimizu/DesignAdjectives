@@ -3,12 +3,14 @@
 // This function will take a backend-compatible object and return a vue compatible store
 // - ideally the store will be able to be hot swapped, but the application mode may need to adjust
 //   accordingly
+import path from 'path';
 
 export function createStore(backend, type) {
   return {
     state: {
       type,
       parameters: [],
+      cacheKey: '',
       backend
     },
     getters: {
@@ -26,6 +28,7 @@ export function createStore(backend, type) {
     mutations: {
       LOAD_NEW_FILE(state, config) {
         state.backend.loadNew(config);
+        state.cacheKey = path.join(config.dir, config.filename);
 
         // at this point we need to re-load all of the parameter data
         state.parameters = backend.getParams();
@@ -50,9 +53,6 @@ export function createStore(backend, type) {
       }
     },
     actions: {
-      LOAD_NEW_FILE(context, config) {
-        context.commit('LOAD_NEW_FILE', config);
-      },
       SET_PARAM(context, config) {
         context.commit('SET_PARAM', config);
       }

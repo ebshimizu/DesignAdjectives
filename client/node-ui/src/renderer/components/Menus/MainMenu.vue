@@ -38,10 +38,14 @@ export default {
             const file = path.basename(paths[0]);
             const dir = `${path.dirname(paths[0])}/`;
 
-            this.$store.dispatch('LOAD_NEW_FILE', {
+            this.$store.commit('LOAD_NEW_FILE', {
               filename: file,
               dir
             });
+            this.$store.commit(
+              'LOAD_SNIPPETS',
+              this.$store.state.paramStore.cacheKey
+            );
           }
         }
       );

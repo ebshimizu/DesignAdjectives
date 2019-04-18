@@ -224,6 +224,17 @@ def reset(args):
     return None, True
 
 
+@sio.on("snippet load gpr")
+def snippetLoadKernel(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        s.setKernelParams(args["kernelData"])
+        s.loadGPR()
+        return None, True
+    else:
+        return None, False
+
+
 sio.connect("http://localhost:5234")
 
 logger.info("Design Snippets server launched")

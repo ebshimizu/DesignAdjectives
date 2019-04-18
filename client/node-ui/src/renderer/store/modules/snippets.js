@@ -18,6 +18,7 @@ export default {
     log: [],
     connected: false,
     serverOnline: false,
+    cacheKey: '',
     serverStatus: {
       action: 'IDLE',
       message: ''
@@ -147,8 +148,20 @@ export default {
       settings.set(key, state.snippets);
     },
     LOAD_SNIPPETS(state, key) {
+      state.cacheKey = key;
+
       if (settings.has(key)) state.snippets = settings.get(key);
       else state.snippets = {};
+    },
+    IMPORT_SNIPPETS(state, file) {
+      try {
+        if (fs.existsSync(file)) {
+          const data = fs.readFileSync(file);
+          state.snippets = JSON.parse(data);
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   },
   actions: {
@@ -157,6 +170,7 @@ export default {
         context.commit('NEW_SNIPPET', data.name);
         // await driver.addSnippet(data.name);
         context.commit('SET_ACTIVE_SNIPPET', data.name);
+        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
       } catch (e) {
         console.log(e);
       }
@@ -165,6 +179,7 @@ export default {
       try {
         context.commit('DELETE_SNIPPET', data.name);
         context.commit('UPDATE_ACTIVE_SNIPPET');
+        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
         // await driver.deleteSnippet(data.name);
       } catch (e) {
         console.log(e);
@@ -183,6 +198,7 @@ export default {
         const trainData = await driver.train(name);
         context.commit('ADD_TRAINED_DATA', { name, trainData });
         context.commit('UPDATE_ACTIVE_SNIPPET');
+        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
       } catch (e) {
         console.log(e);
       }
@@ -193,6 +209,7 @@ export default {
       try {
         context.commit('ADD_EXAMPLE', data);
         context.commit('UPDATE_ACTIVE_SNIPPET');
+        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
         // await driver.addData(data.name, data.point.x, data.point.y);
       } catch (e) {
         console.log(e);
@@ -202,6 +219,7 @@ export default {
       try {
         context.commit('DELETE_EXAMPLE', data);
         context.commit('UPDATE_ACTIVE_SNIPPET');
+        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
         // await driver.removeData(data.name, data.index);
       } catch (e) {
         console.log(e);

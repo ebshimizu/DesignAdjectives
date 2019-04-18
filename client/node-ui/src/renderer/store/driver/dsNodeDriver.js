@@ -212,6 +212,14 @@ export class DsDriver {
     return res;
   }
 
+  async loadGPR(name, trainData, kernelData) {
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
+
+    await this.setData(name, trainData);
+    const res = await this.exec('snippet load kernel', { name, kernelData });
+    return res;
+  }
+
   async stopSampler() {
     const res = await this.exec('stop sampler');
     return res;
