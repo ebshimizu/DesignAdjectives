@@ -53,6 +53,9 @@ export default {
     Tabs,
     SnippetInspector,
     SamplerPanel
+  },
+  mounted() {
+    this.$store.dispatch('CONNECT');
   }
 };
 </script>

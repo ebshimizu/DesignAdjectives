@@ -82,7 +82,9 @@ export default {
     },
     activeSnippet: {
       get() {
-        return this.$store.state.snippets.activeSnippet.name;
+        return this.$store.state.snippets.activeSnippet
+          ? this.$store.state.snippets.activeSnippet.name
+          : '';
       },
       set(newVal) {
         this.$store.dispatch('SET_ACTIVE_SNIPPET', newVal);
@@ -90,6 +92,11 @@ export default {
     },
     isTraining() {
       return this.$store.getters.training;
+    },
+    trained() {
+      return this.activeSnippet !== ''
+        ? this.$store.state.snippets.activeSnippet.trained
+        : false;
     }
   },
   methods: {
@@ -131,7 +138,9 @@ export default {
       }
     },
     train() {
-      if (this.activeSnippet !== '' && !this.isTraining) {
+      if (this.activeSnippet !== '' && !this.isTraining && this.trained) {
+        this.$store.dispatch('LOAD_SNIPPET', this.activeSnippet);
+      } else if (this.activeSnippet !== '' && !this.isTraining) {
         this.$store.dispatch('TRAIN', this.activeSnippet);
       }
     }

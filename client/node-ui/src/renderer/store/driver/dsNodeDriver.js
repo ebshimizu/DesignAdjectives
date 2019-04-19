@@ -216,7 +216,7 @@ export class DsDriver {
     if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
     await this.setData(name, trainData);
-    const res = await this.exec('snippet load kernel', { name, kernelData });
+    const res = await this.exec('snippet load gpr', { name, kernelData });
     return res;
   }
 

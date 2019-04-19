@@ -65,6 +65,7 @@ export default {
         driver.disconnect();
         state.connected = false;
         state.serverOnline = false;
+        state.serverStatus.action = 'IDLE';
       }
     },
     STATUS_UPDATE(state, status) {
@@ -205,6 +206,28 @@ export default {
 
       context.commit('SET_SERVER_STATUS_IDLE', name);
     },
+    async LOAD_SNIPPET(context, name) {
+      // loads the existing train data into the server
+      try {
+        context.commit('SET_SERVER_STATUS_TRAIN', name);
+
+        // ensure exists
+        await driver.addSnippet(name);
+
+        // load gpr data
+        await driver.loadGPR(
+          name,
+          context.state.snippets[name].data,
+          context.state.snippets[name].trainData
+        );
+
+        // done
+      } catch (e) {
+        console.log(e);
+      }
+
+      context.commit('SET_SERVER_STATUS_IDLE', name);
+    },
     ADD_EXAMPLE(context, data) {
       try {
         context.commit('ADD_EXAMPLE', data);
@@ -271,6 +294,17 @@ export default {
     },
     SET_ACTIVE_SNIPPET(context, data) {
       context.commit('SET_ACTIVE_SNIPPET', data);
+    },
+    LOAD_SNIPPETS(context, key) {
+      context.commit('LOAD_SNIPPETS', key);
+
+      // call load snippet on all trained snippets, assumes connected
+      if (context.state.serverOnline) {
+        for (const s of Object.keys(context.state.snippets)) {
+          if (context.state.snippets[s].trained)
+            context.dispatch('LOAD_SNIPPET', s);
+        }
+      }
     }
   }
 };

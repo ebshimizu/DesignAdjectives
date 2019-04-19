@@ -62,6 +62,9 @@ class Snippet:
         self.kernel = data
 
     def loadGPR(self):
+        # might need to change this at some point
+        self.setDefaultFilter()
+
         # generate X matrix
         X = self.getXTrain()
 

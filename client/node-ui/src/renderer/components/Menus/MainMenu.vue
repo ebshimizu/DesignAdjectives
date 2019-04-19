@@ -42,7 +42,7 @@ export default {
               filename: file,
               dir
             });
-            this.$store.commit(
+            this.$store.dispatch(
               'LOAD_SNIPPETS',
               this.$store.state.paramStore.cacheKey
             );
