@@ -4,6 +4,7 @@
 // - ideally the store will be able to be hot swapped, but the application mode may need to adjust
 //   accordingly
 import path from 'path';
+import Vue from 'Vue';
 
 export function createStore(backend, type) {
   return {
@@ -11,7 +12,8 @@ export function createStore(backend, type) {
       type,
       parameters: [],
       cacheKey: '',
-      backend
+      backend,
+      lastCommittedVector: []
     },
     getters: {
       param: state => id => {
@@ -32,18 +34,30 @@ export function createStore(backend, type) {
 
         // at this point we need to re-load all of the parameter data
         state.parameters = backend.getParams();
+        state.lastCommittedVector = state.parameters.map(p => p.value);
       },
       SET_PARAM(state, config) {
-        state.backend.setParam(
-          config.id,
-          config.val,
-          state.parameters[config.id]
-        );
+        Vue.set(state.parameters[config.id], 'value', config.val);
+        // state.backend.setParam(
+        //   config.id,
+        //   config.val,
+        //   state.parameters[config.id]
+        // );
 
-        // this seems painfully inefficient, but it might be performant enough to
-        // not be a problem?
-        // otherwise there needs to be a Vue.set to replace the parameter object?
+        // // this seems painfully inefficient, but it might be performant enough to
+        // // not be a problem?
+        // // otherwise there needs to be a Vue.set to replace the parameter object?
+        // state.parameters = backend.getParams();
+      },
+      SET_PARAMS(state, vec) {
+        state.backend.setAllParams(vec);
         state.parameters = backend.getParams();
+        state.lastCommittedVector = vec;
+      },
+      COMMIT_PARAMS(state) {
+        // replaces the entire state with the array contained in config.val
+        state.backend.setAllParams(state.parameters.map(p => p.value));
+        state.lastCommittedVector = state.parameters.map(p => p.value);
       },
       CHANGE_BACKEND(state, config) {
         // bit of a dangerous function but whatever

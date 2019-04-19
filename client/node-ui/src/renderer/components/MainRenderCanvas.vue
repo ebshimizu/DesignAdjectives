@@ -15,7 +15,7 @@ export default {
   },
   computed: {
     params() {
-      return this.$store.state.paramStore.parameters;
+      return this.$store.state.paramStore.lastCommittedVector;
     }
   },
   watch: {

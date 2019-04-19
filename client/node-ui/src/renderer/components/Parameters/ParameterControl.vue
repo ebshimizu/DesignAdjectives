@@ -30,17 +30,22 @@
 export default {
   name: 'parameter-control',
   props: ['param'],
-  data: function() {
-    return {
-      localVal: this.param.value
-    };
+  computed: {
+    localVal: {
+      get() {
+        return this.param.value;
+      },
+      set(value) {
+        this.$store.commit('SET_PARAM', {
+          id: this.param.id,
+          val: parseFloat(value)
+        });
+      }
+    }
   },
   methods: {
     commitChange() {
-      this.$store.dispatch('SET_PARAM', {
-        id: this.param.id,
-        val: parseFloat(this.localVal)
-      });
+      this.$store.commit('COMMIT_PARAMS');
     }
   }
 };

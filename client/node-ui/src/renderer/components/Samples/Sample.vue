@@ -8,7 +8,10 @@
       v-on:mouseleave="showActions = false"
     >
       <div v-show="showActions" class="absolute pin-b pin-l w-full flex flex-row p-4">
-        <div class="cursor-pointer rounded bg-blue-dark p-2 font-sans text-grey-lightest">Select</div>
+        <div
+          @click="select()"
+          class="cursor-pointer rounded bg-blue-dark p-2 font-sans text-grey-lightest"
+        >Select</div>
       </div>
       <canvas ref="canvas" class="sampleCanvas"/>
     </div>
@@ -47,6 +50,7 @@ export default {
   methods: {
     select() {
       // copy x to the current state
+      this.$store.commit('SET_PARAMS', this.x);
     }
   },
   mounted: function() {

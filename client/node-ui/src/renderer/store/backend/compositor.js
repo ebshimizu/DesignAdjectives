@@ -71,6 +71,10 @@ export const CompositorBackend = {
     c.setContext(c.contextFromVector(vec));
   },
 
+  setAllParams(vec) {
+    c.setContext(c.contextFromVector(vec));
+  },
+
   // the render function. at minimum this takes a canvas target and a set of render settings.
   // render settings should attempt to be mostly consistent, but i suspect this might cause some
   // problems eventually.
