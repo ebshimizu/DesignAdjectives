@@ -13,7 +13,8 @@ export function createStore(backend, type) {
       parameters: [],
       cacheKey: '',
       backend,
-      lastCommittedVector: []
+      lastCommittedVector: [],
+      snapshot: []
     },
     getters: {
       param: state => id => {
@@ -64,11 +65,33 @@ export function createStore(backend, type) {
         state.backend = config.backend;
         state.type = config.type;
         state.parameters = backend.getParams();
+      },
+      SNAPSHOT(state) {
+        if (state.snapshot.length === 0)
+          state.snapshot = state.parameters.map(p => p.value);
+      },
+      RESET_SNAPSHOT(state) {
+        state.snapshot = [];
       }
     },
     actions: {
       SET_PARAM(context, config) {
         context.commit('SET_PARAM', config);
+      },
+      SHOW_TEMPORARY_STATE(context, vec) {
+        context.commit('SNAPSHOT');
+        context.commit('SET_PARAMS', vec);
+      },
+      HIDE_TEMPORARY_STATE(context) {
+        // there's a case where the snapshot is invalid when this is called (state is locked)
+        if (context.state.snapshot.length > 0)
+          context.commit('SET_PARAMS', context.state.snapshot);
+
+        context.commit('RESET_SNAPSHOT');
+      },
+      LOCK_TEMPORARY_STATE(context, vec) {
+        context.commit('RESET_SNAPSHOT');
+        context.commit('SET_PARAMS', vec);
       }
     }
   };
