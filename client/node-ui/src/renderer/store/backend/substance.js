@@ -1,13 +1,15 @@
 // node integration for the substance automation toolkit
 // specialized for the parameter editor interface
 import path from 'path';
-import cp from 'child_process';
+import cp, { exec } from 'child_process';
+import fs from 'fs-extra';
 // import fs from 'fs-extra';
 
 // Fill in path with your toolkit dir
 const tkDir = 'C:/Program Files/Allegorithmic/Substance Automation Toolkit';
+const renderDir = './sbsRender';
 const sbsmutator = path.join(tkDir, 'sbsmutator');
-// const sbsrender = path.join(tkDir, 'sbsrender');
+const sbsrender = path.join(tkDir, 'sbsrender');
 
 let currentFile = '';
 let params = [];
@@ -58,6 +60,7 @@ function loadParams(file) {
               min: 0,
               max: 1,
               id: params.length,
+              parent: name,
               value: parseFloat(defaults[j])
             });
           }
@@ -101,8 +104,77 @@ function loadParams(file) {
   }
 }
 
+// takes the current parameters and returns a set of render arguments
+function getRenderArgs(vec) {
+  // collapse FLOAT3 params
+  const collectedParams = {};
+  for (let i = 0; i < vec.length; i++) {
+    // identify, cache values
+    // note that the float 3s should be in RGB order (that's the creation order)
+    // so we can cache values here and combine
+    if (params[i].type === 'FLOAT3') {
+      if (!collectedParams[params[i].parent])
+        collectedParams[params[i].parent] = [];
+
+      collectedParams[params[i].parent].push(vec[i]);
+    } else {
+      collectedParams[params[i].name] = `${params[i].name}@${vec[i]}`;
+    }
+  }
+
+  // resolve FLOAT3 (color)
+  for (let name in collectedParams) {
+    if (Array.isArray(collectedParams[name])) {
+      // collect
+      collectedParams[name] = `${name}@${collectedParams[name].join(',')}`;
+    }
+  }
+
+  // output argument array
+  const args = [];
+  for (let name in collectedParams) {
+    args.push(`--set-value ${collectedParams[name]}`);
+  }
+
+  return args;
+}
+
+function render(canvasTarget, state, fileID) {
+  // state is a vector
+  const args = getRenderArgs(state);
+
+  // call the render function
+  exec(
+    `"${sbsrender}" render ${args.join(
+      ' '
+    )} --set-value $outputsize@8,8 --output-name "${fileID}_{outputNodeName}" --output-path ${renderDir} "${currentFile}"`,
+    function(err) {
+      if (err) {
+        console.log(err);
+      } else {
+        // files are there, check them
+        // there's a lot tho so like... print the diffuse for now?
+        // uhhhhhhh read the file
+        const img = new Image();
+        img.src = path.join(
+          renderDir,
+          `${fileID}_diffuse.png?${new Date().getTime()}`
+        );
+        img.onload = function() {
+          canvasTarget.width = 256;
+          canvasTarget.height = 256;
+
+          const ctx = canvasTarget.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+        };
+      }
+    }
+  );
+}
+
 export default {
   loadNew(config) {
+    fs.emptyDirSync(renderDir);
     currentFile = path.join(config.dir, config.filename);
 
     // load params
@@ -126,5 +198,9 @@ export default {
 
   async renderer(canvasTarget, settings) {
     // this might... get complicated.
+    const state =
+      'state' in settings ? settings.state : params.map(p => p.value);
+
+    render(canvasTarget, state, settings.instanceID);
   }
 };

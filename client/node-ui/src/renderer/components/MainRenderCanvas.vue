@@ -22,7 +22,8 @@ export default {
     params() {
       // todo: render settings from store
       this.$store.getters.renderer(this.$refs.canvas, {
-        size: 'medium'
+        size: 'medium',
+        instanceID: 'mainCanvas'
       });
     }
   }
