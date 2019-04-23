@@ -1,6 +1,6 @@
 <template>
   <div class="main-canvas overflow-hidden">
-    <canvas ref="canvas" class="renderCanvas"/>
+    <canvas id="mainRenderCanvas" class="renderCanvas"/>
   </div>
 </template>
 
@@ -21,10 +21,13 @@ export default {
   watch: {
     params() {
       // todo: render settings from store
-      this.$store.getters.renderer(this.$refs.canvas, {
-        size: 'medium',
-        instanceID: 'mainCanvas'
-      });
+      this.$store.getters.renderer(
+        document.getElementById('mainRenderCanvas'),
+        {
+          size: 'medium',
+          instanceID: 'mainCanvas'
+        }
+      );
     }
   }
 };

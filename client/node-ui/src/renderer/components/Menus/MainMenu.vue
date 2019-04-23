@@ -38,6 +38,12 @@ export default {
             const file = path.basename(paths[0]);
             const dir = `${path.dirname(paths[0])}/`;
 
+            // replace the main canvas
+            let canvas = document.getElementById('mainRenderCanvas');
+            const newCanvas = canvas.cloneNode(false);
+            canvas.parentNode.replaceChild(newCanvas, canvas);
+            canvas = newCanvas;
+
             this.$store.commit('DETECT_BACKEND', file);
 
             this.$store.commit('LOAD_NEW_FILE', {
