@@ -60,7 +60,8 @@ export default {
   mounted: function() {
     this.$store.getters.renderer(this.$refs.canvas, {
       size: 'thumb',
-      state: this.x
+      state: this.x,
+      instanceID: `sample-${this.id}`
     });
   }
 };

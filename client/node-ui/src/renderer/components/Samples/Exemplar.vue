@@ -69,7 +69,8 @@ export default {
     if (!this.retrievalError) {
       this.$store.getters.renderer(this.$refs.canvas, {
         size: 'thumb',
-        state: this.data.x
+        state: this.data.x,
+        instanceID: `exemplar-${this.id}`
       });
     }
   }

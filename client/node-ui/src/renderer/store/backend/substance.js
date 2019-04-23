@@ -3,6 +3,7 @@
 import path from 'path';
 import cp, { exec } from 'child_process';
 import fs from 'fs-extra';
+import * as THREE from 'three';
 // import fs from 'fs-extra';
 
 // Fill in path with your toolkit dir
@@ -13,6 +14,11 @@ const sbsrender = path.join(tkDir, 'sbsrender');
 
 let currentFile = '';
 let params = [];
+let renderers = {};
+
+const mesh = new THREE.SphereGeometry(10, 64, 64);
+const threeLoader = new THREE.TextureLoader();
+let renderLoopActive = false;
 
 function loadParams(file) {
   // text parsing fun!
@@ -152,24 +158,113 @@ function render(canvasTarget, state, fileID) {
       if (err) {
         console.log(err);
       } else {
-        // files are there, check them
-        // there's a lot tho so like... print the diffuse for now?
-        // uhhhhhhh read the file
-        const img = new Image();
-        img.src = path.join(
-          renderDir,
-          `${fileID}_diffuse.png?${new Date().getTime()}`
-        );
-        img.onload = function() {
-          canvasTarget.width = 256;
-          canvasTarget.height = 256;
+        // files are there, check them and set three.js material parameters accordingly
+        // if there is an existing renderer, we need to check that the canvas element
+        // is still in the DOM. if not, we need to redo everything
+        if (fileID in renderers) {
+          if (!document.body.contains(renderers[fileID].renderer.domElement)) {
+            // deleting the object should trigger a re-bind of the element.
+            deleteRenderer(renderers[fileID]);
+            delete renderers[fileID];
+          }
+        }
 
-          const ctx = canvasTarget.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-        };
+        if (!(fileID in renderers)) {
+          renderers[fileID] = {
+            scene: new THREE.Scene(),
+            camera: new THREE.PerspectiveCamera(75, 1, 0.1, 1000),
+            renderer: new THREE.WebGLRenderer({ canvas: canvasTarget }),
+            material: new THREE.MeshStandardMaterial(),
+            light: new THREE.DirectionalLight(0xffffff, 1)
+          };
+
+          // load a basic model
+          renderers[fileID].object = new THREE.Mesh(
+            mesh,
+            renderers[fileID].material
+          );
+          renderers[fileID].scene.add(renderers[fileID].object);
+          renderers[fileID].scene.add(renderers[fileID].light);
+          renderers[fileID].light.position.set(0, 0, 1);
+
+          // update canvas sizes
+          canvasTarget.width = 512;
+          canvasTarget.height = 512;
+          renderers[fileID].renderer.setSize(
+            canvasTarget.width,
+            canvasTarget.height,
+            false
+          );
+          renderers[fileID].camera.position.z = 25;
+        }
+
+        // update the material properties
+        const material = renderers[fileID].material;
+        material.map = threeLoader.load(
+          path.join(renderDir, `${fileID}_diffuse.png?${new Date().getTime()}`)
+        );
+        material.metalnessMap = threeLoader.load(
+          path.join(renderDir, `${fileID}_metallic.png?${new Date().getTime()}`)
+        );
+        material.normalMap = threeLoader.load(
+          path.join(renderDir, `${fileID}_normal.png?${new Date().getTime()}`)
+        );
+        material.roughness = threeLoader.load(
+          path.join(
+            renderDir,
+            `${fileID}_roughness.png?${new Date().getTime()}`
+          )
+        );
+        material.aoMap = threeLoader.load(
+          path.join(
+            renderDir,
+            `${fileID}_ambientocclusion.png?${new Date().getTime()}`
+          )
+        );
+        material.displacementMap = threeLoader.load(
+          path.join(renderDir, `${fileID}_height.png?${new Date().getTime()}`)
+        );
+
+        material.needsUpdate = true;
       }
     }
   );
+}
+
+function deleteMaterialMaps(material) {
+  material.map.dispose();
+  material.metalnessMap.dispose();
+  material.normalMap.dispose();
+  material.roughness.dispose();
+  material.aoMap.dispose();
+  material.displacementMap.dispose();
+}
+
+function deleteRenderer(renderer) {
+  deleteMaterialMaps(renderer.material);
+  renderer.material.dispose();
+  renderer.scene.dispose();
+  renderer.renderer.dispose();
+}
+
+function updateRenders() {
+  if (renderLoopActive) requestAnimationFrame(updateRenders);
+
+  const prune = [];
+  // we also should prune this for inactive canvases
+  for (let id in renderers) {
+    if (document.body.contains(renderers[id].renderer.domElement)) {
+      renderers[id].object.rotation.x += 0.01;
+      renderers[id].renderer.render(renderers[id].scene, renderers[id].camera);
+    } else {
+      prune.push(id);
+    }
+  }
+
+  for (const id of prune) {
+    deleteRenderer(renderers[id]);
+    delete renderers[id];
+  }
 }
 
 export default {
@@ -178,7 +273,13 @@ export default {
     currentFile = path.join(config.dir, config.filename);
 
     // load params
+    renderers = {};
     loadParams(currentFile);
+
+    if (!renderLoopActive) {
+      renderLoopActive = true;
+      updateRenders();
+    }
   },
 
   getParams() {
