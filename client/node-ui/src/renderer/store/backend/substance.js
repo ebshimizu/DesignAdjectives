@@ -303,5 +303,9 @@ export default {
       'state' in settings ? settings.state : params.map(p => p.value);
 
     render(canvasTarget, state, settings.instanceID);
+  },
+
+  stopUpdateLoop() {
+    renderLoopActive = false;
   }
 };

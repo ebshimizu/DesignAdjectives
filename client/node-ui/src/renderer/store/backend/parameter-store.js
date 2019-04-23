@@ -6,6 +6,9 @@
 import path from 'path';
 import Vue from 'Vue';
 
+import SbsBackend from '../backend/substance';
+import CmpBackend from '../backend/compositor';
+
 export function createStore(backend, type) {
   return {
     state: {
@@ -34,8 +37,24 @@ export function createStore(backend, type) {
         state.cacheKey = path.join(config.dir, config.filename);
 
         // at this point we need to re-load all of the parameter data
-        state.parameters = backend.getParams();
+        state.parameters = state.backend.getParams();
         state.lastCommittedVector = state.parameters.map(p => p.value);
+      },
+      DETECT_BACKEND(state, filename) {
+        // valid extensions: .dark (compositor), .sbsar (substance)
+
+        const ext = path.extname(filename);
+        if (ext === '.dark') {
+          if (state.type === 'substance') {
+            state.backend.stopUpdateLoop();
+          }
+
+          state.backend = CmpBackend;
+          state.type = 'compositor';
+        } else if (ext === '.sbsar') {
+          state.backend = SbsBackend;
+          state.type = 'substance';
+        }
       },
       SET_PARAM(state, config) {
         Vue.set(state.parameters[config.id], 'value', config.val);
@@ -59,12 +78,6 @@ export function createStore(backend, type) {
         // replaces the entire state with the array contained in config.val
         state.backend.setAllParams(state.parameters.map(p => p.value));
         state.lastCommittedVector = state.parameters.map(p => p.value);
-      },
-      CHANGE_BACKEND(state, config) {
-        // bit of a dangerous function but whatever
-        state.backend = config.backend;
-        state.type = config.type;
-        state.parameters = backend.getParams();
       },
       SNAPSHOT(state) {
         if (state.snapshot.length === 0)

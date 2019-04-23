@@ -38,10 +38,13 @@ export default {
             const file = path.basename(paths[0]);
             const dir = `${path.dirname(paths[0])}/`;
 
+            this.$store.commit('DETECT_BACKEND', file);
+
             this.$store.commit('LOAD_NEW_FILE', {
               filename: file,
               dir
             });
+
             this.$store.dispatch(
               'LOAD_SNIPPETS',
               this.$store.state.paramStore.cacheKey

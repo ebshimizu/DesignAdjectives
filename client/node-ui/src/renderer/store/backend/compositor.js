@@ -35,7 +35,7 @@ function renderPromise(context, size) {
   });
 }
 
-export const CompositorBackend = {
+export default {
   // config may have additional fields, would recommend adding to the object
   // as additional backends get constructed.
   loadNew(config) {
