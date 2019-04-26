@@ -71,7 +71,7 @@ export function createStore(backend, type) {
       },
       SET_PARAMS(state, vec) {
         state.backend.setAllParams(vec);
-        state.parameters = backend.getParams();
+        state.parameters = state.backend.getParams();
         state.lastCommittedVector = vec;
       },
       COMMIT_PARAMS(state) {

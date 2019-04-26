@@ -373,9 +373,8 @@ export default {
   },
 
   setAllParams(vec) {
-    const keys = Object.keys(params);
     for (let i = 0; i < vec.length; i++) {
-      params[keys[i]].value = vec[i];
+      params[i].value = vec[i];
     }
   },
 
