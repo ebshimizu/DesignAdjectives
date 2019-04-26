@@ -70,7 +70,8 @@ export default {
       this.$store.getters.renderer(this.$refs.canvas, {
         size: 'thumb',
         state: this.data.x,
-        instanceID: `exemplar-${this.id}`
+        instanceID: `exemplar-${this.id}`,
+        once: true
       });
     }
   }

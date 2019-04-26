@@ -25,7 +25,8 @@ export default {
         document.getElementById('mainRenderCanvas'),
         {
           size: 'medium',
-          instanceID: 'mainCanvas'
+          instanceID: 'mainCanvas',
+          once: false
         }
       );
     }

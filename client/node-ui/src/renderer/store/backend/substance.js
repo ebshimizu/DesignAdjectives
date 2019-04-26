@@ -18,6 +18,8 @@ let renderers = {};
 
 const mesh = new THREE.SphereGeometry(10, 64, 64);
 const threeLoader = new THREE.TextureLoader();
+
+let renderer2D = null;
 let renderLoopActive = false;
 
 function loadParams(file) {
@@ -145,7 +147,7 @@ function getRenderArgs(vec) {
   return args;
 }
 
-function render(canvasTarget, state, fileID) {
+function render(canvasTarget, state, fileID, once) {
   // state is a vector
   const args = getRenderArgs(state);
 
@@ -169,63 +171,52 @@ function render(canvasTarget, state, fileID) {
           }
         }
 
+        let renderer = {};
+
         if (!(fileID in renderers)) {
-          renderers[fileID] = {
+          renderer = {
             scene: new THREE.Scene(),
             camera: new THREE.PerspectiveCamera(75, 1, 0.1, 1000),
-            renderer: new THREE.WebGLRenderer({ canvas: canvasTarget }),
             material: new THREE.MeshStandardMaterial(),
             light: new THREE.DirectionalLight(0xffffff, 1)
           };
 
           // load a basic model
-          renderers[fileID].object = new THREE.Mesh(
-            mesh,
-            renderers[fileID].material
-          );
-          renderers[fileID].scene.add(renderers[fileID].object);
-          renderers[fileID].scene.add(renderers[fileID].light);
-          renderers[fileID].light.position.set(0, 0, 1);
+          renderer.object = new THREE.Mesh(mesh, renderer.material);
+          renderer.scene.add(renderer.object);
+          renderer.scene.add(renderer.light);
+          renderer.light.position.set(0, 0, 1);
 
           // update canvas sizes
           canvasTarget.width = 512;
           canvasTarget.height = 512;
-          renderers[fileID].renderer.setSize(
-            canvasTarget.width,
-            canvasTarget.height,
-            false
-          );
-          renderers[fileID].camera.position.z = 25;
+          renderer.camera.position.z = 25;
+
+          if (!once) {
+            renderer.renderer = new THREE.WebGLRenderer({
+              canvas: canvasTarget
+            });
+
+            renderer.renderer.setSize(
+              canvasTarget.width,
+              canvasTarget.height,
+              false
+            );
+
+            renderers[fileID] = renderer;
+          }
+        } else {
+          renderer = renderers[fileID];
         }
 
         // update the material properties
-        const material = renderers[fileID].material;
-        material.map = threeLoader.load(
-          path.join(renderDir, `${fileID}_diffuse.png?${new Date().getTime()}`)
-        );
-        material.metalnessMap = threeLoader.load(
-          path.join(renderDir, `${fileID}_metallic.png?${new Date().getTime()}`)
-        );
-        material.normalMap = threeLoader.load(
-          path.join(renderDir, `${fileID}_normal.png?${new Date().getTime()}`)
-        );
-        material.roughness = threeLoader.load(
-          path.join(
-            renderDir,
-            `${fileID}_roughness.png?${new Date().getTime()}`
-          )
-        );
-        material.aoMap = threeLoader.load(
-          path.join(
-            renderDir,
-            `${fileID}_ambientocclusion.png?${new Date().getTime()}`
-          )
-        );
-        material.displacementMap = threeLoader.load(
-          path.join(renderDir, `${fileID}_height.png?${new Date().getTime()}`)
-        );
+        const material = renderer.material;
 
-        material.needsUpdate = true;
+        if (once) {
+          loadThenDelete(renderer, material, fileID, canvasTarget);
+        } else {
+          loadContinuous(material, fileID);
+        }
       }
     }
   );
@@ -244,7 +235,88 @@ function deleteRenderer(renderer) {
   deleteMaterialMaps(renderer.material);
   renderer.material.dispose();
   renderer.scene.dispose();
-  renderer.renderer.dispose();
+
+  if (renderer.renderer) {
+    renderer.renderer.forceContextLoss();
+    renderer.renderer.dispose();
+  }
+}
+
+function promiseLoadTexture(url) {
+  return new Promise(resolve => {
+    threeLoader.load(url, resolve);
+  });
+}
+
+function loadThenDelete(renderer, material, id, destCanvas) {
+  // welcome to hell (but like promisified)
+  const textures = {
+    map: path.join(renderDir, `${id}_diffuse.png?${new Date().getTime()}`),
+    metalnessMap: path.join(
+      renderDir,
+      `${id}_metallic.png?${new Date().getTime()}`
+    ),
+    normalMap: path.join(renderDir, `${id}_normal.png?${new Date().getTime()}`),
+    roughness: path.join(
+      renderDir,
+      `${id}_roughness.png?${new Date().getTime()}`
+    ),
+    aoMap: path.join(
+      renderDir,
+      `${id}_ambientocclusion.png?${new Date().getTime()}`
+    ),
+    displacementMap: path.join(
+      renderDir,
+      `${id}_height.png?${new Date().getTime()}`
+    )
+  };
+
+  const promises = Object.keys(textures).map(key => {
+    return promiseLoadTexture(textures[key]).then(texture => {
+      material[key] = texture;
+    });
+  });
+
+  Promise.all(promises)
+    .then(() => {
+      material.needsUpdate = true;
+
+      renderer2D.render(renderer.scene, renderer.camera);
+
+      // grab the canvas element, copy the pixels over
+      const src = renderer2D.domElement.getContext('webgl');
+      const dest = destCanvas.getContext('2d');
+
+      dest.drawImage(src.canvas, 0, 0);
+      deleteRenderer(renderer);
+    })
+    .catch(e => {
+      console.log(e);
+      deleteRenderer(renderer);
+    });
+}
+
+function loadContinuous(material, id) {
+  material.map = threeLoader.load(
+    path.join(renderDir, `${id}_diffuse.png?${new Date().getTime()}`)
+  );
+  material.metalnessMap = threeLoader.load(
+    path.join(renderDir, `${id}_metallic.png?${new Date().getTime()}`)
+  );
+  material.normalMap = threeLoader.load(
+    path.join(renderDir, `${id}_normal.png?${new Date().getTime()}`)
+  );
+  material.roughness = threeLoader.load(
+    path.join(renderDir, `${id}_roughness.png?${new Date().getTime()}`)
+  );
+  material.aoMap = threeLoader.load(
+    path.join(renderDir, `${id}_ambientocclusion.png?${new Date().getTime()}`)
+  );
+  material.displacementMap = threeLoader.load(
+    path.join(renderDir, `${id}_height.png?${new Date().getTime()}`)
+  );
+
+  material.needsUpdate = true;
 }
 
 function updateRenders() {
@@ -276,6 +348,16 @@ export default {
     renderers = {};
     loadParams(currentFile);
 
+    // rendering setup
+    if (renderer2D) {
+      renderer2D.forceContextLoss();
+      renderer2D.dispose();
+      renderer2D = null;
+    }
+
+    renderer2D = new THREE.WebGLRenderer();
+    renderer2D.setSize(512, 512);
+
     if (!renderLoopActive) {
       renderLoopActive = true;
       updateRenders();
@@ -302,7 +384,7 @@ export default {
     const state =
       'state' in settings ? settings.state : params.map(p => p.value);
 
-    render(canvasTarget, state, settings.instanceID);
+    render(canvasTarget, state, settings.instanceID, settings.once);
   },
 
   stopUpdateLoop() {
