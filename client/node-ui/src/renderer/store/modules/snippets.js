@@ -210,7 +210,6 @@ export default {
       // loads the existing train data into the server
       try {
         context.commit('SET_SERVER_STATUS_TRAIN', name);
-        context.commit('SET_ACTIVE_SNIPPET', '');
 
         // ensure exists
         await driver.addSnippet(name);
