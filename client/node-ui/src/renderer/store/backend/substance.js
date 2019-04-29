@@ -72,6 +72,34 @@ function loadParams(file) {
               value: parseFloat(defaults[j])
             });
           }
+        }
+        if (type === 'FLOAT4') {
+          // color
+          let defaults = [];
+          for (let i = 1; i < settings.length; i++) {
+            const setting = settings[i].split(' ');
+            const settingName = setting[0];
+
+            if (settingName === 'DEFAULT') {
+              defaults = setting[1].split(',');
+            }
+          }
+
+          const channels = ['r', 'g', 'b', 'a'];
+          for (let j in channels) {
+            const channel = channels[j];
+            const cname = `${name}_${channel}`;
+
+            params.push({
+              name: cname,
+              type,
+              min: 0,
+              max: 1,
+              id: params.length,
+              parent: name,
+              value: parseFloat(defaults[j])
+            });
+          }
         } else if (type === 'BOOLEAN') {
           // skipping for now
           continue;
@@ -120,7 +148,7 @@ function getRenderArgs(vec) {
     // identify, cache values
     // note that the float 3s should be in RGB order (that's the creation order)
     // so we can cache values here and combine
-    if (params[i].type === 'FLOAT3') {
+    if (params[i].type === 'FLOAT3' || params[i].type === 'FLOAT4') {
       if (!collectedParams[params[i].parent])
         collectedParams[params[i].parent] = [];
 
@@ -130,7 +158,7 @@ function getRenderArgs(vec) {
     }
   }
 
-  // resolve FLOAT3 (color)
+  // resolve FLOAT3/FLOAT4 (color)
   for (let name in collectedParams) {
     if (Array.isArray(collectedParams[name])) {
       // collect
