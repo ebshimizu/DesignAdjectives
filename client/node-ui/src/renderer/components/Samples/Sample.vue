@@ -8,6 +8,14 @@
           @click="select()"
           class="cursor-pointer rounded bg-blue-dark p-2 font-sans text-grey-lightest"
         >Lock</div>
+        <div
+          @click="addPositive()"
+          class="cursor-pointer text-center font-bold w-8 rounded bg-green-dark ml-1 p-2 font-sans text-grey-lightest"
+        >+</div>
+        <div
+          @click="addNegative()"
+          class="cursor-pointer text-center font-bold w-8 rounded bg-red-dark ml-1 p-2 font-sans text-grey-lightest"
+        >-</div>
       </div>
       <canvas ref="canvas" class="sampleCanvas"/>
     </div>
@@ -55,6 +63,18 @@ export default {
     onHoverStop() {
       this.showActions = false;
       this.$store.dispatch('HIDE_TEMPORARY_STATE');
+    },
+    addPositive() {
+      this.$store.dispatch('ADD_EXAMPLE', {
+        name: this.$store.getters.activeSnippetName,
+        point: { x: this.x, y: 1 }
+      });
+    },
+    addNegative() {
+      this.$store.dispatch('ADD_EXAMPLE', {
+        name: this.$store.getters.activeSnippetName,
+        point: { x: this.x, y: -1 }
+      });
     }
   },
   mounted: function() {

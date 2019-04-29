@@ -40,6 +40,11 @@ export default {
     },
     status: state => {
       return state.serverStatus.action;
+    },
+    activeSnippetName: state => {
+      if (state.activeSnippet.name) return state.activeSnippet.name;
+
+      return null;
     }
   },
   mutations: {
