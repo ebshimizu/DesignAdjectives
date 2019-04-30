@@ -14,13 +14,33 @@
         <div class="font-mono text-sm">{{ val }}</div>
       </div>
     </div>
-    <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
-      <exemplar
-        v-for="(ex, idx) in activeSnippet.data"
-        :key="activeSnippet.name + idx"
-        v-bind:snippet-name="activeSnippet.name"
-        v-bind:id="idx"
-      ></exemplar>
+    <div class="flex flex-row h-full w-full">
+      <div class="w-1/2 overflow-hidden flex flex-col h-full border-r border-grey-lightest">
+        <div
+          class="w-full bg-green-darkest text-grey-lightest font-mono text-sm h-8 p-2 border-b border-grey-lightest"
+        >Positive</div>
+        <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
+          <exemplar
+            v-for="exId in positiveExamples"
+            :key="exId + activeSnippet.name"
+            v-bind:snippet-name="activeSnippet.name"
+            v-bind:id="exId"
+          ></exemplar>
+        </div>
+      </div>
+      <div class="w-1/2 overflow-hidden flex flex-col h-full border-r border-grey-lightest">
+        <div
+          class="w-full bg-red-darkest text-grey-lightest font-mono text-sm h-8 p-2 border-b border-grey-lightest"
+        >Negative</div>
+        <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
+          <exemplar
+            v-for="exId in negativeExamples"
+            :key="exId + activeSnippet.name"
+            v-bind:snippet-name="activeSnippet.name"
+            v-bind:id="exId"
+          ></exemplar>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -36,6 +56,30 @@ export default {
   computed: {
     activeSnippet() {
       return this.$store.state.snippets.activeSnippet;
+    },
+    positiveExamples() {
+      const ex = [];
+      if (this.activeSnippet.data) {
+        for (let i = 0; i < this.activeSnippet.data.length; i++) {
+          if (this.activeSnippet.data[i].y > 0) {
+            ex.push(i);
+          }
+        }
+      }
+
+      return ex;
+    },
+    negativeExamples() {
+      const ex = [];
+      if (this.activeSnippet.data) {
+        for (let i = 0; i < this.activeSnippet.data.length; i++) {
+          if (this.activeSnippet.data[i].y <= 0) {
+            ex.push(i);
+          }
+        }
+      }
+
+      return ex;
     },
     status() {
       return this.activeSnippet.trained ? 'Trained' : 'Not Trained';

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="exemplar overflow-hidden flex flex-col w-48 border border-grey-light hover:border-yellow rounded m-2"
+    class="exemplar overflow-hidden flex flex-col w-1/5 border border-grey-light hover:border-yellow rounded m-2"
   >
     <div
       class="w-full h-auto relative"
