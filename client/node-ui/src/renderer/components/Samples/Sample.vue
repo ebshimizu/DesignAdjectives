@@ -2,7 +2,15 @@
   <div
     class="sample overflow-hidden flex flex-col w-48 border border-grey-light hover:border-yellow rounded m-2"
   >
-    <div class="w-full h-auto relative" v-on:mouseenter="onHover()" v-on:mouseleave="onHoverStop()">
+    <div
+      class="w-full h-auto relative"
+      v-on:mouseenter="onHover()"
+      v-on:mouseleave="onHoverStop()"
+      v-on:keyup.z="addPositive()"
+      v-on:keyup.x="addNegative()"
+      tabindex="0"
+      ref="sample"
+    >
       <div v-show="showActions" class="absolute pin-b pin-l w-full flex flex-row p-4">
         <div
           @click="select()"
@@ -29,6 +37,10 @@
 </template>
 
 <script>
+// keyboard shortcuts
+// z = add positive
+// x = add negative
+
 export default {
   name: 'sample',
   data() {
@@ -59,6 +71,7 @@ export default {
     onHover() {
       this.showActions = true;
       this.$store.dispatch('SHOW_TEMPORARY_STATE', this.x);
+      this.$refs.sample.focus();
     },
     onHoverStop() {
       this.showActions = false;
