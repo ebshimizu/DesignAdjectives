@@ -183,7 +183,7 @@ function render(canvasTarget, state, fileID, once) {
   exec(
     `"${sbsrender}" render ${args.join(
       ' '
-    )} --set-value $outputsize@8,8 --output-name "${fileID}_{outputNodeName}" --output-path ${renderDir} "${currentFile}"`,
+    )} --set-value $outputsize@9,9 --output-name "${fileID}_{outputNodeName}" --output-path ${renderDir} "${currentFile}"`,
     function(err) {
       if (err) {
         console.log(err);
