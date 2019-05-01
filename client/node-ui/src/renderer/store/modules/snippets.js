@@ -15,6 +15,7 @@ export default {
     port: 5234,
     snippets: {},
     activeSnippet: {},
+    activeSnippetScore: { mean: 0, cov: 0 },
     log: [],
     connected: false,
     serverOnline: false,
@@ -168,6 +169,9 @@ export default {
       } catch (e) {
         console.log(e);
       }
+    },
+    SET_ACTIVE_SNIPPET_SCORE(state, score) {
+      state.activeSnippetScore = score;
     }
   },
   actions: {
@@ -299,9 +303,13 @@ export default {
     },
     SET_ACTIVE_SNIPPET(context, data) {
       context.commit('SET_ACTIVE_SNIPPET', data);
+      context.dispatch('COMMIT_PARAMS');
     },
     LOAD_SNIPPETS(context, key) {
+      // reset state during the load
       context.commit('LOAD_SNIPPETS', key);
+      context.commit('UPDATE_ACTIVE_SNIPPET', key);
+      context.commit('CLEAR_SAMPLES');
 
       // call load snippet on all trained snippets, assumes connected
       if (context.state.serverOnline) {
@@ -309,6 +317,21 @@ export default {
           if (context.state.snippets[s].trained)
             context.dispatch('LOAD_SNIPPET', s);
         }
+      }
+    },
+    async EVAL_CURRENT(context, vec) {
+      if (context.state.activeSnippet && context.state.activeSnippet.trained) {
+        try {
+          const score = await driver.predictOne(
+            context.getters.activeSnippetName,
+            vec
+          );
+          context.commit('SET_ACTIVE_SNIPPET_SCORE', score);
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        context.commit('SET_ACTIVE_SNIPPET_SCORE', { mean: 0, cov: 0 });
       }
     }
   }

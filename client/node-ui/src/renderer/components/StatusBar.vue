@@ -7,6 +7,9 @@
         class="flex justify-center items-center h-full font-mono text-grey-lightest text-xs ml-1"
       >{{ serverStatus }}</div>
     </div>
+    <div
+      class="flex justify-end flex-grow items-center h-full font-mono text-grey-lightest text-xs mx-1"
+    >{{ snippetEvalText }}</div>
   </div>
 </template>
 
@@ -34,6 +37,21 @@ export default {
         return 'Snippet Server Not Found';
       } else {
         return 'Server Disconnected';
+      }
+    },
+    score() {
+      return this.$store.state.snippets.activeSnippetScore;
+    },
+    snippetEvalText() {
+      if (
+        this.$store.getters.activeSnippetName &&
+        this.$store.state.snippets.activeSnippet.trained
+      ) {
+        return `${
+          this.$store.getters.activeSnippetName
+        }: ${this.score.mean.toFixed(2)} (var: ${this.score.cov.toFixed(2)})`;
+      } else {
+        return '[Snippet Score Unavailable]';
       }
     }
   }

@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     commitChange() {
-      this.$store.commit('COMMIT_PARAMS');
+      this.$store.dispatch('COMMIT_PARAMS');
     }
   }
 };

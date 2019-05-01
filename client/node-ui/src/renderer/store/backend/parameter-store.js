@@ -91,6 +91,10 @@ export function createStore(backend, type) {
       SET_PARAM(context, config) {
         context.commit('SET_PARAM', config);
       },
+      COMMIT_PARAMS(context) {
+        context.commit('COMMIT_PARAMS');
+        context.dispatch('EVAL_CURRENT', context.getters.paramsAsArray);
+      },
       SHOW_TEMPORARY_STATE(context, vec) {
         context.commit('SNAPSHOT');
         context.commit('SET_PARAMS', vec);
@@ -105,6 +109,7 @@ export function createStore(backend, type) {
       LOCK_TEMPORARY_STATE(context, vec) {
         context.commit('RESET_SNAPSHOT');
         context.commit('SET_PARAMS', vec);
+        context.dispatch('EVAL_CURRENT', vec);
       }
     }
   };

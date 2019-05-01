@@ -326,7 +326,7 @@ function loadThenDelete(renderer, material, id, destCanvas) {
 
 function loadContinuous(material, id) {
   material.map = threeLoader.load(
-    path.join(renderDir, `${id}_diffuse.png?${new Date().getTime()}`)
+    path.join(renderDir, `${id}_basecolor.png?${new Date().getTime()}`)
   );
   material.metalnessMap = threeLoader.load(
     path.join(renderDir, `${id}_metallic.png?${new Date().getTime()}`)
