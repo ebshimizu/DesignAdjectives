@@ -205,7 +205,7 @@ function render(canvasTarget, state, fileID, once) {
           renderer = {
             scene: new THREE.Scene(),
             camera: new THREE.PerspectiveCamera(75, 1, 0.1, 1000),
-            material: new THREE.MeshStandardMaterial(),
+            material: new THREE.MeshStandardMaterial({ metalness: 1.0, roughness: 1.0, opacity: 1.0 }),
             light: new THREE.DirectionalLight(0xffffff, 1)
           };
 
