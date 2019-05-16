@@ -7,9 +7,39 @@ import settings from 'electron-settings';
 // would be able to invoke things outside of mutations/actions
 let driver = null;
 
+// normalize a single vector
+function normalizeVector(x, key) {
+  // key has min/max data for each element
+  return x.map((value, i) => {
+    const k = key[i];
+    return (value - k.min) / (k.max - k.min);
+  });
+}
+
+// normalize a vector of data objects.
+// objects are { x, y } format
+function normalizeData(data, key) {
+  return data.map(d => {
+    return { x: normalizeVector(d.x, key), y: d.y };
+  });
+}
+
+function unnormalizeVector(x, key) {
+  return x.map((value, i) => {
+    const k = key[i];
+    return value * (k.max - k.min) + k.min;
+  });
+}
+
+// takes the sample's vector and normalizes it
+function unnormalizeSample(sample, key) {
+  sample.x = unnormalizeVector(sample.x, key);
+}
+
 // this state maintains a list of snippet objects and sync's to the server as needed.
 // data format is same as server
 // snippet.data format: [{ x: vec, y: val }]
+// vectors are saved locally in unnormalized formats, sent to server normalized to [0,1]
 export default {
   state: {
     port: 5234,
@@ -202,7 +232,13 @@ export default {
         // ensure snippet exists
         await driver.addSnippet(name);
         // sync data
-        await driver.setData(name, context.state.snippets[name].data);
+        await driver.setData(
+          name,
+          normalizeData(
+            context.state.snippets[name].data,
+            context.getters.params
+          )
+        );
 
         // train
         const trainData = await driver.train(name);
@@ -226,7 +262,10 @@ export default {
         // load gpr data
         await driver.loadGPR(
           name,
-          context.state.snippets[name].data,
+          normalizeData(
+            context.state.snippets[name].data,
+            context.getters.params
+          ),
           context.state.snippets[name].trainData
         );
 
@@ -269,6 +308,7 @@ export default {
       };
 
       driver.sampleCallback = function(data, name) {
+        unnormalizeSample(data, context.getters.params);
         context.commit('ADD_SAMPLE', data);
       };
 
@@ -324,7 +364,7 @@ export default {
         try {
           const score = await driver.predictOne(
             context.getters.activeSnippetName,
-            vec
+            normalizeVector(vec, context.getters.params)
           );
           context.commit('SET_ACTIVE_SNIPPET_SCORE', score);
         } catch (e) {

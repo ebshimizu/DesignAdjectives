@@ -17,7 +17,9 @@ pyro.enable_validation(True)
 # torch.set_default_tensor_type(torch.cuda.FloatTensor)
 # torch.cuda.init()
 
-
+# couple snippet notes
+# - Input vectors are assumed to already be normalized. They don't technically have to be for training,
+#   but the samplers will fail because they have a hard [0,1] clamp constraint.
 class Snippet:
     def __init__(self, name):
         self.name = name

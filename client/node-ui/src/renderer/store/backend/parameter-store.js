@@ -24,6 +24,9 @@ export function createStore(backend, type) {
         if (id < state.parameters.length) return state.parameters[id];
         return 0;
       },
+      params: state => {
+        return state.parameters;
+      },
       paramsAsArray: state => {
         return state.parameters.map(p => p.value);
       },
