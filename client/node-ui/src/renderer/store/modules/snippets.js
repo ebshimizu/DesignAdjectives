@@ -325,6 +325,11 @@ export default {
       try {
         context.commit('SET_SERVER_STATUS_SAMPLE');
         context.commit('CLEAR_SAMPLES');
+
+        // get the current normalized vector starting state
+        const current = context.getters.paramsAsArray;
+        data.x0 = normalizeVector(current, context.getters.params);
+
         await driver.sample(data.name, data.data);
       } catch (e) {
         console.log(e);

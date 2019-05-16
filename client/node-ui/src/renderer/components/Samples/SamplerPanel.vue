@@ -26,6 +26,17 @@
           step="0.001"
         >
       </div>
+      <div class="border-b border-grey-lightest px-2 py-1">
+        <div class="font-bold tracking-wide uppercase text-xs mb-1">Burn-in</div>
+        <input
+          class="w-full rounded-sm p-1 text-sm text-grey-light bg-grey-darkest font-mono"
+          type="number"
+          v-model="burnin"
+          min="0"
+          max="10000"
+          step="1"
+        >
+      </div>
       <div class="p-2">
         <div
           class="btn btn-green"
@@ -51,7 +62,8 @@ export default {
   data() {
     return {
       n: 50,
-      threshold: 0.7
+      threshold: 0.7,
+      burnin: 100
     };
   },
   computed: {
@@ -93,7 +105,8 @@ export default {
           name: this.$store.state.snippets.activeSnippet.name,
           data: {
             n: parseInt(this.n),
-            qMin: parseFloat(this.threshold)
+            qMin: parseFloat(this.threshold),
+            burn: parseInt(this.burnin)
           }
         });
       }
