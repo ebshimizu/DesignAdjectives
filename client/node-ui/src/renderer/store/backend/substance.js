@@ -16,7 +16,7 @@ let currentFile = '';
 let params = [];
 let renderers = {};
 
-const mesh = new THREE.SphereGeometry(10, 64, 64);
+let mesh = new THREE.SphereGeometry(10, 64, 64);
 const threeLoader = new THREE.TextureLoader();
 
 let renderer2D = null;
@@ -33,7 +33,14 @@ const substanceSettings = {
     value: 0.01,
     name: 'Rotation Speed',
     min: 0,
-    max: 1
+    max: 0.1,
+    step: 0.001
+  },
+  modelType: {
+    type: 'enum',
+    value: 'sphere',
+    values: ['sphere', 'box', 'torus', 'knot'],
+    name: 'Model'
   }
 };
 
@@ -155,6 +162,27 @@ function loadParams(file) {
   }
 }
 
+function updateMesh() {
+  const type = substanceSettings.modelType.value;
+  if (type === 'sphere') {
+    mesh = new THREE.SphereGeometry(10, 64, 64);
+  } else if (type === 'box') {
+    mesh = new THREE.BoxGeometry(18, 18, 18);
+  } else if (type === 'torus') {
+    mesh = new THREE.TorusGeometry(10, 3, 32, 100);
+  } else if (type === 'knot') {
+    mesh = new THREE.TorusKnotGeometry(7, 2, 100, 32);
+  }
+
+  // update geometry in active renderers
+  for (const k in renderers) {
+    renderers[k].scene.remove(renderers[k].scene.getObjectByName('ref-object'));
+    renderers[k].object = new THREE.Mesh(mesh, renderers[k].material);
+    renderers[k].object.name = 'ref-object';
+    renderers[k].scene.add(renderers[k].object);
+  }
+}
+
 // takes the current parameters and returns a set of render arguments
 function getRenderArgs(vec) {
   // collapse FLOAT3 params
@@ -230,6 +258,7 @@ function render(canvasTarget, state, fileID, once) {
 
           // load a basic model
           renderer.object = new THREE.Mesh(mesh, renderer.material);
+          renderer.object.name = 'ref-object';
           renderer.scene.add(renderer.object);
           renderer.scene.add(renderer.light);
           renderer.light.position.set(0, 0, 1);
@@ -446,5 +475,9 @@ export default {
 
   setSetting(key, value) {
     substanceSettings[key].value = value;
+
+    if (key === 'modelType') {
+      updateMesh();
+    }
   }
 };

@@ -8,7 +8,7 @@
         v-model="localVal"
         v-bind:max="setting.max"
         v-bind:min="setting.min"
-        step="0.01"
+        v-bind:step="setting.step"
       >
     </div>
     <div v-else-if="setting.type === 'boolean'" class="w-full px-2">
@@ -17,6 +17,15 @@
         <input type="checkbox" v-model="localVal">
         <span class="check"></span>
       </label>
+    </div>
+    <div v-else-if="setting.type === 'enum'" class="w-full px-2">
+      <div class="label font-bold tracking-wide uppercase mb-1 w-full text-xs">{{ setting.name }}</div>
+      <select
+        v-model="localVal"
+        class="text-sm font-mono p-1 w-full bg-grey-darkest text-grey-light"
+      >
+        <option v-for="option in setting.values" v-bind:value="option" :key="option">{{ option }}</option>
+      </select>
     </div>
   </div>
 </template>
@@ -50,7 +59,7 @@ export default {
 .checkbox {
   display: block;
   position: relative;
-  padding-left: 35px;
+  padding-left: 30px;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
