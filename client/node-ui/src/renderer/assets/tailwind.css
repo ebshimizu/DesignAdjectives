@@ -43,3 +43,7 @@
 .btn-red:hover {
   @apply bg-red-dark;
 }
+
+.standard-text-field {
+  @apply rounded-sm p-1 text-sm text-grey-light bg-grey-darkest font-mono;
+}

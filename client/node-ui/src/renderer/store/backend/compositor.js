@@ -92,5 +92,13 @@ export default {
     } catch (e) {
       console.log(e);
     }
+  },
+
+  getSettings() {
+    return {};
+  },
+
+  setSetting(key, value) {
+    // noop
   }
 };

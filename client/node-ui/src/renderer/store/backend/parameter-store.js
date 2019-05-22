@@ -32,6 +32,9 @@ export function createStore(backend, type) {
       },
       renderer: state => {
         return state.backend.renderer;
+      },
+      settings: state => {
+        return state.backend.getSettings();
       }
     },
     mutations: {
@@ -88,6 +91,9 @@ export function createStore(backend, type) {
       },
       RESET_SNAPSHOT(state) {
         state.snapshot = [];
+      },
+      SET_BACKEND_SETTING(state, data) {
+        state.backend.setSetting(data.key, data.value);
       }
     },
     actions: {

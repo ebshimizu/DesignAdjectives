@@ -22,6 +22,21 @@ const threeLoader = new THREE.TextureLoader();
 let renderer2D = null;
 let renderLoopActive = false;
 
+const substanceSettings = {
+  rotate: {
+    type: 'boolean',
+    value: true,
+    name: 'Rotate Model'
+  },
+  rotateSpeed: {
+    type: 'number',
+    value: 0.01,
+    name: 'Rotation Speed',
+    min: 0,
+    max: 1
+  }
+};
+
 function loadParams(file) {
   // text parsing fun!
   try {
@@ -205,7 +220,11 @@ function render(canvasTarget, state, fileID, once) {
           renderer = {
             scene: new THREE.Scene(),
             camera: new THREE.PerspectiveCamera(75, 1, 0.1, 1000),
-            material: new THREE.MeshStandardMaterial({ metalness: 1.0, roughness: 1.0, opacity: 1.0 }),
+            material: new THREE.MeshStandardMaterial({
+              metalness: 1.0,
+              roughness: 1.0,
+              opacity: 1.0
+            }),
             light: new THREE.DirectionalLight(0xffffff, 1)
           };
 
@@ -354,7 +373,10 @@ function updateRenders() {
   // we also should prune this for inactive canvases
   for (let id in renderers) {
     if (document.body.contains(renderers[id].renderer.domElement)) {
-      renderers[id].object.rotation.x += 0.01;
+      if (substanceSettings.rotate.value === true) {
+        renderers[id].object.rotation.x += substanceSettings.rotateSpeed.value;
+      }
+
       renderers[id].renderer.render(renderers[id].scene, renderers[id].camera);
     } else {
       prune.push(id);
@@ -416,5 +438,13 @@ export default {
 
   stopUpdateLoop() {
     renderLoopActive = false;
+  },
+
+  getSettings() {
+    return substanceSettings;
+  },
+
+  setSetting(key, value) {
+    substanceSettings[key].value = value;
   }
 };

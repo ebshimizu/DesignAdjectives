@@ -4,6 +4,9 @@
       <tab title="Params">
         <parameter-controls></parameter-controls>
       </tab>
+      <tab title="Settings">
+        <settings-panel></settings-panel>
+      </tab>
     </tabs>
   </div>
 </template>
@@ -12,13 +15,15 @@
 import Tab from '../Tabs/Tab';
 import Tabs from '../Tabs/Tabs';
 import ParameterControls from './ParameterControls';
+import SettingsPanel from '../Settings/SettingsPanel';
 
 export default {
   name: 'parameter-panel',
   components: {
     Tab,
     Tabs,
-    ParameterControls
+    ParameterControls,
+    SettingsPanel
   }
 };
 </script>
