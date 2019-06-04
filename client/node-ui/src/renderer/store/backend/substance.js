@@ -419,6 +419,10 @@ function updateRenders() {
 }
 
 export default {
+  type() {
+    return 'Substance';
+  },
+
   loadNew(config) {
     fs.emptyDirSync(renderDir);
     currentFile = path.join(config.dir, config.filename);

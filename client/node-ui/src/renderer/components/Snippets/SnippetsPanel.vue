@@ -7,7 +7,7 @@
       >Current Snippet</label>
       <div class="w-full m-2 relative">
         <select
-          class="font-mono text-sm cursor-pointer block appearance-none w-full bg-grey-lighter border border-grey-lighter text-grey-darker py-2 px-2 rounded focus:outline-none focus:bg-white focus:border-grey"
+          class="text-sm font-mono p-1 w-full bg-grey-darkest text-grey-light cursor-pointer"
           id="current-snippet"
           v-model="activeSnippet"
         >
@@ -18,27 +18,30 @@
             v-bind:key="option.name"
           >{{ option.name }}</option>
         </select>
-        <div
-          class="pointer-events-none absolute pin-y pin-r flex items-center px-2 text-grey-darker"
-        >
-          <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path>
-          </svg>
-        </div>
       </div>
       <div
         class="w-full block uppercase tracking-wide text-grey-lighter text-xs font-bold m-2"
       >Actions</div>
       <div class="w-full ml-2 flex text-sm flex-wrap flex-row">
-        <div class="btn btn-green w-1/5 mr-2 flex-grow" @click="showNewModal()">New</div>
-        <div class="btn btn-red w-1/5 mr-2 flex-grow" @click="deleteSnippet()">Delete</div>
-        <div class="btn btn-blue w-1/5 mr-2 flex-grow" @click="addExample(1)">Add +</div>
-        <div class="btn btn-blue w-1/5 mr-2 flex-grow" @click="addExample(-1)">Add -</div>
-        <div
-          class="btn btn-blue w-1/5 mr-2"
-          :class="{ disabled: isTraining }"
-          @click="train()"
-        >{{ isTraining ? 'Training...' : 'Train' }}</div>
+        <div class="w-1/4 flex-grow pr-2">
+          <div class="btn btn-green" @click="showNewModal()">New</div>
+        </div>
+        <div class="w-1/4 flex-grow pr-2">
+          <div class="btn btn-red w-full" @click="deleteSnippet()">Delete</div>
+        </div>
+        <div class="w-1/4 flex-grow pr-2">
+          <div class="btn btn-blue w-full" @click="addExample(1)">Add +</div>
+        </div>
+        <div class="w-1/4 flex-grow pr-2">
+          <div class="btn btn-blue w-full" @click="addExample(-1)">Add -</div>
+        </div>
+        <div class="w-1/4 pr-2">
+          <div
+            class="btn btn-blue"
+            :class="{ disabled: isTraining }"
+            @click="train()"
+          >{{ isTraining ? 'Training...' : 'Train' }}</div>
+        </div>
       </div>
     </div>
     <div

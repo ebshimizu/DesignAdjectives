@@ -1,5 +1,8 @@
 <template>
   <div class="w-full h-full overflow-hidden border-l">
+    <div
+      class="w-full border-b border-grey-lightest py-2 font-bold text-grey-lightest tracking-wide uppercase text-center"
+    >{{ type }} Options</div>
     <setting-control
       v-for="(setting, key) in settings"
       :key="key"
@@ -24,6 +27,9 @@ export default {
   computed: {
     settings() {
       return this.$store.getters.settings;
+    },
+    type() {
+      return this.$store.getters.backendType;
     }
   }
 };

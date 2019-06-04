@@ -36,6 +36,10 @@ function renderPromise(context, size) {
 }
 
 export default {
+  type() {
+    return '2D Compositor';
+  },
+
   // config may have additional fields, would recommend adding to the object
   // as additional backends get constructed.
   loadNew(config) {

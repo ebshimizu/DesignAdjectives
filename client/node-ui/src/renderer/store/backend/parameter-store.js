@@ -35,6 +35,9 @@ export function createStore(backend, type) {
       },
       settings: state => {
         return state.backend.getSettings();
+      },
+      backendType: state => {
+        return state.backend.type();
       }
     },
     mutations: {
