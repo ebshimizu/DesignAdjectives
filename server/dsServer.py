@@ -185,7 +185,6 @@ def snippetSample(args):
         if s:
             currentSampler = samplers.Metropolis(
                 s,
-                args["x0"],
                 name=args["name"],
                 cb=lambda data: sampleSingleResult(data, args["name"]),
                 final=sampleFinal,

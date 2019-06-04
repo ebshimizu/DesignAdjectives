@@ -328,7 +328,7 @@ export default {
 
         // get the current normalized vector starting state
         const current = context.getters.paramsAsArray;
-        data.x0 = normalizeVector(current, context.getters.params);
+        data.data.x0 = normalizeVector(current, context.getters.params);
 
         await driver.sample(data.name, data.data);
       } catch (e) {
