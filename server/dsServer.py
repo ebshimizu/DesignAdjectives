@@ -172,6 +172,19 @@ def snippetPredict(args):
     if s:
         print(args["data"])
         val = s.predict(args["data"])
+        val["mean"] = val["mean"].numpy().tolist()
+        val["cov"] = val["cov"].numpy().toList()
+        return None, val
+    else:
+        return None, False
+
+
+@sio.on("snippet predict one")
+def snippetPredict(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        print(args["data"])
+        val = s.predictOne(args["data"])
         return None, val
     else:
         return None, False

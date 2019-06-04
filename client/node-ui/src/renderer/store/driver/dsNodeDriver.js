@@ -257,7 +257,7 @@ export class DsDriver {
   async predictOne(name, x) {
     if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
-    const res = await this.predict(name, [x]);
+    const res = await this.exec('snippet predict one', { name, data: x });
     return res;
   }
 

@@ -82,24 +82,39 @@ class Metropolis(SamplerThread):
     def run(self):
         # initialize
         logger.info("[{0}] Metropolis sampler initializing".format(self.name))
-        fx = self.f.predict([self.x0])
+        fx = self.f.predictOne(self.x0)
         x = torch.tensor(self.x0)
         count = 0
         accept = []
-        g = dist.MultivariateNormal(torch.zeros(len(x)), torch.eye(len(x)) * self.scale)
+        filter = self.f.filter
 
+        g = dist.MultivariateNormal(
+            torch.zeros(len(filter)), torch.eye(len(filter)) * self.scale
+        )
+
+        logger.info("[{0} Metropolis sampler starting".format(self.name))
         while count < self.limit:
             if self.stopped():
                 logger.info("[{0}] Metropolis sampler early stop".format(self.name))
                 break
 
             # generate
-            xp = x + g.sample()
+            delta = g.sample()
+
+            # modify xp but only do it to the relevant params in filter
+            xp = torch.tensor(x)
+
+            for i in range(0, len(filter)):
+                idx = filter[i]
+                xp[idx] = xp[idx] + delta[i]
+            # xp = x + g.sample()
 
             # bounds (assuming normalized, if not will need a key)
             xp = torch.clamp(xp, 0.0, 1.0)
 
             fxp = self.f.predict(xp.view(-1, 1).t())
+            fxp["mean"] = fxp["mean"].item()
+            fxp["cov"] = fxp["cov"].item()
 
             # test
             a = fxp["mean"] / fx["mean"]

@@ -114,7 +114,7 @@ class Snippet:
 
         # check that a filter has been set to include at least one parameter
         if len(self.filter) == 0:
-            # and if not, set it to all (default)
+            # and if not, set it to default (all non-constant params)
             self.setDefaultFilter()
 
         # TODO: allow kernel settings per-snippet?
