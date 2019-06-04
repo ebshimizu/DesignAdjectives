@@ -20,16 +20,12 @@ def plot1DPredictions(x, model, paramIdx=0, rmin=0, rmax=1, n=100):
         xt[paramIdx] = i
         XTest.append(xt)
 
-    XTest = torch.tensor(XTest)
-
-    with torch.no_grad():
-        if type(model) == gp.models.VariationalSparseGP:
-            mean, cov = model(XTest, full_cov=True)
-        else:
-            mean, cov = model(XTest, full_cov=True, noiseless=False)
+    res = model.predict(XTest)
+    mean = res["mean"]
+    cov = res["cov"]
 
     sd = cov.diag().sqrt()  # standard deviation at each input point x
-    plt.plot(XTest.numpy(), mean.numpy(), "r", lw=2)  # plot the mean
+    plt.plot(XTest, mean.numpy(), "r", lw=2)  # plot the mean
     plt.fill_between(
         torch.reshape(
             XRange, (-1,)

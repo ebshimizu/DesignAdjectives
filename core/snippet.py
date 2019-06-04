@@ -1,5 +1,6 @@
 from dsTypes import *
 from samplers import *
+from functools import reduce
 import os
 import torch
 import pyro
@@ -38,11 +39,20 @@ class Snippet:
     def setParamFilter(self, filter):
         self.filter = filter
 
+    def applyFilter(self, data):
+        # return new set of vectors with filtered out values
+        return [
+            list(map(lambda x: data[i][x], self.filter)) for i in range(0, len(data))
+        ]
+
     def setData(self, items):
         self.data = items
 
     def addData(self, item):
         self.data.append(item)
+
+    def addTraining(self, x, y):
+        self.data.append(Training(x, y))
 
     def removeData(self, index):
         if index < len(self.data):
@@ -155,25 +165,23 @@ class Snippet:
         graphUtils.plotLoss(self.losses)
 
     def plot1D(self, x, dim, rmin=0, rmax=1, n=100):
-        graphUtils.plot1DPredictions(
-            x, self.gpr, paramIdx=dim, rmin=rmin, rmax=rmax, n=n
-        )
+        graphUtils.plot1DPredictions(x, self, paramIdx=dim, rmin=rmin, rmax=rmax, n=n)
 
     def predict(self, items):
-        Xtest = torch.tensor(items)
+        # need to filter the input based on the current filter val
+        Xtest = torch.tensor(self.applyFilter(items))
         with torch.no_grad():
             if type(self.gpr) == gp.models.VariationalSparseGP:
                 mean, cov = self.gpr(Xtest, full_cov=True)
             else:
                 mean, cov = self.gpr(Xtest, full_cov=True, noiseless=False)
 
-        return {"mean": mean.item(), "cov": cov.item()}
+        return {"mean": mean, "cov": cov}
 
-    # remember that gpr samples are functions.
-    # there should be another function for actually sampling
-    # for new designs.
-    def sample(self, count=1):
-        return []
+    def predictOne(self, item):
+        # identical to predict, but returns scalars
+        res = self.predict([item])
+        return {"mean": res["mean"].item(), "cov": res["cov"].item()}
 
     def x0(self):
         if self.data:
@@ -184,7 +192,19 @@ class Snippet:
 
     def setDefaultFilter(self):
         # assumption: all data is the same vector length
-        if len(self.data) > 0:
-            self.filter = list(range(0, len(self.data[0].data)))
-        else:
-            self.filter = []
+        self.filter = []
+
+        # for each parameter
+        for i in range(0, len(self.data[0].data)):
+            # extract vector of params
+            p = list(map(lambda x: x.data[i], self.data))
+
+            # map again, test == to first val
+            p0 = p[0]
+            isEq = list(map(lambda x: x == p0, p))
+
+            # reduce with &
+            allEq = reduce(lambda x, y: x and y, isEq)
+
+            if not allEq:
+                self.filter.append(i)
