@@ -43,6 +43,10 @@ function unnormalizeSample(sample, key) {
 export default {
   state: {
     port: 5234,
+    paramSettings: {
+      hueMin: 0,
+      hueMax: 120
+    },
     snippets: {},
     activeSnippet: {},
     activeSnippetScore: { mean: 0, cov: 0 },
@@ -54,6 +58,7 @@ export default {
       action: 'IDLE',
       message: ''
     },
+    paramData: {},
     samples: []
   },
   getters: {
@@ -76,6 +81,15 @@ export default {
       if (state.activeSnippet.name) return state.activeSnippet.name;
 
       return null;
+    },
+    paramData: state => {
+      return state.paramData;
+    },
+    hueMin: state => {
+      return state.paramSettings.hueMin;
+    },
+    hueMax: state => {
+      return state.paramSettings.hueMax;
     }
   },
   mutations: {
@@ -202,6 +216,22 @@ export default {
     },
     SET_ACTIVE_SNIPPET_SCORE(state, score) {
       state.activeSnippetScore = score;
+    },
+    SET_PARAM_COLOR_DATA(state, data) {
+      // may want to perform some analysis to determine min/max ranges for the params
+      let meanMin = 1e10;
+      let meanMax = -1e10;
+
+      for (const paramId in data) {
+        for (let mean of data[paramId].mean) {
+          if (mean > meanMax) meanMax = mean;
+          if (mean < meanMin) meanMin = mean;
+        }
+      }
+
+      data.meanMin = meanMin;
+      data.meanMax = meanMax;
+      state.paramData = data;
     }
   },
   actions: {
@@ -245,6 +275,9 @@ export default {
         context.commit('ADD_TRAINED_DATA', { name, trainData });
         context.commit('UPDATE_ACTIVE_SNIPPET');
         context.commit('CACHE_SNIPPETS', context.state.cacheKey);
+
+        // load parameter color data
+        await context.dispatch('LOAD_PARAM_COLOR_DATA', name);
       } catch (e) {
         console.log(e);
       }
@@ -349,6 +382,10 @@ export default {
     SET_ACTIVE_SNIPPET(context, data) {
       context.commit('SET_ACTIVE_SNIPPET', data);
       context.dispatch('COMMIT_PARAMS');
+
+      if (context.state.activeSnippet && context.state.activeSnippet.trained) {
+        context.dispatch('LOAD_PARAM_COLOR_DATA', data);
+      }
     },
     LOAD_SNIPPETS(context, key) {
       // reset state during the load
@@ -378,6 +415,16 @@ export default {
       } else {
         context.commit('SET_ACTIVE_SNIPPET_SCORE', { mean: 0, cov: 0 });
       }
+    },
+    async LOAD_PARAM_COLOR_DATA(context, snippet) {
+      const current = context.getters.paramsAsArray;
+      const paramData = await driver.predictAll1D(snippet, {
+        x: normalizeVector(current, context.getters.params),
+        rmin: 0,
+        rmax: 1,
+        n: 20
+      });
+      context.commit('SET_PARAM_COLOR_DATA', paramData);
     }
   }
 };

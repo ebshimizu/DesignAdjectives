@@ -15,7 +15,7 @@ import samplers
 import logging
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="[%(levelname)-5.5s] %(asctime)s [%(threadName)-12.12s]  %(message)s",
     handlers=[logging.FileHandler("server.log"), logging.StreamHandler()],
 )
@@ -243,6 +243,28 @@ def snippetLoadKernel(args):
         s.setKernelParams(args["kernelData"])
         s.loadGPR()
         return None, True
+    else:
+        return None, False
+
+
+@sio.on("snippet 1DPredict")
+def snippet1DPredict(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        # 1d predict, assumes normalized range 0-1
+        res = s.predict1D(**args["data"])
+        return None, res
+    else:
+        return None, False
+
+
+@sio.on("snippet 1DPredictAll")
+def snippet1DPredictAll(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        # 1d predict, assumes normalized range 0-1
+        res = s.predictAll1D(**args["data"])
+        return None, res
     else:
         return None, False
 

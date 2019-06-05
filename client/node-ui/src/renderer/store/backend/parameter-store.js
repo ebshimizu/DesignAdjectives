@@ -106,6 +106,12 @@ export function createStore(backend, type) {
       COMMIT_PARAMS(context) {
         context.commit('COMMIT_PARAMS');
         context.dispatch('EVAL_CURRENT', context.getters.paramsAsArray);
+        if (context.getters.activeSnippetName !== null) {
+          context.dispatch(
+            'LOAD_PARAM_COLOR_DATA',
+            context.getters.activeSnippetName
+          );
+        }
       },
       SHOW_TEMPORARY_STATE(context, vec) {
         context.commit('SNAPSHOT');

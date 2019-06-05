@@ -275,6 +275,39 @@ export class DsDriver {
   }
 
   /**
+   *
+   * @param {name} name Snippet name
+   * @param {Object} data Parameters for predict1D
+   * @param {number[]} data.x Initial parameter vector
+   * @param {number} data.dim Dimension to evaluate over
+   * @param {?number} data.rmin Minimum value between 0 and 1 to start evaluation at
+   * @param {?number} data.rmax Maximum value between 0 and 1 to stop evaluation at
+   * @param {?number} data.n Number of steps
+   */
+  async predict1D(name, data) {
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
+
+    const res = await this.exec('snippet 1DPredict', { name, data });
+    return res;
+  }
+
+  /**
+   *
+   * @param {String} name Snippet name
+   * @param {Object} data Parameters for predictAll1D
+   * @param {number[]} data.x Initial parameter vector
+   * @param {?number} data.rmin Minimum value between 0 and 1 to start evaluation at
+   * @param {?number} data.rmax Maximum value between 0 and 1 to stop evaluation at
+   * @param {?number} data.n Number of steps
+   */
+  async predictAll1D(name, data) {
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
+
+    const res = await this.exec('snippet 1DPredictAll', { name, data });
+    return res;
+  }
+
+  /**
    * Start sampling the specified snippet
    * @param {string} name Snippet name
    * @param {Object} params Sampling parameters. See below for some common options.

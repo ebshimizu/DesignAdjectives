@@ -183,6 +183,27 @@ class Snippet:
         res = self.predict([item])
         return {"mean": res["mean"].item(), "cov": res["cov"].item()}
 
+    def predict1D(self, x, dim, rmin=0, rmax=1, n=10):
+        XRange = torch.linspace(rmin, rmax, n)
+        XTest = []
+        for i in XRange:
+            xt = x.copy()
+            xt[dim] = i
+            XTest.append(xt)
+
+        res = self.predict(XTest)
+        return {
+            "mean": res["mean"].numpy().tolist(),
+            "cov": res["cov"].numpy().tolist(),
+        }
+
+    def predictAll1D(self, x, rmin=0, rmax=1, n=10):
+        dims = {}
+        for i in self.filter:
+            res = self.predict1D(x, i, rmin, rmax, n)
+            dims[i] = res
+        return dims
+
     def x0(self):
         if self.data:
             # NOTE: CHANGE LATER THIS ASSUMES FIRST EXAMPLE IS POSITIVE

@@ -9,6 +9,7 @@
         v-bind:max="param.max"
         v-bind:min="param.min"
         v-on:change="commitChange"
+        v-bind:style="sliderGoodnessStyle"
         step="0.001"
       >
       <input
@@ -41,6 +42,30 @@ export default {
           val: parseFloat(value)
         });
       }
+    },
+    sliderGoodnessStyle() {
+      // if an entry exists in the param data
+      if (this.param.id in this.$store.getters.paramData) {
+        const vals = this.$store.getters.paramData[this.param.id].mean;
+        const min = this.$store.getters.paramData.meanMin;
+        const max = this.$store.getters.paramData.meanMax;
+        const minHue = this.$store.getters.hueMin;
+        const maxHue = this.$store.getters.hueMax;
+        let grad = 'linear-gradient(to right';
+
+        // scale based on max/min and also on color range
+        for (let i = 0; i < vals.length; i++) {
+          const normVal = (vals[i] - min) / (max - min);
+          const hueVal = normVal * (maxHue - minHue) + minHue;
+
+          grad = `${grad}, hsl(${hueVal}, 100%, 50%)`;
+        }
+
+        grad = grad + ')';
+        return { 'background-image': grad };
+      }
+
+      return { 'background-image': 'unset' };
     }
   },
   methods: {
