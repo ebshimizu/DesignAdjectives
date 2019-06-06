@@ -45,7 +45,17 @@ export default {
   state: {
     port: 5234,
     settings: {
-      paramColor: Constants.PARAM_COLOR_MODE.REDGREEN
+      paramColor: {
+        value: Constants.PARAM_COLOR_MODE.REDGREEN,
+        type: 'enum',
+        name: 'Parameter Preference Function Colors',
+        values: [
+          Constants.PARAM_COLOR_MODE.REDGREEN,
+          Constants.PARAM_COLOR_MODE.BLUEGREEN,
+          Constants.PARAM_COLOR_MODE.REDBLUE,
+          Constants.PARAM_COLOR_MODE.GREYSCALE
+        ]
+      }
     },
     snippets: {},
     activeSnippet: {},
@@ -86,18 +96,49 @@ export default {
       return state.paramData;
     },
     hueMin: state => {
-      if (state.settings.paramColor === Constants.PARAM_COLOR_MODE.REDGREEN) {
+      if (
+        state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.REDGREEN
+      ) {
+        return 0;
+      } else if (
+        state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.BLUEGREEN
+      ) {
+        return 240;
+      } else if (
+        state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.REDBLUE
+      ) {
+        return 360;
+      } else if (
+        state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.GREYSCALE
+      ) {
         return 0;
       }
 
       return 0;
     },
     hueMax: state => {
-      if (state.settings.paramColor === Constants.PARAM_COLOR_MODE.REDGREEN) {
+      if (
+        state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.REDGREEN
+      ) {
         return 120;
+      } else if (
+        state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.BLUEGREEN
+      ) {
+        return 120;
+      } else if (
+        state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.REDBLUE
+      ) {
+        return 240;
+      } else if (
+        state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.GREYSCALE
+      ) {
+        return 0;
       }
 
       return 120;
+    },
+    snippetSettings: state => {
+      return state.settings;
     }
   },
   mutations: {
@@ -240,6 +281,18 @@ export default {
       data.meanMin = meanMin;
       data.meanMax = meanMax;
       state.paramData = data;
+    },
+    SET_SNIPPET_SETTING(state, data) {
+      state.settings[data.key].value = data.value;
+      settings.set('snippetSettings', state.settings);
+    },
+    LOAD_SNIPPET_SETTINGS(state) {
+      const loadedSettings = settings.get('snippetSettings');
+      for (const key in loadedSettings) {
+        if (key in state.settings) {
+          state.settings[key].value = loadedSettings[key].value;
+        }
+      }
     }
   },
   actions: {

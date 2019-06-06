@@ -33,7 +33,7 @@
 <script>
 export default {
   name: 'setting-control',
-  props: ['id', 'setting'],
+  props: ['id', 'setting', 'action'],
   computed: {
     localVal: {
       get() {
@@ -42,13 +42,12 @@ export default {
       set(value) {
         if (this.setting.type === 'number') {
           if (!isNaN(parseFloat(value))) {
-            this.$store.commit('SET_BACKEND_SETTING', {
+            this.$store.commit(this.action, {
               key: this.id,
               value: parseFloat(value)
             });
           }
-        } else
-          this.$store.commit('SET_BACKEND_SETTING', { key: this.id, value });
+        } else this.$store.commit(this.action, { key: this.id, value });
       }
     }
   }

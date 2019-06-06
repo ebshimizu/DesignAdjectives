@@ -52,13 +52,18 @@ export default {
         const minHue = this.$store.getters.hueMin;
         const maxHue = this.$store.getters.hueMax;
         let grad = 'linear-gradient(to right';
+        const isGreyscale = minHue - maxHue === 0;
 
         // scale based on max/min and also on color range
         for (let i = 0; i < vals.length; i++) {
           const normVal = (vals[i] - min) / (max - min);
-          const hueVal = normVal * (maxHue - minHue) + minHue;
 
-          grad = `${grad}, hsl(${hueVal}, 100%, 50%)`;
+          if (isGreyscale) {
+            grad = `${grad}, hsl(0, 0%, ${normVal * 100}%)`;
+          } else {
+            const hueVal = normVal * (maxHue - minHue) + minHue;
+            grad = `${grad}, hsl(${hueVal}, 100%, 50%)`;
+          }
         }
 
         grad = grad + ')';

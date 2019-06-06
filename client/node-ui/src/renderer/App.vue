@@ -55,6 +55,7 @@ export default {
     SamplerPanel
   },
   mounted() {
+    this.$store.commit('LOAD_SNIPPET_SETTINGS');
     this.$store.dispatch('CONNECT');
   }
 };
