@@ -1,4 +1,5 @@
 import { DsDriver } from '../driver/dsNodeDriver';
+import * as Constants from '../constants';
 import Vue from 'Vue';
 import fs from 'fs-extra';
 import settings from 'electron-settings';
@@ -43,9 +44,8 @@ function unnormalizeSample(sample, key) {
 export default {
   state: {
     port: 5234,
-    paramSettings: {
-      hueMin: 0,
-      hueMax: 120
+    settings: {
+      paramColor: Constants.PARAM_COLOR_MODE.REDGREEN
     },
     snippets: {},
     activeSnippet: {},
@@ -86,10 +86,18 @@ export default {
       return state.paramData;
     },
     hueMin: state => {
-      return state.paramSettings.hueMin;
+      if (state.settings.paramColor === Constants.PARAM_COLOR_MODE.REDGREEN) {
+        return 0;
+      }
+
+      return 0;
     },
     hueMax: state => {
-      return state.paramSettings.hueMax;
+      if (state.settings.paramColor === Constants.PARAM_COLOR_MODE.REDGREEN) {
+        return 120;
+      }
+
+      return 120;
     }
   },
   mutations: {

@@ -4,6 +4,7 @@ import path from 'path';
 import cp, { exec } from 'child_process';
 import fs from 'fs-extra';
 import * as THREE from 'three';
+import Settings from 'electron-settings';
 // import fs from 'fs-extra';
 
 // Fill in path with your toolkit dir
@@ -418,14 +419,38 @@ function updateRenders() {
   }
 }
 
+function setSettingGlobal(key, value) {
+  substanceSettings[key].value = value;
+
+  if (key === 'modelType') {
+    updateMesh();
+  }
+
+  Settings.set('substanceBackendSettings', substanceSettings);
+}
+
 export default {
   type() {
     return 'Substance';
   },
 
+  setSetting(key, value) {
+    setSettingGlobal(key, value);
+  },
+
   loadNew(config) {
     fs.emptyDirSync(renderDir);
     currentFile = path.join(config.dir, config.filename);
+
+    // load backend settings
+    const loadedSettings = Settings.get('substanceBackendSettings');
+    if (loadedSettings) {
+      for (const key in loadedSettings) {
+        if (key in substanceSettings) {
+          setSettingGlobal(key, loadedSettings[key].value);
+        }
+      }
+    }
 
     // load params
     renderers = {};
@@ -475,13 +500,5 @@ export default {
 
   getSettings() {
     return substanceSettings;
-  },
-
-  setSetting(key, value) {
-    substanceSettings[key].value = value;
-
-    if (key === 'modelType') {
-      updateMesh();
-    }
   }
 };

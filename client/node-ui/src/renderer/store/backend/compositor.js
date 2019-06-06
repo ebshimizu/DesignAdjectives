@@ -43,6 +43,8 @@ export default {
   // config may have additional fields, would recommend adding to the object
   // as additional backends get constructed.
   loadNew(config) {
+    // load settings too, eventually
+
     c = new compositor.Compositor(config.filename, config.dir);
   },
 
@@ -104,5 +106,6 @@ export default {
 
   setSetting(key, value) {
     // noop
+    // don't forget to snapshot settings
   }
 };
