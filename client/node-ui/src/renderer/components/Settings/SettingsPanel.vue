@@ -6,7 +6,7 @@
     <setting-control
       v-for="(setting, key) in snippetSettings"
       :key="key"
-      action="SET_SNIPPET_SETTING"
+      :action="snippetMutation"
       v-bind:setting="setting"
       v-bind:id="key"
     ></setting-control>
@@ -27,6 +27,7 @@
 import Tab from '../Tabs/Tab';
 import Tabs from '../Tabs/Tabs';
 import SettingControl from './SettingControl';
+import { MUTATION } from '../../store/constants';
 
 export default {
   name: 'settings-panel',
@@ -34,6 +35,11 @@ export default {
     Tab,
     Tabs,
     SettingControl
+  },
+  data() {
+    return {
+      snippetMutation: MUTATION.SET_SNIPPET_SETTING
+    };
   },
   computed: {
     settings() {

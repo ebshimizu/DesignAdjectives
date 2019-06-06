@@ -40,6 +40,7 @@ import Tab from '@/components/Tabs/Tab';
 import SnippetInspector from '@/components/Snippets/SnippetInspector';
 import SamplerPanel from '@/components/Samples/SamplerPanel';
 import '@/assets/tailwind.css';
+import { MUTATION, ACTION } from '@/store/constants';
 
 export default {
   name: 'snippets-ui',
@@ -55,8 +56,8 @@ export default {
     SamplerPanel
   },
   mounted() {
-    this.$store.commit('LOAD_SNIPPET_SETTINGS');
-    this.$store.dispatch('CONNECT');
+    this.$store.commit(MUTATION.LOAD_SNIPPET_SETTINGS);
+    this.$store.dispatch(ACTION.CONNECT);
   }
 };
 </script>

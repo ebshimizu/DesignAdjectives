@@ -153,10 +153,10 @@ export default {
     }
   },
   mutations: {
-    SET_PORT(state, port) {
+    [Constants.MUTATION.SET_PORT](state, port) {
       state.port = port;
     },
-    CONNECT(state) {
+    [Constants.MUTATION.CONNECT](state) {
       if (driver) {
         driver.connectCallback = null;
         driver.disconnect();
@@ -170,7 +170,7 @@ export default {
       // async stuff might happen in an action? like call a sampling function
       // which then registers a callback with the driver that commits new samples to the state
     },
-    DISCONNECT(state) {
+    [Constants.MUTATION.DISCONNECT](state) {
       if (driver) {
         driver.disconnect();
         state.connected = false;
@@ -178,11 +178,11 @@ export default {
         state.serverStatus.action = 'IDLE';
       }
     },
-    STATUS_UPDATE(state, status) {
+    [Constants.MUTATION.STATUS_UPDATE](state, status) {
       state.connected = status.connected;
       state.serverOnline = status.serverOnline;
     },
-    NEW_SNIPPET(state, name) {
+    [Constants.MUTATION.NEW_SNIPPET](state, name) {
       if (!(name in state.snippets)) {
         Vue.set(state.snippets, name, {});
         Vue.set(state.snippets[name], 'name', name);
@@ -191,10 +191,10 @@ export default {
         Vue.set(state.snippets[name], 'trained', false);
       }
     },
-    DELETE_SNIPPET(state, name) {
+    [Constants.MUTATION.DELETE_SNIPPET](state, name) {
       Vue.delete(state.snippets, name);
     },
-    ADD_EXAMPLE(state, data) {
+    [Constants.MUTATION.ADD_EXAMPLE](state, data) {
       if (data.name in state.snippets) {
         state.snippets[data.name].data.push(data.point);
 
@@ -202,7 +202,7 @@ export default {
         state.snippets[data.name].trained = false;
       }
     },
-    DELETE_EXAMPLE(state, data) {
+    [Constants.MUTATION.DELETE_EXAMPLE](state, data) {
       if (data.name in state.snippets) {
         state.snippets[data.name].data.splice(data.index, 1);
 
@@ -210,18 +210,18 @@ export default {
         state.snippets[data.name].trained = false;
       }
     },
-    ADD_TRAINED_DATA(state, data) {
+    [Constants.MUTATION.ADD_TRAINED_DATA](state, data) {
       if (data.name in state.snippets) {
         state.snippets[data.name].trainData = data.trainData;
         state.snippets[data.name].trained = true;
       }
     },
-    SET_ACTIVE_SNIPPET(state, id) {
+    [Constants.MUTATION.SET_ACTIVE_SNIPPET](state, id) {
       if (id in state.snippets)
         state.activeSnippet = Object.assign({}, state.snippets[id]);
       else state.activeSnippet = {};
     },
-    UPDATE_ACTIVE_SNIPPET(state) {
+    [Constants.MUTATION.UPDATE_ACTIVE_SNIPPET](state) {
       if (state.activeSnippet.name in state.snippets)
         state.activeSnippet = Object.assign(
           {},
@@ -229,25 +229,25 @@ export default {
         );
       else state.activeSnippet = {};
     },
-    CLEAR_SAMPLES(state) {
+    [Constants.MUTATION.CLEAR_SAMPLES](state) {
       state.samples = [];
     },
-    ADD_SAMPLE(state, sample) {
+    [Constants.MUTATION.ADD_SAMPLE](state, sample) {
       state.samples.push(sample);
     },
-    SET_SERVER_STATUS_IDLE(state) {
+    [Constants.MUTATION.SET_SERVER_STATUS_IDLE](state) {
       state.serverStatus.action = 'IDLE';
       state.serverStatus.message = '';
     },
-    SET_SERVER_STATUS_TRAIN(state, name) {
+    [Constants.MUTATION.SET_SERVER_STATUS_TRAIN](state, name) {
       state.serverStatus.action = 'TRAIN';
       state.serverStatus.message = `Training ${name}`;
     },
-    SET_SERVER_STATUS_SAMPLE(state, name) {
+    [Constants.MUTATION.SET_SERVER_STATUS_SAMPLE](state, name) {
       state.serverStatus.action = 'SAMPLE';
       state.serverStatus.message = `Sampling ${name}`;
     },
-    EXPORT_SNIPPETS(state, file) {
+    [Constants.MUTATION.EXPORT_SNIPPETS](state, file) {
       const data = JSON.stringify(state.snippets, undefined, 2);
       try {
         fs.writeFileSync(file, data);
@@ -255,16 +255,16 @@ export default {
         console.log(e);
       }
     },
-    CACHE_SNIPPETS(state, key) {
+    [Constants.MUTATION.CACHE_SNIPPETS](state, key) {
       settings.set(key, state.snippets);
     },
-    LOAD_SNIPPETS(state, key) {
+    [Constants.MUTATION.LOAD_SNIPPETS](state, key) {
       state.cacheKey = key;
 
       if (settings.has(key)) state.snippets = settings.get(key);
       else state.snippets = {};
     },
-    IMPORT_SNIPPETS(state, file) {
+    [Constants.MUTATION.IMPORT_SNIPPETS](state, file) {
       try {
         if (fs.existsSync(file)) {
           const data = fs.readFileSync(file);
@@ -274,10 +274,10 @@ export default {
         console.log(e);
       }
     },
-    SET_ACTIVE_SNIPPET_SCORE(state, score) {
+    [Constants.MUTATION.SET_ACTIVE_SNIPPET_SCORE](state, score) {
       state.activeSnippetScore = score;
     },
-    SET_PARAM_COLOR_DATA(state, data) {
+    [Constants.MUTATION.SET_PARAM_COLOR_DATA](state, data) {
       // may want to perform some analysis to determine min/max ranges for the params
       let meanMin = 1e10;
       let meanMax = -1e10;
@@ -293,11 +293,11 @@ export default {
       data.meanMax = meanMax;
       state.paramData = data;
     },
-    SET_SNIPPET_SETTING(state, data) {
+    [Constants.MUTATION.SET_SNIPPET_SETTING](state, data) {
       state.settings[data.key].value = data.value;
       settings.set('snippetSettings', state.settings);
     },
-    LOAD_SNIPPET_SETTINGS(state) {
+    [Constants.MUTATION.LOAD_SNIPPET_SETTINGS](state) {
       const loadedSettings = settings.get('snippetSettings');
       for (const key in loadedSettings) {
         if (key in state.settings) {
@@ -309,19 +309,25 @@ export default {
   actions: {
     NEW_SNIPPET(context, data) {
       try {
-        context.commit('NEW_SNIPPET', data.name);
+        context.commit(Constants.MUTATION.NEW_SNIPPET, data.name);
         // await driver.addSnippet(data.name);
-        context.commit('SET_ACTIVE_SNIPPET', data.name);
-        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
+        context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.name);
+        context.commit(
+          Constants.MUTATION.CACHE_SNIPPETS,
+          context.state.cacheKey
+        );
       } catch (e) {
         console.log(e);
       }
     },
     DELETE_SNIPPET(context, data) {
       try {
-        context.commit('DELETE_SNIPPET', data.name);
-        context.commit('UPDATE_ACTIVE_SNIPPET');
-        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
+        context.commit(Constants.MUTATION.DELETE_SNIPPET, data.name);
+        context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+        context.commit(
+          Constants.MUTATION.CACHE_SNIPPETS,
+          context.state.cacheKey
+        );
         // await driver.deleteSnippet(data.name);
       } catch (e) {
         console.log(e);
@@ -329,7 +335,7 @@ export default {
     },
     async TRAIN(context, name) {
       try {
-        context.commit('SET_SERVER_STATUS_TRAIN', name);
+        context.commit(Constants.MUTATION.SET_SERVER_STATUS_TRAIN, name);
 
         // ensure snippet exists
         await driver.addSnippet(name);
@@ -344,9 +350,15 @@ export default {
 
         // train
         const trainData = await driver.train(name);
-        context.commit('ADD_TRAINED_DATA', { name, trainData });
-        context.commit('UPDATE_ACTIVE_SNIPPET');
-        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
+        context.commit(Constants.MUTATION.ADD_TRAINED_DATA, {
+          name,
+          trainData
+        });
+        context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+        context.commit(
+          Constants.MUTATION.CACHE_SNIPPETS,
+          context.state.cacheKey
+        );
 
         // load parameter color data
         await context.dispatch('LOAD_PARAM_COLOR_DATA', name);
@@ -354,12 +366,12 @@ export default {
         console.log(e);
       }
 
-      context.commit('SET_SERVER_STATUS_IDLE', name);
+      context.commit(Constants.MUTATION.SET_SERVER_STATUS_IDLE, name);
     },
     async LOAD_SNIPPET(context, name) {
       // loads the existing train data into the server
       try {
-        context.commit('SET_SERVER_STATUS_TRAIN', name);
+        context.commit(Constants.MUTATION.SET_SERVER_STATUS_TRAIN, name);
 
         // ensure exists
         await driver.addSnippet(name);
@@ -379,13 +391,16 @@ export default {
         console.log(e);
       }
 
-      context.commit('SET_SERVER_STATUS_IDLE', name);
+      context.commit(Constants.MUTATION.SET_SERVER_STATUS_IDLE, name);
     },
     ADD_EXAMPLE(context, data) {
       try {
-        context.commit('ADD_EXAMPLE', data);
-        context.commit('UPDATE_ACTIVE_SNIPPET');
-        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
+        context.commit(Constants.MUTATION.ADD_EXAMPLE, data);
+        context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+        context.commit(
+          Constants.MUTATION.CACHE_SNIPPETS,
+          context.state.cacheKey
+        );
         // await driver.addData(data.name, data.point.x, data.point.y);
       } catch (e) {
         console.log(e);
@@ -393,9 +408,12 @@ export default {
     },
     DELETE_EXAMPLE(context, data) {
       try {
-        context.commit('DELETE_EXAMPLE', data);
-        context.commit('UPDATE_ACTIVE_SNIPPET');
-        context.commit('CACHE_SNIPPETS', context.state.cacheKey);
+        context.commit(Constants.MUTATION.DELETE_EXAMPLE, data);
+        context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+        context.commit(
+          Constants.MUTATION.CACHE_SNIPPETS,
+          context.state.cacheKey
+        );
         // await driver.removeData(data.name, data.index);
       } catch (e) {
         console.log(e);
@@ -404,17 +422,20 @@ export default {
     async SYNC(context) {
       // todo: yeh fill this in
     },
-    async CONNECT(context) {
-      context.commit('CONNECT');
+    async [Constants.ACTION.CONNECT](context) {
+      context.commit(Constants.MUTATION.CONNECT);
 
       // bind status callbacks
       driver.connectCallback = function(connected, serverOnline) {
-        context.commit('STATUS_UPDATE', { connected, serverOnline });
+        context.commit(Constants.MUTATION.STATUS_UPDATE, {
+          connected,
+          serverOnline
+        });
       };
 
       driver.sampleCallback = function(data, name) {
         unnormalizeSample(data, context.getters.params);
-        context.commit('ADD_SAMPLE', data);
+        context.commit(Constants.MUTATION.ADD_SAMPLE, data);
       };
 
       driver.sampleFinalCallback = function(data, name) {
@@ -428,8 +449,8 @@ export default {
     },
     async START_SAMPLER(context, data) {
       try {
-        context.commit('SET_SERVER_STATUS_SAMPLE');
-        context.commit('CLEAR_SAMPLES');
+        context.commit(Constants.MUTATION.SET_SERVER_STATUS_SAMPLE);
+        context.commit(Constants.MUTATION.CLEAR_SAMPLES);
 
         // get the current normalized vector starting state
         const current = context.getters.paramsAsArray;
@@ -443,16 +464,16 @@ export default {
     async STOP_SAMPLER(context) {
       try {
         await driver.stopSampler();
-        context.commit('SET_SERVER_STATUS_IDLE');
+        context.commit(Constants.MUTATION.SET_SERVER_STATUS_IDLE);
       } catch (e) {
         console.log(e);
       }
     },
     DISCONNECT(context) {
-      context.commit('DISCONNECT');
+      context.commit(Constants.MUTATION.DISCONNECT);
     },
     SET_ACTIVE_SNIPPET(context, data) {
-      context.commit('SET_ACTIVE_SNIPPET', data);
+      context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data);
       context.dispatch('COMMIT_PARAMS');
 
       if (context.state.activeSnippet && context.state.activeSnippet.trained) {
@@ -461,9 +482,9 @@ export default {
     },
     LOAD_SNIPPETS(context, key) {
       // reset state during the load
-      context.commit('LOAD_SNIPPETS', key);
-      context.commit('UPDATE_ACTIVE_SNIPPET', key);
-      context.commit('CLEAR_SAMPLES');
+      context.commit(Constants.MUTATION.LOAD_SNIPPETS, key);
+      context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET, key);
+      context.commit(Constants.MUTATION.CLEAR_SAMPLES);
 
       // call load snippet on all trained snippets, assumes connected
       if (context.state.serverOnline) {
@@ -480,12 +501,15 @@ export default {
             context.getters.activeSnippetName,
             normalizeVector(vec, context.getters.params)
           );
-          context.commit('SET_ACTIVE_SNIPPET_SCORE', score);
+          context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET_SCORE, score);
         } catch (e) {
           console.log(e);
         }
       } else {
-        context.commit('SET_ACTIVE_SNIPPET_SCORE', { mean: 0, cov: 0 });
+        context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET_SCORE, {
+          mean: 0,
+          cov: 0
+        });
       }
     },
     async LOAD_PARAM_COLOR_DATA(context, snippet) {
@@ -496,7 +520,7 @@ export default {
         rmax: 1,
         n: 20
       });
-      context.commit('SET_PARAM_COLOR_DATA', paramData);
+      context.commit(Constants.MUTATION.SET_PARAM_COLOR_DATA, paramData);
     }
   }
 };
