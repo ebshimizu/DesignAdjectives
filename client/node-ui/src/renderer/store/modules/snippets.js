@@ -51,6 +51,7 @@ export default {
         name: 'Parameter Preference Function Colors',
         values: [
           Constants.PARAM_COLOR_MODE.REDGREEN,
+          Constants.PARAM_COLOR_MODE.BLUEYELLOW,
           Constants.PARAM_COLOR_MODE.BLUEGREEN,
           Constants.PARAM_COLOR_MODE.REDBLUE,
           Constants.PARAM_COLOR_MODE.GREYSCALE
@@ -112,6 +113,11 @@ export default {
         state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.GREYSCALE
       ) {
         return 0;
+      } else if (
+        state.settings.paramColor.value ===
+        Constants.PARAM_COLOR_MODE.BLUEYELLOW
+      ) {
+        return { r: 0, g: 0, b: 255 };
       }
 
       return 0;
@@ -133,6 +139,11 @@ export default {
         state.settings.paramColor.value === Constants.PARAM_COLOR_MODE.GREYSCALE
       ) {
         return 0;
+      } else if (
+        state.settings.paramColor.value ===
+        Constants.PARAM_COLOR_MODE.BLUEYELLOW
+      ) {
+        return { r: 255, g: 255, b: 0 };
       }
 
       return 120;

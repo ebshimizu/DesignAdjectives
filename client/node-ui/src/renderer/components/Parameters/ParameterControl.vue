@@ -53,6 +53,7 @@ export default {
         const maxHue = this.$store.getters.hueMax;
         let grad = 'linear-gradient(to right';
         const isGreyscale = minHue - maxHue === 0;
+        const isRGB = typeof minHue !== 'number';
 
         // scale based on max/min and also on color range
         for (let i = 0; i < vals.length; i++) {
@@ -60,6 +61,11 @@ export default {
 
           if (isGreyscale) {
             grad = `${grad}, hsl(0, 0%, ${normVal * 100}%)`;
+          } else if (isRGB) {
+            grad = `${grad}, rgb(${normVal * maxHue.r +
+              (1 - normVal) * minHue.r}, ${normVal * maxHue.g +
+              (1 - normVal) * minHue.g}, ${normVal * maxHue.b +
+              (1 - normVal) * minHue.b})`;
           } else {
             const hueVal = normVal * (maxHue - minHue) + minHue;
             grad = `${grad}, hsl(${hueVal}, 100%, 50%)`;
