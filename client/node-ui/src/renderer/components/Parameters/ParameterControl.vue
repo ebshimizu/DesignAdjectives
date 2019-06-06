@@ -62,10 +62,10 @@ export default {
         }
 
         grad = grad + ')';
-        return { 'background-image': grad };
+        return { background: grad };
       }
 
-      return { 'background-image': 'unset' };
+      return { background: 'rgba(27, 28, 29, 0.81)' };
     }
   },
   methods: {
@@ -90,7 +90,6 @@ input[type='range']::-webkit-slider-runnable-track {
   height: 25.9px;
   cursor: pointer;
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: rgba(27, 28, 29, 0.81);
   border-radius: 1.3px;
   border: 0.2px solid #0b0101;
 }
@@ -106,7 +105,6 @@ input[type='range']::-webkit-slider-thumb {
   margin-top: -3.75px;
 }
 input[type='range']:focus::-webkit-slider-runnable-track {
-  background: rgba(39, 41, 42, 0.81);
 }
 input[type='range']::-moz-range-track {
   width: 100%;
