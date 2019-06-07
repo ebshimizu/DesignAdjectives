@@ -204,6 +204,14 @@ export default {
         Vue.set(state.snippets[data.copyTo], 'trained', false);
       }
     },
+    [Constants.MUTATION.RENAME_SNIPPET](state, data) {
+      if (!(data.renameTo in state.snippets)) {
+        // move the reference
+        Vue.set(state.snippets, data.renameTo, state.snippets[data.active]);
+        Vue.set(state.snippets[data.renameTo], 'name', data.renameTo);
+        Vue.delete(state.snippets, data.active);
+      }
+    },
     [Constants.MUTATION.DELETE_SNIPPET](state, name) {
       Vue.delete(state.snippets, name);
     },
@@ -341,6 +349,18 @@ export default {
       try {
         context.commit(Constants.MUTATION.COPY_SNIPPET, data);
         context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.copyTo);
+        context.commit(
+          Constants.MUTATION.CACHE_SNIPPETS,
+          context.state.cacheKey
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [Constants.ACTION.RENAME_SNIPPET](context, data) {
+      try {
+        context.commit(Constants.MUTATION.RENAME_SNIPPET, data);
+        context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.renameTo);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
