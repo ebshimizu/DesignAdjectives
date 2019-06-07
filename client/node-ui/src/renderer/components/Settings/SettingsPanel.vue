@@ -16,7 +16,7 @@
     <setting-control
       v-for="(setting, key) in settings"
       :key="key"
-      action="SET_BACKEND_SETTING"
+      :action="backendMutation"
       v-bind:setting="setting"
       v-bind:id="key"
     ></setting-control>
@@ -38,7 +38,8 @@ export default {
   },
   data() {
     return {
-      snippetMutation: MUTATION.SET_SNIPPET_SETTING
+      snippetMutation: MUTATION.SET_SNIPPET_SETTING,
+      backendMutation: MUTATION.SET_BACKEND_SETTING
     };
   },
   computed: {

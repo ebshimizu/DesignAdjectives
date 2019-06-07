@@ -27,6 +27,7 @@
 
 <script>
 // input styles from http://danielstern.ca/range.css/#/
+import { MUTATION, ACTION } from '../../store/constants';
 
 export default {
   name: 'parameter-control',
@@ -37,7 +38,7 @@ export default {
         return this.param.value;
       },
       set(value) {
-        this.$store.commit('SET_PARAM', {
+        this.$store.commit(MUTATION.SET_PARAM, {
           id: this.param.id,
           val: parseFloat(value)
         });
@@ -81,7 +82,7 @@ export default {
   },
   methods: {
     commitChange() {
-      this.$store.dispatch('COMMIT_PARAMS');
+      this.$store.dispatch(ACTION.COMMIT_PARAMS);
     }
   }
 };

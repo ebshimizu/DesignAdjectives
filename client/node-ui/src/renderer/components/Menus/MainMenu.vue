@@ -13,7 +13,7 @@
 import MenuGroup from './MenuGroup';
 import MenuItem from './MenuItem';
 import path from 'path';
-import { ACTION } from '../../store/constants';
+import { ACTION, MUTATION } from '../../store/constants';
 
 export default {
   name: 'main-menu',
@@ -45,9 +45,9 @@ export default {
             canvas.parentNode.replaceChild(newCanvas, canvas);
             canvas = newCanvas;
 
-            this.$store.commit('DETECT_BACKEND', file);
+            this.$store.commit(MUTATION.DETECT_BACKEND, file);
 
-            this.$store.commit('LOAD_NEW_FILE', {
+            this.$store.commit(MUTATION.LOAD_NEW_FILE, {
               filename: file,
               dir
             });

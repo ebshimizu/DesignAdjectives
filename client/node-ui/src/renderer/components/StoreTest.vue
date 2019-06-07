@@ -16,13 +16,7 @@ export default {
     MainRenderCanvas
   },
   methods: {
-    loadTestFile() {
-      this.$store.dispatch('LOAD_NEW_FILE', {
-        filename: 'shapes3.dark',
-        dir:
-          'C:/Users/Falindrith/Dropbox/Documents/research/sliders_project/test_images/shapes/'
-      });
-    }
+    loadTestFile() {}
   }
 };
 </script>

@@ -67,16 +67,16 @@ export default {
   methods: {
     select() {
       // copy x to the current state
-      this.$store.dispatch('LOCK_TEMPORARY_STATE', this.x);
+      this.$store.dispatch(ACTION.LOCK_TEMPORARY_STATE, this.x);
     },
     onHover() {
       this.showActions = true;
-      this.$store.dispatch('SHOW_TEMPORARY_STATE', this.x);
+      this.$store.dispatch(ACTION.SHOW_TEMPORARY_STATE, this.x);
       this.$refs.sample.focus();
     },
     onHoverStop() {
       this.showActions = false;
-      this.$store.dispatch('HIDE_TEMPORARY_STATE');
+      this.$store.dispatch(ACTION.HIDE_TEMPORARY_STATE);
     },
     addPositive() {
       this.$store.dispatch(ACTION.ADD_EXAMPLE, {

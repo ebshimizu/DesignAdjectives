@@ -9,7 +9,7 @@ import Vue from 'Vue';
 import SbsBackend from '../backend/substance';
 import CmpBackend from '../backend/compositor';
 
-import { ACTION } from '../constants';
+import { ACTION, MUTATION } from '../constants';
 
 export function createStore(backend, type) {
   return {
@@ -43,7 +43,7 @@ export function createStore(backend, type) {
       }
     },
     mutations: {
-      LOAD_NEW_FILE(state, config) {
+      [MUTATION.LOAD_NEW_FILE](state, config) {
         state.backend.loadNew(config);
         state.cacheKey = path.join(config.dir, config.filename);
 
@@ -51,7 +51,7 @@ export function createStore(backend, type) {
         state.parameters = state.backend.getParams();
         state.lastCommittedVector = state.parameters.map(p => p.value);
       },
-      DETECT_BACKEND(state, filename) {
+      [MUTATION.DETECT_BACKEND](state, filename) {
         // valid extensions: .dark (compositor), .sbsar (substance)
 
         const ext = path.extname(filename);
@@ -67,36 +67,36 @@ export function createStore(backend, type) {
           state.type = 'substance';
         }
       },
-      SET_PARAM(state, config) {
+      [MUTATION.SET_PARAM](state, config) {
         Vue.set(state.parameters[config.id], 'value', config.val);
       },
-      SET_PARAMS(state, vec) {
+      [MUTATION.SET_PARAMS](state, vec) {
         state.backend.setAllParams(vec);
         state.parameters = state.backend.getParams();
         state.lastCommittedVector = vec;
       },
-      COMMIT_PARAMS(state) {
+      [MUTATION.COMMIT_PARAMS](state) {
         // replaces the entire state with the array contained in config.val
         state.backend.setAllParams(state.parameters.map(p => p.value));
         state.lastCommittedVector = state.parameters.map(p => p.value);
       },
-      SNAPSHOT(state) {
+      [MUTATION.SNAPSHOT](state) {
         if (state.snapshot.length === 0)
           state.snapshot = state.parameters.map(p => p.value);
       },
-      RESET_SNAPSHOT(state) {
+      [MUTATION.RESET_SNAPSHOT](state) {
         state.snapshot = [];
       },
-      SET_BACKEND_SETTING(state, data) {
+      [MUTATION.SET_BACKEND_SETTING](state, data) {
         state.backend.setSetting(data.key, data.value);
       }
     },
     actions: {
-      SET_PARAM(context, config) {
-        context.commit('SET_PARAM', config);
+      [ACTION.SET_PARAM](context, config) {
+        context.commit(MUTATION.SET_PARAM, config);
       },
-      COMMIT_PARAMS(context) {
-        context.commit('COMMIT_PARAMS');
+      [ACTION.COMMIT_PARAMS](context) {
+        context.commit(MUTATION.COMMIT_PARAMS);
         context.dispatch(ACTION.EVAL_CURRENT, context.getters.paramsAsArray);
         if (context.getters.activeSnippetName !== null) {
           context.dispatch(
@@ -105,20 +105,20 @@ export function createStore(backend, type) {
           );
         }
       },
-      SHOW_TEMPORARY_STATE(context, vec) {
-        context.commit('SNAPSHOT');
-        context.commit('SET_PARAMS', vec);
+      [ACTION.SHOW_TEMPORARY_STATE](context, vec) {
+        context.commit(MUTATION.SNAPSHOT);
+        context.commit(MUTATION.SET_PARAMS, vec);
       },
-      HIDE_TEMPORARY_STATE(context) {
+      [ACTION.HIDE_TEMPORARY_STATE](context) {
         // there's a case where the snapshot is invalid when this is called (state is locked)
         if (context.state.snapshot.length > 0)
-          context.commit('SET_PARAMS', context.state.snapshot);
+          context.commit(MUTATION.SET_PARAMS, context.state.snapshot);
 
-        context.commit('RESET_SNAPSHOT');
+        context.commit(MUTATION.RESET_SNAPSHOT);
       },
-      LOCK_TEMPORARY_STATE(context, vec) {
-        context.commit('RESET_SNAPSHOT');
-        context.commit('SET_PARAMS', vec);
+      [ACTION.LOCK_TEMPORARY_STATE](context, vec) {
+        context.commit(MUTATION.RESET_SNAPSHOT);
+        context.commit(MUTATION.SET_PARAMS, vec);
         context.dispatch(ACTION.EVAL_CURRENT, vec);
       }
     }
