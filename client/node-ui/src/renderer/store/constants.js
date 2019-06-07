@@ -47,5 +47,6 @@ export const ACTION = {
   DISCONNECT: 'Disconnect from Snippet Server',
   SET_ACTIVE_SNIPPET: 'Set Active Snippet',
   LOAD_SNIPPETS: 'Load Snippets',
-  EVAL_CURRENT: 'Evaluate Current State with Current Snippet'
+  EVAL_CURRENT: 'Evaluate Current State with Current Snippet',
+  LOAD_PARAM_COLOR_DATA: 'Load Preference Data for Current Parameters'
 };

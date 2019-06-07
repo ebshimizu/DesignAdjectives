@@ -361,7 +361,7 @@ export default {
         );
 
         // load parameter color data
-        await context.dispatch('LOAD_PARAM_COLOR_DATA', name);
+        await context.dispatch(Constants.ACTION.LOAD_PARAM_COLOR_DATA, name);
       } catch (e) {
         console.log(e);
       }
@@ -477,7 +477,7 @@ export default {
       context.dispatch('COMMIT_PARAMS');
 
       if (context.state.activeSnippet && context.state.activeSnippet.trained) {
-        context.dispatch('LOAD_PARAM_COLOR_DATA', data);
+        context.dispatch(Constants.ACTION.LOAD_PARAM_COLOR_DATA, data);
       }
     },
     [Constants.ACTION.LOAD_SNIPPETS](context, key) {
