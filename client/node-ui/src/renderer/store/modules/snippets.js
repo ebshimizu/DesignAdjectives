@@ -191,6 +191,19 @@ export default {
         Vue.set(state.snippets[name], 'trained', false);
       }
     },
+    [Constants.MUTATION.COPY_SNIPPET](state, data) {
+      if (!(data.copyTo in state.snippets) && data.active in state.snippets) {
+        Vue.set(state.snippets, data.copyTo, {});
+        Vue.set(state.snippets[data.copyTo], 'name', data.copyTo);
+        Vue.set(state.snippets[data.copyTo], 'data', [
+          ...state.snippets[data.active].data
+        ]);
+
+        // copied snippets will need to re-train (it's assumed you will modify the copy)
+        Vue.set(state.snippets[data.copyTo], 'trainData', {});
+        Vue.set(state.snippets[data.copyTo], 'trained', false);
+      }
+    },
     [Constants.MUTATION.DELETE_SNIPPET](state, name) {
       Vue.delete(state.snippets, name);
     },
@@ -278,6 +291,10 @@ export default {
       state.activeSnippetScore = score;
     },
     [Constants.MUTATION.SET_PARAM_COLOR_DATA](state, data) {
+      if (!data) {
+        return;
+      }
+
       // may want to perform some analysis to determine min/max ranges for the params
       let meanMin = 1e10;
       let meanMax = -1e10;
@@ -312,6 +329,18 @@ export default {
         context.commit(Constants.MUTATION.NEW_SNIPPET, data.name);
         // await driver.addSnippet(data.name);
         context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.name);
+        context.commit(
+          Constants.MUTATION.CACHE_SNIPPETS,
+          context.state.cacheKey
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [Constants.ACTION.COPY_SNIPPET](context, data) {
+      try {
+        context.commit(Constants.MUTATION.COPY_SNIPPET, data);
+        context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.copyTo);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
@@ -439,7 +468,7 @@ export default {
       };
 
       driver.sampleFinalCallback = function(data, name) {
-        context.dispatch(Constants.ACITON.STOP_SAMPLER);
+        context.dispatch(Constants.ACTION.STOP_SAMPLER);
       };
 
       // reset the server state completely

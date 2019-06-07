@@ -47,3 +47,11 @@
 .standard-text-field {
   @apply rounded-sm p-1 text-sm text-grey-light bg-grey-darkest font-mono;
 }
+
+.snippet-panel-modal {
+  @apply absolute w-full h-full pin-t pin-r flex flex-col items-center justify-center p-2;
+}
+
+.snippet-panel-modal .title {
+  @apply w-full block uppercase tracking-wide text-grey-lighter text-sm font-bold flex items-start justify-center px-2 py-4;
+}

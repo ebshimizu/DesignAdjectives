@@ -23,16 +23,22 @@
         class="w-full block uppercase tracking-wide text-grey-lighter text-xs font-bold m-2"
       >Actions</div>
       <div class="w-full ml-2 flex text-sm flex-wrap flex-row">
-        <div class="w-1/4 flex-grow pr-2">
+        <div class="w-1/4 pr-2">
           <div class="btn btn-green" @click="showNewModal()">New</div>
         </div>
-        <div class="w-1/4 flex-grow pr-2">
+        <div class="w-1/4 pr-2">
+          <div class="btn btn-blue" @click="showCopyModal()">Copy</div>
+        </div>
+        <div class="w-1/4 pr-2">
+          <div class="btn btn-blue" @click="showRenameModal()">Rename</div>
+        </div>
+        <div class="w-1/4 pr-2">
           <div class="btn btn-red w-full" @click="deleteSnippet()">Delete</div>
         </div>
-        <div class="w-1/4 flex-grow pr-2">
+        <div class="w-1/4 pr-2">
           <div class="btn btn-blue w-full" @click="addExample(1)">Add +</div>
         </div>
-        <div class="w-1/4 flex-grow pr-2">
+        <div class="w-1/4 pr-2">
           <div class="btn btn-blue w-full" @click="addExample(-1)">Add -</div>
         </div>
         <div class="w-1/4 pr-2">
@@ -44,13 +50,8 @@
         </div>
       </div>
     </div>
-    <div
-      class="new-modal absolute w-full h-full pin-t pin-r flex flex-col items-center justify-center p-2"
-      v-show="showNew"
-    >
-      <div
-        class="w-full block uppercase tracking-wide text-grey-lighter text-sm font-bold flex items-start justify-center px-2 py-4"
-      >Create New Snippet</div>
+    <div class="new-modal snippet-panel-modal" v-show="showNew">
+      <div class="title">Create New Snippet</div>
       <div class="w-full flex flex-row items-center border-b border-b-2 border-green">
         <input
           v-model="newSnippetName"
@@ -59,7 +60,24 @@
           type="text"
         >
         <div class="flex-no-shrink btn btn-green mr-2" @click="createNewSnippet()">Create</div>
-        <div class="flex-no-shrink btn hover:bg-red-dark" @click="hideNewModal()">Cancel</div>
+        <div class="flex-no-shrink btn hover:bg-red-dark" @click="hideAllModals()">Cancel</div>
+      </div>
+      <div
+        class="w-full text-sm my-2 bg-red-lightest border border-red-light text-red-dark py-3 px-4 rounded"
+        v-show="newSnippetError"
+      >A Snippet with this name already exists</div>
+    </div>
+    <div class="copy-modal snippet-panel-modal" v-show="showCopy">
+      <div class="title">Copy Snippet</div>
+      <div class="w-full flex flex-row items-center border-b border-b-2 border-green">
+        <input
+          v-model="newSnippetName"
+          placeholder="Enter Copied Snippet Name"
+          class="appearance-none bg-transparent border-none w-full text-grey-lightest mr-3 py-1 px-2 leading-tight focus:outline-none"
+          type="text"
+        >
+        <div class="flex-no-shrink btn btn-green mr-2" @click="copySnippet()">Copy</div>
+        <div class="flex-no-shrink btn hover:bg-red-dark" @click="hideAllModals()">Cancel</div>
       </div>
       <div
         class="w-full text-sm my-2 bg-red-lightest border border-red-light text-red-dark py-3 px-4 rounded"
@@ -77,6 +95,7 @@ export default {
   data: function() {
     return {
       showNew: false,
+      showCopy: false,
       newSnippetError: false,
       newSnippetName: ''
     };
@@ -107,8 +126,19 @@ export default {
   methods: {
     showNewModal() {
       this.showNew = true;
+      this.showCopy = false;
     },
-    hideNewModal() {
+    hideAllModals() {
+      this.showNew = false;
+      this.showCopy = false;
+    },
+    showCopyModal() {
+      if (this.activeSnippet === '') {
+        // cannot copy without active snippet, unsure where to show message for this
+        return;
+      }
+
+      this.showCopy = true;
       this.showNew = false;
     },
     createNewSnippet() {
@@ -121,6 +151,20 @@ export default {
       this.$store.dispatch(ACTION.NEW_SNIPPET, { name: this.newSnippetName });
 
       this.showNew = false;
+      this.newSnippetName = '';
+      this.newSnippetError = false;
+    },
+    copySnippet() {
+      if (this.newSnippetName in this.snippetOptions) {
+        this.newSnippetError = true;
+        return;
+      }
+
+      this.$store.dispatch(ACTION.COPY_SNIPPET, {
+        active: this.activeSnippet,
+        copyTo: this.newSnippetName
+      });
+      this.showCopy = false;
       this.newSnippetName = '';
       this.newSnippetError = false;
     },
@@ -156,7 +200,7 @@ export default {
 </script>
 
 <style lang="scss">
-.new-modal {
+.snippet-panel-modal {
   background-color: rgba(0, 0, 0, 0.9);
 }
 </style>

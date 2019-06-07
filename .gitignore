@@ -111,3 +111,5 @@ client/node/test2.png
 *.prof
 client/node/*.png
 client/node-ui/sbsRender/*
+*.ipch
+*.bin

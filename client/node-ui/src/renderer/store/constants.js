@@ -38,7 +38,8 @@ export const MUTATION = {
   COMMIT_PARAMS: 'Commit Parameters',
   SNAPSHOT: 'Create Snapshot',
   RESET_SNAPSHOT: 'Reset Snapshot State',
-  SET_BACKEND_SETTING: 'Set Backend Setting'
+  SET_BACKEND_SETTING: 'Set Backend Setting',
+  COPY_SNIPPET: 'Copy Snippet'
 };
 
 export const ACTION = {
@@ -61,5 +62,6 @@ export const ACTION = {
   COMMIT_PARAMS: 'Commit Parameters',
   SHOW_TEMPORARY_STATE: 'Show Temporary Snapshot State',
   HIDE_TEMPORARY_STATE: 'Hide Temporary Snapshot State',
-  LOCK_TEMPORARY_STATE: 'Lock Temporary Snapshot State'
+  LOCK_TEMPORARY_STATE: 'Lock Temporary Snapshot State',
+  COPY_SNIPPET: 'Copy Snippet'
 };
