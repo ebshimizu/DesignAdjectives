@@ -9,6 +9,8 @@ import Vue from 'Vue';
 import SbsBackend from '../backend/substance';
 import CmpBackend from '../backend/compositor';
 
+import { ACTION } from '../constants';
+
 export function createStore(backend, type) {
   return {
     state: {
@@ -95,10 +97,10 @@ export function createStore(backend, type) {
       },
       COMMIT_PARAMS(context) {
         context.commit('COMMIT_PARAMS');
-        context.dispatch('EVAL_CURRENT', context.getters.paramsAsArray);
+        context.dispatch(ACTION.EVAL_CURRENT, context.getters.paramsAsArray);
         if (context.getters.activeSnippetName !== null) {
           context.dispatch(
-            'LOAD_PARAM_COLOR_DATA',
+            ACTION.LOAD_PARAM_COLOR_DATA,
             context.getters.activeSnippetName
           );
         }
@@ -117,7 +119,7 @@ export function createStore(backend, type) {
       LOCK_TEMPORARY_STATE(context, vec) {
         context.commit('RESET_SNAPSHOT');
         context.commit('SET_PARAMS', vec);
-        context.dispatch('EVAL_CURRENT', vec);
+        context.dispatch(ACTION.EVAL_CURRENT, vec);
       }
     }
   };

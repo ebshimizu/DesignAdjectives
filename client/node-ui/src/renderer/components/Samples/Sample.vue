@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { ACTION } from '../../store/constants';
 // keyboard shortcuts
 // z = add positive
 // x = add negative
@@ -78,13 +79,13 @@ export default {
       this.$store.dispatch('HIDE_TEMPORARY_STATE');
     },
     addPositive() {
-      this.$store.dispatch('ADD_EXAMPLE', {
+      this.$store.dispatch(ACTION.ADD_EXAMPLE, {
         name: this.$store.getters.activeSnippetName,
         point: { x: this.x, y: 1 }
       });
     },
     addNegative() {
-      this.$store.dispatch('ADD_EXAMPLE', {
+      this.$store.dispatch(ACTION.ADD_EXAMPLE, {
         name: this.$store.getters.activeSnippetName,
         point: { x: this.x, y: -1 }
       });

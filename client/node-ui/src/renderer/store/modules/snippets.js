@@ -307,7 +307,7 @@ export default {
     }
   },
   actions: {
-    NEW_SNIPPET(context, data) {
+    [Constants.ACTION.NEW_SNIPPET](context, data) {
       try {
         context.commit(Constants.MUTATION.NEW_SNIPPET, data.name);
         // await driver.addSnippet(data.name);
@@ -320,7 +320,7 @@ export default {
         console.log(e);
       }
     },
-    DELETE_SNIPPET(context, data) {
+    [Constants.ACTION.DELETE_SNIPPET](context, data) {
       try {
         context.commit(Constants.MUTATION.DELETE_SNIPPET, data.name);
         context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
@@ -333,7 +333,7 @@ export default {
         console.log(e);
       }
     },
-    async TRAIN(context, name) {
+    async [Constants.ACTION.TRAIN](context, name) {
       try {
         context.commit(Constants.MUTATION.SET_SERVER_STATUS_TRAIN, name);
 
@@ -368,7 +368,7 @@ export default {
 
       context.commit(Constants.MUTATION.SET_SERVER_STATUS_IDLE, name);
     },
-    async LOAD_SNIPPET(context, name) {
+    async [Constants.ACTION.LOAD_SNIPPET](context, name) {
       // loads the existing train data into the server
       try {
         context.commit(Constants.MUTATION.SET_SERVER_STATUS_TRAIN, name);
@@ -393,7 +393,7 @@ export default {
 
       context.commit(Constants.MUTATION.SET_SERVER_STATUS_IDLE, name);
     },
-    ADD_EXAMPLE(context, data) {
+    [Constants.ACTION.ADD_EXAMPLE](context, data) {
       try {
         context.commit(Constants.MUTATION.ADD_EXAMPLE, data);
         context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
@@ -406,7 +406,7 @@ export default {
         console.log(e);
       }
     },
-    DELETE_EXAMPLE(context, data) {
+    [Constants.ACTION.DELETE_EXAMPLE](context, data) {
       try {
         context.commit(Constants.MUTATION.DELETE_EXAMPLE, data);
         context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
@@ -419,7 +419,7 @@ export default {
         console.log(e);
       }
     },
-    async SYNC(context) {
+    async [Constants.ACTION.SYNC](context) {
       // todo: yeh fill this in
     },
     async [Constants.ACTION.CONNECT](context) {
@@ -447,7 +447,7 @@ export default {
 
       // sync the current snippet state?
     },
-    async START_SAMPLER(context, data) {
+    async [Constants.ACTION.START_SAMPLER](context, data) {
       try {
         context.commit(Constants.MUTATION.SET_SERVER_STATUS_SAMPLE);
         context.commit(Constants.MUTATION.CLEAR_SAMPLES);
@@ -461,7 +461,7 @@ export default {
         console.log(e);
       }
     },
-    async STOP_SAMPLER(context) {
+    async [Constants.ACTION.STOP_SAMPLER](context) {
       try {
         await driver.stopSampler();
         context.commit(Constants.MUTATION.SET_SERVER_STATUS_IDLE);
@@ -469,10 +469,10 @@ export default {
         console.log(e);
       }
     },
-    DISCONNECT(context) {
+    [Constants.ACTION.DISCONNECT](context) {
       context.commit(Constants.MUTATION.DISCONNECT);
     },
-    SET_ACTIVE_SNIPPET(context, data) {
+    [Constants.ACTION.SET_ACTIVE_SNIPPET](context, data) {
       context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data);
       context.dispatch('COMMIT_PARAMS');
 
@@ -480,7 +480,7 @@ export default {
         context.dispatch('LOAD_PARAM_COLOR_DATA', data);
       }
     },
-    LOAD_SNIPPETS(context, key) {
+    [Constants.ACTION.LOAD_SNIPPETS](context, key) {
       // reset state during the load
       context.commit(Constants.MUTATION.LOAD_SNIPPETS, key);
       context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET, key);
@@ -490,11 +490,11 @@ export default {
       if (context.state.serverOnline) {
         for (const s of Object.keys(context.state.snippets)) {
           if (context.state.snippets[s].trained)
-            context.dispatch('LOAD_SNIPPET', s);
+            context.dispatch(Constants.ACTION.LOAD_SNIPPET, s);
         }
       }
     },
-    async EVAL_CURRENT(context, vec) {
+    async [Constants.ACTION.EVAL_CURRENT](context, vec) {
       if (context.state.activeSnippet && context.state.activeSnippet.trained) {
         try {
           const score = await driver.predictOne(
@@ -512,7 +512,7 @@ export default {
         });
       }
     },
-    async LOAD_PARAM_COLOR_DATA(context, snippet) {
+    async [Constants.ACTION.LOAD_PARAM_COLOR_DATA](context, snippet) {
       const current = context.getters.paramsAsArray;
       const paramData = await driver.predictAll1D(snippet, {
         x: normalizeVector(current, context.getters.params),

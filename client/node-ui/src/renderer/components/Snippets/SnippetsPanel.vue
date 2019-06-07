@@ -70,6 +70,8 @@
 </template>
 
 <script>
+import { ACTION } from '../../store/constants';
+
 export default {
   name: 'snippets-panel',
   data: function() {
@@ -90,7 +92,7 @@ export default {
           : '';
       },
       set(newVal) {
-        this.$store.dispatch('SET_ACTIVE_SNIPPET', newVal);
+        this.$store.dispatch(ACTION.SET_ACTIVE_SNIPPET, newVal);
       }
     },
     isTraining() {
@@ -116,7 +118,7 @@ export default {
         return;
       }
 
-      this.$store.dispatch('NEW_SNIPPET', { name: this.newSnippetName });
+      this.$store.dispatch(ACTION.NEW_SNIPPET, { name: this.newSnippetName });
 
       this.showNew = false;
       this.newSnippetName = '';
@@ -124,7 +126,9 @@ export default {
     },
     deleteSnippet() {
       if (this.activeSnippet !== '') {
-        this.$store.dispatch('DELETE_SNIPPET', { name: this.activeSnippet });
+        this.$store.dispatch(ACTION.DELETE_SNIPPET, {
+          name: this.activeSnippet
+        });
         this.activeSnippet = '';
       }
     },
@@ -134,7 +138,7 @@ export default {
         // snapshot current state
         const x = this.$store.getters.paramsAsArray;
 
-        this.$store.dispatch('ADD_EXAMPLE', {
+        this.$store.dispatch(ACTION.ADD_EXAMPLE, {
           name: this.activeSnippet,
           point: { x, y }
         });
@@ -142,9 +146,9 @@ export default {
     },
     train() {
       if (this.activeSnippet !== '' && !this.isTraining && this.trained) {
-        this.$store.dispatch('LOAD_SNIPPET', this.activeSnippet);
+        this.$store.dispatch(ACTION.LOAD_SNIPPET, this.activeSnippet);
       } else if (this.activeSnippet !== '' && !this.isTraining) {
-        this.$store.dispatch('TRAIN', this.activeSnippet);
+        this.$store.dispatch(ACTION.TRAIN, this.activeSnippet);
       }
     }
   }

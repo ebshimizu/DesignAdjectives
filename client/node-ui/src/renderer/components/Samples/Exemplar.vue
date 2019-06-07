@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { ACTION } from '../../store/constants';
+
 export default {
   name: 'exemplar',
   data() {
@@ -59,7 +61,7 @@ export default {
   },
   methods: {
     removeExample() {
-      this.$store.dispatch('DELETE_EXAMPLE', {
+      this.$store.dispatch(ACTION.DELETE_EXAMPLE, {
         name: this.snippetName,
         index: this.id
       });

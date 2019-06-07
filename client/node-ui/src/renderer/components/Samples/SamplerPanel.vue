@@ -53,6 +53,7 @@
 
 <script>
 import Sample from './Sample';
+import { ACTION } from '../../store/constants';
 
 export default {
   name: 'sampler-panel',
@@ -101,7 +102,7 @@ export default {
       // - active sample is trained
       // - server is not already sampling
       if (this.canSample) {
-        this.$store.dispatch('START_SAMPLER', {
+        this.$store.dispatch(ACTION.START_SAMPLER, {
           name: this.$store.state.snippets.activeSnippet.name,
           data: {
             n: parseInt(this.n),
@@ -112,7 +113,7 @@ export default {
       }
     },
     stop() {
-      this.$store.dispatch('STOP_SAMPLER');
+      this.$store.dispatch(ACTION.STOP_SAMPLER);
     },
     toggleSampler() {
       if (this.canSample) {

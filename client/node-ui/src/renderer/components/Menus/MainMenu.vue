@@ -13,6 +13,7 @@
 import MenuGroup from './MenuGroup';
 import MenuItem from './MenuItem';
 import path from 'path';
+import { ACTION } from '../../store/constants';
 
 export default {
   name: 'main-menu',
@@ -52,7 +53,7 @@ export default {
             });
 
             this.$store.dispatch(
-              'LOAD_SNIPPETS',
+              ACTION.LOAD_SNIPPETS,
               this.$store.state.paramStore.cacheKey
             );
           }
@@ -61,8 +62,8 @@ export default {
     },
     connect() {
       this.$store.getters.ready
-        ? this.$store.dispatch('DISCONNECT')
-        : this.$store.dispatch('CONNECT');
+        ? this.$store.dispatch(ACTION.DISCONNECT)
+        : this.$store.dispatch(ACTION.CONNECT);
     }
   }
 };

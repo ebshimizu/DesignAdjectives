@@ -34,5 +34,18 @@ export const MUTATION = {
 };
 
 export const ACTION = {
-  CONNECT: 'Connect to Snippet Server'
+  NEW_SNIPPET: 'New Snippet',
+  DELETE_SNIPPET: 'Delete Snippet',
+  TRAIN: 'Train Snippet',
+  LOAD_SNIPPET: 'Load Snippet',
+  ADD_EXAMPLE: 'Add Example',
+  DELETE_EXAMPLE: 'Delete Example',
+  SYNC: 'Sync with Snippet Server',
+  CONNECT: 'Connect to Snippet Server',
+  START_SAMPLER: 'Start Sampling',
+  STOP_SAMPLER: 'Stop Sampling',
+  DISCONNECT: 'Disconnect from Snippet Server',
+  SET_ACTIVE_SNIPPET: 'Set Active Snippet',
+  LOAD_SNIPPETS: 'Load Snippets',
+  EVAL_CURRENT: 'Evaluate Current State with Current Snippet'
 };
