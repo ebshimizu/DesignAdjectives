@@ -14,13 +14,13 @@
         class="absolute bottom-0 left-0 w-full flex flex-row bg-gray-800 border-t border-gray-200 text-sm font-mono text-center"
       >
         <div
-          @click="removeExample()"
-          class="cursor-pointer bg-red-900 py-1 px-2 border-r border-gray-200 text-gray-200 flex-grow"
-        >X</div>
-        <div
           @click="lockExample()"
-          class="cursor-pointer bg-green-700 py-1 px-2 text-gray-200 flex-grow"
+          class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 border-r text-gray-200 flex-grow"
         >Lock</div>
+        <div
+          @click="removeExample()"
+          class="cursor-pointer bg-red-900 hover:bg-red-700 py-1 px-2 text-gray-200 flex-grow"
+        >X</div>
       </div>
       <canvas ref="canvas" class="exemplarCanvas"/>
     </div>

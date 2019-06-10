@@ -11,18 +11,21 @@
       tabindex="0"
       ref="sample"
     >
-      <div v-show="showActions" class="absolute bottom-0 left-0 w-full flex flex-row p-4">
+      <div
+        v-show="showActions"
+        class="absolute bottom-0 left-0 w-full flex flex-row font-mono text-center border-t border-gray-200"
+      >
         <div
           @click="select()"
-          class="cursor-pointer rounded bg-blue-800 p-2 font-sans text-gray-200"
+          class="cursor-pointer bg-blue-900 hover:bg-blue-600 px-2 py-1 flex-grow text-gray-200 border-r border-gray-200"
         >Lock</div>
         <div
           @click="addPositive()"
-          class="cursor-pointer text-center font-bold w-8 rounded bg-green-900 ml-1 p-2 font-sans text-gray-200"
+          class="cursor-pointer font-bold flex-grow bg-green-900 hover:bg-green-700 px-2 py-1 border-r text-gray-200"
         >+</div>
         <div
           @click="addNegative()"
-          class="cursor-pointer text-center font-bold w-8 rounded bg-red-900 ml-1 p-2 font-sans text-gray-200"
+          class="cursor-pointer font-bold flex-grow bg-red-900 hover:bg-red-700 px-2 py-1 text-gray-200"
         >-</div>
       </div>
       <canvas ref="canvas" class="sampleCanvas"/>
