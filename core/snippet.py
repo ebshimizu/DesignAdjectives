@@ -3,6 +3,7 @@ from samplers import *
 from functools import reduce
 import os
 import torch
+import math
 import pyro
 import pyro.contrib.gp as gp
 import pyro.distributions as dist
@@ -219,10 +220,11 @@ class Snippet:
         for i in range(0, len(self.data[0].data)):
             # extract vector of params
             p = list(map(lambda x: x.data[i], self.data))
+            print(p)
 
             # map again, test == to first val
             p0 = p[0]
-            isEq = list(map(lambda x: x == p0, p))
+            isEq = list(map(lambda x: math.isclose(x, p0, rel_tol=1e-5), p))
 
             # reduce with &
             allEq = reduce(lambda x, y: x and y, isEq)
