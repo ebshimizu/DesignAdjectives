@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full">
+  <div class="flex h-full bg-black">
     <div class="flex flex-row h-full">
       <div class="rounded-full w-4 m-1" :class="[connectClass]"></div>
       <div class="rounded-full w-4 m-1" :class="[serverClass]"></div>

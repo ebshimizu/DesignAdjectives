@@ -113,10 +113,10 @@ class Snippet:
                 ),
             )
 
-        # check that a filter has been set to include at least one parameter
-        if len(self.filter) == 0:
-            # and if not, set it to default (all non-constant params)
-            self.setDefaultFilter()
+        # In the event that additional data points have extended the relevant dimensions,
+        # adjust the filter.
+        # TODO: allow custom overrides for the filter
+        self.setDefaultFilter()
 
         # TODO: allow kernel settings per-snippet?
         # for retraining, use exising variance/lengthscale
@@ -220,7 +220,6 @@ class Snippet:
         for i in range(0, len(self.data[0].data)):
             # extract vector of params
             p = list(map(lambda x: x.data[i], self.data))
-            print(p)
 
             # map again, test == to first val
             p0 = p[0]
