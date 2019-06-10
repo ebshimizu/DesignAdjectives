@@ -7,7 +7,7 @@
       >Current Snippet</label>
       <div class="w-full m-2 relative">
         <select
-          class="text-sm font-mono p-1 w-full bg-grey-darkest text-grey-light cursor-pointer"
+          class="text-sm font-mono p-1 w-full bg-gray-800 text-grey-light cursor-pointer"
           id="current-snippet"
           v-model="activeSnippet"
         >
@@ -56,11 +56,11 @@
         <input
           v-model="newSnippetName"
           placeholder="Enter Snippet Name"
-          class="appearance-none bg-transparent border-none w-full text-grey-lightest mr-3 py-1 px-2 leading-tight focus:outline-none"
+          class="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
           type="text"
         >
         <div class="flex-no-shrink btn btn-green mr-2" @click="createNewSnippet()">Create</div>
-        <div class="flex-no-shrink btn hover:bg-red-dark" @click="hideAllModals()">Cancel</div>
+        <div class="flex-no-shrink btn hover:bg-red-900" @click="hideAllModals()">Cancel</div>
       </div>
       <div
         class="w-full text-sm my-2 bg-red-lightest border border-red-light text-red-dark py-3 px-4 rounded"
@@ -73,11 +73,11 @@
         <input
           v-model="newSnippetName"
           placeholder="Enter Copied Snippet Name"
-          class="appearance-none bg-transparent border-none w-full text-grey-lightest mr-3 py-1 px-2 leading-tight focus:outline-none"
+          class="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
           type="text"
         >
         <div class="flex-no-shrink btn btn-green mr-2" @click="copySnippet()">Copy</div>
-        <div class="flex-no-shrink btn hover:bg-red-dark" @click="hideAllModals()">Cancel</div>
+        <div class="flex-no-shrink btn hover:bg-red-900" @click="hideAllModals()">Cancel</div>
       </div>
       <div
         class="w-full text-sm my-2 bg-red-lightest border border-red-light text-red-dark py-3 px-4 rounded"
@@ -90,11 +90,11 @@
         <input
           v-model="newSnippetName"
           placeholder="Rename Snippet"
-          class="appearance-none bg-transparent border-none w-full text-grey-lightest mr-3 py-1 px-2 leading-tight focus:outline-none"
+          class="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
           type="text"
         >
         <div class="flex-no-shrink btn btn-green mr-2" @click="renameSnippet()">Rename</div>
-        <div class="flex-no-shrink btn hover:bg-red-dark" @click="hideAllModals()">Cancel</div>
+        <div class="flex-no-shrink btn hover:bg-red-900" @click="hideAllModals()">Cancel</div>
       </div>
       <div
         class="w-full text-sm my-2 bg-red-lightest border border-red-light text-red-dark py-3 px-4 rounded"

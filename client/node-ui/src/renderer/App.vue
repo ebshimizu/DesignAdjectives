@@ -1,6 +1,6 @@
 <template>
-  <div id="app" class="bg-black flex flex-col">
-    <div class="flex-none w-full border-b border-grey-lightest bg-grey-darkest shadow">
+  <div id="app" class="bg-gray-900 flex flex-col">
+    <div class="flex-none w-full border-b border-gray-200 bg-gray-700 shadow">
       <main-menu></main-menu>
     </div>
     <div class="relative h-full flex-shrink flex-no-grow main-content flex flex-row">
@@ -23,7 +23,7 @@
         <parameter-panel></parameter-panel>
       </div>
     </div>
-    <div class="flex-none w-full h-6 border-t border-grey-lightest bg-grey-darkest">
+    <div class="flex-none w-full h-6 border-t border-gray-200 bg-gray-900">
       <status-bar></status-bar>
     </div>
   </div>

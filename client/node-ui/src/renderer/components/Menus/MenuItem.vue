@@ -1,6 +1,6 @@
 <template>
-  <li class="hover:bg-grey-darker py-1 px-2">
-    <a class="text-grey-lightest no-underline" href="#">
+  <li class="hover:bg-gray-600 py-1 px-2">
+    <a class="text-gray-200 no-underline" href="#">
       <slot/>
     </a>
   </li>

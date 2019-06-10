@@ -1,5 +1,5 @@
 <template>
-  <div class="text-grey-lightest font-mono font-sm w-full border-b border-grey-lightest p-2 h-16">
+  <div class="text-gray-200 font-mono font-sm w-full border-b border-gray-200 p-1 h-16">
     <div class="label w-full text-xs">{{ param.name }}</div>
     <div class="flex my-1">
       <input
@@ -13,7 +13,7 @@
         step="0.001"
       >
       <input
-        class="w-1/6 mx-2 rounded-sm p-1 text-sm text-grey-light bg-grey-darkest"
+        class="w-1/6 mx-2 rounded-sm p-1 text-sm text-grey-light bg-gray-800"
         type="number"
         v-model="localVal"
         v-on:change="commitChange"

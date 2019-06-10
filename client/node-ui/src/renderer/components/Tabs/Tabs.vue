@@ -1,16 +1,16 @@
 <template>
   <div class="font-sans h-full w-full flex flex-col border-t">
-    <ul class="h-10 list-reset flex border-b border-l border-grey-lightest bg-blue-darkest">
+    <ul class="h-10 list-reset flex border-b border-l border-gray-200 bg-gray-900">
       <li
         v-for="(tab, i) in tabs"
         :key="i"
         :class="{visible: tab.visible}"
-        class="pr-1 border-r bg-grey-darkest hover:bg-grey-dark font-bold"
+        class="pr-1 border-r bg-gray-800 hover:bg-gray-600 font-bold"
       >
         <a
           href="#"
           :class="{visible: tab.visible}"
-          class="inline-block py-2 px-4 font-semibold no-underline text-yellow"
+          class="inline-block py-2 px-4 font-semibold no-underline text-yellow-400"
           @click="showTab(i)"
         >{{ tab.title }}</a>
       </li>
@@ -52,6 +52,6 @@ export default {
 
 <style lang="scss" scoped>
 li.visible {
-  background-color: #8795a1;
+  background-color: #6e767e;
 }
 </style>

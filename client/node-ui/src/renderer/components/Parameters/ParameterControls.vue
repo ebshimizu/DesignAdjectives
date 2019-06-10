@@ -1,11 +1,9 @@
 <template>
-  <div
-    class="h-full w-full flex flex-col border-l border-grey-lightest text-grey-lightest overflow-hidden"
-  >
+  <div class="h-full w-full flex flex-col border-l border-gray-200 text-gray-200 overflow-hidden">
     <div class="overflow-auto flex flex-grow flex-col-reverse flex-shrink">
       <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
     </div>
-    <div class="overflow-auto flex-no-shrink border-t border-grey-lightest">
+    <div class="overflow-auto flex-no-shrink border-t border-gray-200">
       <snippets-panel></snippets-panel>
     </div>
   </div>

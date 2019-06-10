@@ -1,24 +1,24 @@
 <template>
   <div class="flex flex-row h-full w-full overflow-hidden">
-    <div class="w-64 border-r border-grey-lightest font-sans overflow-auto text-grey-lightest">
-      <div class="border-b border-blue-darkest bg-blue-lighter text-blue-dark px-2 py-1 text-sm">
+    <div class="w-64 border-r border-gray-200 font-sans overflow-auto text-gray-200">
+      <div class="border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm">
         <div class="font-bold">{{ activeSnippetName ? activeSnippetName : '[No Active Snippet]' }}</div>
-        <div class="my-1">Sampler Control</div>
+        <div>Sampler Control</div>
       </div>
-      <div class="border-b border-grey-lightest px-2 py-1">
+      <div class="border-b border-gray-200 px-2 py-1">
         <div class="font-bold tracking-wide uppercase text-xs mb-1">Count</div>
         <input
-          class="w-full rounded-sm p-1 text-sm text-grey-light bg-grey-darkest font-mono"
+          class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
           type="number"
           v-model="n"
           min="1"
           step="1"
         >
       </div>
-      <div class="border-b border-grey-lightest px-2 py-1">
+      <div class="border-b border-gray-200 px-2 py-1">
         <div class="font-bold tracking-wide uppercase text-xs mb-1">Threshold</div>
         <input
-          class="w-full rounded-sm p-1 text-sm text-grey-light bg-grey-darkest font-mono"
+          class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
           type="number"
           v-model="threshold"
           min="0"
@@ -26,10 +26,10 @@
           step="0.001"
         >
       </div>
-      <div class="border-b border-grey-lightest px-2 py-1">
+      <div class="border-b border-gray-200 px-2 py-1">
         <div class="font-bold tracking-wide uppercase text-xs mb-1">Burn-in</div>
         <input
-          class="w-full rounded-sm p-1 text-sm text-grey-light bg-grey-darkest font-mono"
+          class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
           type="number"
           v-model="burnin"
           min="0"

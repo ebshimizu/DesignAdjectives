@@ -1,23 +1,19 @@
 <template>
   <div class="flex flex-row h-full w-full overflow-hidden">
-    <div class="w-64 border-r border-grey-lightest font-sans overflow-auto text-grey-lightest">
-      <div class="border-b border-blue-darkest bg-blue-lighter text-blue-dark px-2 py-1 text-sm">
+    <div class="w-64 border-r border-gray-200 font-sans overflow-auto text-gray-200">
+      <div class="border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm">
         <div class="font-bold">{{ activeSnippet.name ? activeSnippet.name : '[No Active Snippet]' }}</div>
-        <div class="my-1">{{ status }}</div>
+        <div>{{ status }}</div>
       </div>
-      <div
-        class="border-b border-grey-lightest px-2 py-1"
-        v-for="(val, key) in trainData"
-        :key="key"
-      >
+      <div class="border-b border-gray-200 px-2 py-1" v-for="(val, key) in trainData" :key="key">
         <div class="font-bold tracking-wide uppercase text-xs mb-1">{{ key }}</div>
         <div class="font-mono text-sm">{{ val }}</div>
       </div>
     </div>
     <div class="flex flex-row h-full w-full">
-      <div class="w-1/2 overflow-hidden flex flex-col h-full border-r border-grey-lightest">
+      <div class="w-1/2 overflow-hidden flex flex-col h-full border-r border-gray-200">
         <div
-          class="w-full bg-green-darkest text-grey-lightest font-mono text-sm h-8 p-2 border-b border-grey-lightest"
+          class="w-full bg-green-900 text-gray-200 font-mono text-sm h-10 p-2 border-b border-gray-200"
         >Positive</div>
         <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
           <exemplar
@@ -28,9 +24,9 @@
           ></exemplar>
         </div>
       </div>
-      <div class="w-1/2 overflow-hidden flex flex-col h-full border-r border-grey-lightest">
+      <div class="w-1/2 overflow-hidden flex flex-col h-full border-r border-gray-200">
         <div
-          class="w-full bg-red-darkest text-grey-lightest font-mono text-sm h-8 p-2 border-b border-grey-lightest"
+          class="w-full bg-red-900 text-gray-200 font-mono text-sm h-10 p-2 border-b border-gray-200"
         >Negative</div>
         <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
           <exemplar

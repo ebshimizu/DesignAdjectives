@@ -4,11 +4,11 @@
       <div class="rounded-full w-4 m-1" :class="[connectClass]"></div>
       <div class="rounded-full w-4 m-1" :class="[serverClass]"></div>
       <div
-        class="flex justify-center items-center h-full font-mono text-grey-lightest text-xs ml-1"
+        class="flex justify-center items-center h-full font-mono text-gray-200 text-xs ml-1"
       >{{ serverStatus }}</div>
     </div>
     <div
-      class="flex justify-end flex-grow items-center h-full font-mono text-grey-lightest text-xs mx-1"
+      class="flex justify-end flex-grow items-center h-full font-mono text-gray-200 text-xs mx-1"
     >{{ snippetEvalText }}</div>
   </div>
 </template>

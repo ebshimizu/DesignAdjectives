@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full overflow-auto border-l">
     <div
-      class="w-full bg-grey-darkest border-b border-grey-lightest py-2 font-bold text-grey-lightest tracking-wide uppercase text-center"
+      class="w-full bg-gray-800 border-b border-gray-200 py-2 font-bold text-gray-200 tracking-wide uppercase text-center"
     >Global Snippet Options</div>
     <setting-control
       v-for="(setting, key) in snippetSettings"
@@ -11,7 +11,7 @@
       v-bind:id="key"
     ></setting-control>
     <div
-      class="w-full border-b bg-grey-darkest border-grey-lightest py-2 font-bold text-grey-lightest tracking-wide uppercase text-center"
+      class="w-full border-b bg-gray-800 border-gray-200 py-2 font-bold text-gray-200 tracking-wide uppercase text-center"
     >Backend: {{ type }}</div>
     <setting-control
       v-for="(setting, key) in settings"

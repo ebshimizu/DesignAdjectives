@@ -1,22 +1,31 @@
 <template>
   <div
-    class="exemplar overflow-hidden flex flex-col w-1/5 border border-grey-light hover:border-yellow rounded m-2"
+    class="exemplar overflow-hidden flex flex-col w-1/5 border border-gray-200 hover:border-yellow-500 rounded m-2"
   >
     <div
       class="w-full h-auto relative"
-      v-on:mouseenter="showActions = true"
-      v-on:mouseleave="showActions = false"
+      v-on:mouseenter="onHover()"
+      v-on:mouseleave="onHoverStop()"
+      tabindex="0"
+      ref="exemplar"
     >
-      <div v-show="showActions" class="absolute pin-b pin-l w-full flex flex-row p-4">
+      <div
+        v-show="showActions"
+        class="absolute bottom-0 left-0 w-full flex flex-row bg-gray-800 border-t border-gray-200"
+      >
         <div
           @click="removeExample()"
-          class="cursor-pointer rounded bg-red-dark p-2 font-sans text-grey-lightest"
-        >Remove</div>
+          class="cursor-pointer bg-red-900 p-2 mr-2 font-sans text-gray-200"
+        >X</div>
+        <div
+          @click="lockExample()"
+          class="cursor-pointer rounded bg-green-700 p-2 font-sans text-gray-200"
+        >Lock</div>
       </div>
       <canvas ref="canvas" class="exemplarCanvas"/>
     </div>
     <div
-      class="flex flex-row text-grey-lightest font-mono text-sm px-2 py-1 border-t border-grey-light justify-between"
+      class="flex flex-row text-gray-200 font-mono text-sm px-2 py-1 border-t border-gray-200 justify-between"
       :class="[scoreClass]"
     >
       <div class="flex-auto">ID: {{ id }}</div>
@@ -56,7 +65,7 @@ export default {
       return this.data.y;
     },
     scoreClass() {
-      return this.score >= 0 ? 'bg-green-darker' : 'bg-red-darker';
+      return this.score >= 0 ? 'bg-green-900' : 'bg-red-900';
     }
   },
   methods: {
@@ -65,6 +74,18 @@ export default {
         name: this.snippetName,
         index: this.id
       });
+    },
+    onHover() {
+      this.showActions = true;
+      this.$store.dispatch(ACTION.SHOW_TEMPORARY_STATE, this.data.x);
+      this.$refs.exemplar.focus();
+    },
+    onHoverStop() {
+      this.showActions = false;
+      this.$store.dispatch(ACTION.HIDE_TEMPORARY_STATE);
+    },
+    lockExample() {
+      this.$store.dispatch(ACTION.LOCK_TEMPORARY_STATE, this.data.x);
     }
   },
   mounted: function() {

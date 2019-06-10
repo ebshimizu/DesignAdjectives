@@ -1,6 +1,6 @@
 <template>
   <div
-    class="sample overflow-hidden flex flex-col w-48 border border-grey-light hover:border-yellow rounded m-2"
+    class="sample overflow-hidden flex flex-col w-48 border border-gray-200 hover:border-yellow-500 rounded m-2"
   >
     <div
       class="w-full h-auto relative"
@@ -11,24 +11,24 @@
       tabindex="0"
       ref="sample"
     >
-      <div v-show="showActions" class="absolute pin-b pin-l w-full flex flex-row p-4">
+      <div v-show="showActions" class="absolute bottom-0 left-0 w-full flex flex-row p-4">
         <div
           @click="select()"
-          class="cursor-pointer rounded bg-blue-dark p-2 font-sans text-grey-lightest"
+          class="cursor-pointer rounded bg-blue-800 p-2 font-sans text-gray-200"
         >Lock</div>
         <div
           @click="addPositive()"
-          class="cursor-pointer text-center font-bold w-8 rounded bg-green-dark ml-1 p-2 font-sans text-grey-lightest"
+          class="cursor-pointer text-center font-bold w-8 rounded bg-green-900 ml-1 p-2 font-sans text-gray-200"
         >+</div>
         <div
           @click="addNegative()"
-          class="cursor-pointer text-center font-bold w-8 rounded bg-red-dark ml-1 p-2 font-sans text-grey-lightest"
+          class="cursor-pointer text-center font-bold w-8 rounded bg-red-900 ml-1 p-2 font-sans text-gray-200"
         >-</div>
       </div>
       <canvas ref="canvas" class="sampleCanvas"/>
     </div>
     <div
-      class="flex flex-row text-grey-lightest font-mono text-sm px-2 py-1 border-t border-grey-light justify-between bg-blue-darkest"
+      class="flex flex-row text-gray-200 font-mono text-sm px-2 py-1 border-t border-gray-200 justify-between bg-blue-darkest"
     >
       <div class="flex-auto">ID: {{ id }}</div>
       <div class="flex-no-grow">{{ score.toFixed(3) }}</div>

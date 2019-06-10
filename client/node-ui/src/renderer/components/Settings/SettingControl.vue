@@ -1,5 +1,5 @@
 <template>
-  <div class="text-grey-lightest w-full border-b border-grey-lightest px-2 py-4">
+  <div class="text-gray-200 w-full border-b border-gray-200 px-2 py-4">
     <div v-if="setting.type === 'number'" class="w-full px-2">
       <div class="label font-bold tracking-wide uppercase mb-1 w-full text-xs">{{ setting.name }}</div>
       <input
@@ -20,10 +20,7 @@
     </div>
     <div v-else-if="setting.type === 'enum'" class="w-full px-2">
       <div class="label font-bold tracking-wide uppercase mb-1 w-full text-xs">{{ setting.name }}</div>
-      <select
-        v-model="localVal"
-        class="text-sm font-mono p-1 w-full bg-grey-darkest text-grey-light"
-      >
+      <select v-model="localVal" class="text-sm font-mono p-1 w-full bg-gray-800 text-grey-light">
         <option v-for="option in setting.values" v-bind:value="option" :key="option">{{ option }}</option>
       </select>
     </div>
