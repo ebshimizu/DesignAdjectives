@@ -300,6 +300,10 @@ export default {
     },
     [Constants.MUTATION.SET_PARAM_COLOR_DATA](state, data) {
       if (!data) {
+        state.paramData = {
+          meanMax: 1,
+          meanMin: -1
+        };
         return;
       }
 
