@@ -320,7 +320,7 @@ export class DsDriver {
    * @param {?number} params.stride [Metropolis] Number of samples to skip between accepts
    * @param {?number} params.scale [Metropolis] Step size
    * @param {?number} params.threshold [Rejection] Minimum quality threshold
-   * @param {?number} params.fixed [Rejection] Initial number of parameters to keep fixed
+   * @param {?number} params.free [Rejection] Initial number of parameters to keep free
    */
   async sample(name, params) {
     if (typeof name !== 'string') throw new Error('Missing Snippet Name');

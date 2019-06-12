@@ -55,14 +55,22 @@ class SamplerThread(Thread):
 
 class Rejection(SamplerThread):
     def __init__(
-        self, snippet, x0, name="", threshold=0.7, fixed=0, n=10, cb=None, final=None
+        self,
+        snippet,
+        x0,
+        name="",
+        threshold=0.7,
+        freeParams=1000,
+        n=10,
+        cb=None,
+        final=None,
     ):
         super().__init__()
         self.snippet = snippet
         self.name = name
         self.x0 = x0
         self.threshold = threshold
-        self.fixed = fixed
+        self.freeParams = freeParams
         self.n = n
         self.cb = cb
         self.final = final
@@ -74,13 +82,12 @@ class Rejection(SamplerThread):
 
         # duplicate, we're going to shuffle it a lot
         filter = list(self.snippet.filter)
-        freeParams = len(filter) - self.fixed
         posExamples = self.snippet.posExamples()
 
         g = dist.Uniform(torch.zeros(len(filter)), torch.ones(len(filter)))
 
         logger.info("[{0}] Filter: {1}".format(self.name, filter))
-        logger.info("[{0}] Initial Free Params: {1}".format(self.name, freeParams))
+        logger.info("[{0}] Initial Free Params: {1}".format(self.name, self.freeParams))
         logger.info(
             "[{0}] Positive Example Count: {1}".format(self.name, len(posExamples))
         )
@@ -92,7 +99,7 @@ class Rejection(SamplerThread):
 
             # determine which parameters are fixed (randomly select from the filter params)
             random.shuffle(filter)
-            selected = filter[0:freeParams]
+            selected = filter[0 : self.freeParams]
 
             # pull a random positive example to use as the base
             random.shuffle(posExamples)

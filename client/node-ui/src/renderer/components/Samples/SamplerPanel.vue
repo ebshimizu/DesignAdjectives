@@ -38,8 +38,8 @@
         >
       </div>-->
       <div class="border-b border-gray-200 px-2 py-1">
-        <div class="font-bold tracking-wide uppercase text-xs mb-1">Fixed Params</div>
-        <input class="standard-text-field w-full" type="number" v-model="fixed" min="0" step="1">
+        <div class="font-bold tracking-wide uppercase text-xs mb-1">Free Params</div>
+        <input class="standard-text-field w-full" type="number" v-model="free" min="0" step="1">
       </div>
       <div class="p-2">
         <div
@@ -66,10 +66,10 @@ export default {
   },
   data() {
     return {
-      n: 50,
+      n: 10,
       threshold: 0.7,
       burnin: 100,
-      fixed: 0
+      free: 3
     };
   },
   computed: {
@@ -112,7 +112,7 @@ export default {
           data: {
             n: parseInt(this.n),
             threshold: parseFloat(this.threshold),
-            fixed: parseInt(this.fixed)
+            freeParams: parseInt(this.free)
           }
         });
       }
