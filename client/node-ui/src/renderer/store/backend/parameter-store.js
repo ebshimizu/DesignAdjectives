@@ -108,6 +108,10 @@ export function createStore(backend, type) {
       [ACTION.SHOW_TEMPORARY_STATE](context, vec) {
         context.commit(MUTATION.SNAPSHOT);
         context.commit(MUTATION.SET_PARAMS, vec);
+        context.dispatch(
+          ACTION.LOAD_PARAM_COLOR_DATA,
+          context.getters.activeSnippetName
+        );
       },
       [ACTION.HIDE_TEMPORARY_STATE](context) {
         // there's a case where the snapshot is invalid when this is called (state is locked)
@@ -115,11 +119,19 @@ export function createStore(backend, type) {
           context.commit(MUTATION.SET_PARAMS, context.state.snapshot);
 
         context.commit(MUTATION.RESET_SNAPSHOT);
+        context.dispatch(
+          ACTION.LOAD_PARAM_COLOR_DATA,
+          context.getters.activeSnippetName
+        );
       },
       [ACTION.LOCK_TEMPORARY_STATE](context, vec) {
         context.commit(MUTATION.RESET_SNAPSHOT);
         context.commit(MUTATION.SET_PARAMS, vec);
         context.dispatch(ACTION.EVAL_CURRENT, vec);
+        context.dispatch(
+          ACTION.LOAD_PARAM_COLOR_DATA,
+          context.getters.activeSnippetName
+        );
       }
     }
   };
