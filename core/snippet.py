@@ -4,6 +4,7 @@ from functools import reduce
 import os
 import torch
 import math
+import random
 import pyro
 import pyro.contrib.gp as gp
 import pyro.distributions as dist
@@ -211,6 +212,15 @@ class Snippet:
             return self.data[0].data
         else:
             return 0
+
+    # returns the positive example from the example set
+    def posExamples(self):
+        pos = []
+        for i in self.data:
+            if i.score > 0:
+                pos.append(i.data)
+
+        return pos
 
     def setDefaultFilter(self):
         # assumption: all data is the same vector length

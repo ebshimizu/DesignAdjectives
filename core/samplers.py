@@ -48,6 +48,95 @@ class SamplerThread(Thread):
     def stopped(self):
         return self._stop_event.is_set()
 
+    # standardizing the callback format for these samplers
+    def callback(self, func, x, mean, cov, id):
+        func({"x": x, "mean": mean, "cov": cov, "idx": id})
+
+
+class Rejection(SamplerThread):
+    def __init__(
+        self, snippet, x0, name="", threshold=0.7, fixed=0, n=10, cb=None, final=None
+    ):
+        super().__init__()
+        self.snippet = snippet
+        self.name = name
+        self.x0 = x0
+        self.threshold = threshold
+        self.fixed = fixed
+        self.n = n
+        self.cb = cb
+        self.final = final
+
+    def run(self):
+        logger.info("[{0}] Rejection sampler initializing".format(self.name))
+        count = 0
+        accept = []
+
+        # duplicate, we're going to shuffle it a lot
+        filter = list(self.snippet.filter)
+        freeParams = len(filter) - self.fixed
+        posExamples = self.snippet.posExamples()
+
+        g = dist.Uniform(torch.zeros(len(filter)), torch.ones(len(filter)))
+
+        logger.info("[{0}] Filter: {1}".format(self.name, filter))
+        logger.info("[{0}] Initial Free Params: {1}".format(self.name, freeParams))
+        logger.info(
+            "[{0}] Positive Example Count: {1}".format(self.name, len(posExamples))
+        )
+
+        while count < self.n:
+            if self.stopped():
+                logger.info("[{0}] Rejection Sampler early stop".format(self.name))
+                break
+
+            # determine which parameters are fixed (randomly select from the filter params)
+            random.shuffle(filter)
+            selected = filter[0:freeParams]
+
+            # pull a random positive example to use as the base
+            random.shuffle(posExamples)
+            xp = torch.tensor(self.x0)
+            for i in range(len(filter)):
+                xp[filter[i]] = posExamples[0][filter[i]]
+
+            # drop in replace the modified params
+            randVec = g.sample()
+
+            for i in range(len(selected)):
+                xp[selected[i]] = randVec[i]
+
+            # eval
+            score = self.snippet.predictOne(xp)
+
+            logger.debug(
+                "[{0}] Sample Generated. Mean Score: {1}".format(
+                    self.name, score["mean"]
+                )
+            )
+
+            # check score
+            if score["mean"] > self.threshold:
+                logger.info(
+                    "[{0}/{1}] Accepted {2} mean score: {3}".format(
+                        count + 1, self.n, xp, score["mean"]
+                    )
+                )
+                accept.append(xp.tolist())
+
+                if self.cb:
+                    self.callback(
+                        self.cb, xp.tolist(), score["mean"], score["cov"], count
+                    )
+
+                count = count + 1
+
+        # finalize
+        logger.info("[{0}] Finalizing sampler".format(self.name))
+
+        if self.final:
+            self.final(accept, self.name)
+
 
 class Metropolis(SamplerThread):
     def __init__(

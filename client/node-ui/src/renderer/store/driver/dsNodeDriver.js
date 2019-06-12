@@ -312,13 +312,15 @@ export class DsDriver {
    * @param {string} name Snippet name
    * @param {Object} params Sampling parameters. See below for some common options.
    * @param {number[]} params.x0 Initial feature vector
-   * @param {?number} params.qMin quality threshold
-   * @param {?number} params.epsilon sample difference threshold
+   * @param {?number} params.qMin [Metropolis] quality threshold
+   * @param {?number} params.epsilon [Metropolis] sample difference threshold
    * @param {?number} params.n Number of samples to return
-   * @param {?number} params.burn Burn-in time
+   * @param {?number} params.burn [Metropolis] Burn-in time
    * @param {?number} params.limit Number of samples to evaluate. Upper bound on sampling runtime
-   * @param {?number} params.stride Number of samples to skip between accepts
-   * @param {?number} params.scale Step size
+   * @param {?number} params.stride [Metropolis] Number of samples to skip between accepts
+   * @param {?number} params.scale [Metropolis] Step size
+   * @param {?number} params.threshold [Rejection] Minimum quality threshold
+   * @param {?number} params.fixed [Rejection] Initial number of parameters to keep fixed
    */
   async sample(name, params) {
     if (typeof name !== 'string') throw new Error('Missing Snippet Name');

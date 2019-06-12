@@ -26,7 +26,7 @@
           step="0.001"
         >
       </div>
-      <div class="border-b border-gray-200 px-2 py-1">
+      <!-- <div class="border-b border-gray-200 px-2 py-1">
         <div class="font-bold tracking-wide uppercase text-xs mb-1">Burn-in</div>
         <input
           class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
@@ -36,6 +36,10 @@
           max="10000"
           step="1"
         >
+      </div>-->
+      <div class="border-b border-gray-200 px-2 py-1">
+        <div class="font-bold tracking-wide uppercase text-xs mb-1">Fixed Params</div>
+        <input class="standard-text-field w-full" type="number" v-model="fixed" min="0" step="1">
       </div>
       <div class="p-2">
         <div
@@ -64,7 +68,8 @@ export default {
     return {
       n: 50,
       threshold: 0.7,
-      burnin: 100
+      burnin: 100,
+      fixed: 0
     };
   },
   computed: {
@@ -106,8 +111,8 @@ export default {
           name: this.$store.state.snippets.activeSnippet.name,
           data: {
             n: parseInt(this.n),
-            qMin: parseFloat(this.threshold),
-            burn: parseInt(this.burnin)
+            threshold: parseFloat(this.threshold),
+            fixed: parseInt(this.fixed)
           }
         });
       }

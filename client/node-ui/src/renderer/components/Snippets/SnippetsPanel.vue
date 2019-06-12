@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-none h-64 font-sans relative">
+  <div class="snippet-panel flex-none font-sans relative">
     <div class="h-auto flex flex-wrap flex-row mb-4">
       <label
         class="block uppercase tracking-wide text-grey-lighter text-xs font-bold m-2"

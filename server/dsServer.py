@@ -15,7 +15,7 @@ import samplers
 import logging
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="[%(levelname)-5.5s] %(asctime)s [%(threadName)-12.12s]  %(message)s",
     handlers=[logging.FileHandler("server.log"), logging.StreamHandler()],
 )
@@ -196,13 +196,20 @@ def snippetSample(args):
     if currentSampler is None or (not currentSampler.is_alive()):
         s = snippetServer.getSnippet(args["name"])
         if s:
-            currentSampler = samplers.Metropolis(
+            currentSampler = samplers.Rejection(
                 s,
                 name=args["name"],
                 cb=lambda data: sampleSingleResult(data, args["name"]),
                 final=sampleFinal,
-                **args["data"],
+                **args["data"]
             )
+            # currentSampler = samplers.Metropolis(
+            #     s,
+            #     name=args["name"],
+            #     cb=lambda data: sampleSingleResult(data, args["name"]),
+            #     final=sampleFinal,
+            #     **args["data"],
+            # )
             currentSampler.start()
             return None, True
         else:
