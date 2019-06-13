@@ -5,6 +5,7 @@
     </menu-group>
     <menu-group name="Snippets">
       <menu-item @click.native="connect()">{{ connected }} Server</menu-item>
+      <menu-item @click.native="exportSnippets()">Export Snippets...</menu-item>
     </menu-group>
   </ul>
 </template>
@@ -64,6 +65,19 @@ export default {
       this.$store.getters.ready
         ? this.$store.dispatch(ACTION.DISCONNECT)
         : this.$store.dispatch(ACTION.CONNECT);
+    },
+    exportSnippets() {
+      this.$electron.remote.dialog.showSaveDialog(
+        {
+          title: 'Export Snippets (JSON)',
+          filters: [{ name: 'JSON', extensions: ['json'] }]
+        },
+        filename => {
+          if (filename) {
+            this.$store.commit(MUTATION.EXPORT_SNIPPETS, filename);
+          }
+        }
+      );
     }
   }
 };
