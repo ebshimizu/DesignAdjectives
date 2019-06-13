@@ -14,8 +14,19 @@ import samplers
 # logging setup
 import logging
 
+# level addition
+ALG_INFO_LEVEL = 31
+logging.addLevelName(ALG_INFO_LEVEL, "SINFO")
+
+
+def alginf(self, message, *args, **kws):
+    if self.isEnabledFor(ALG_INFO_LEVEL):
+        self._log(ALG_INFO_LEVEL, message, args, **kws)
+
+
+logging.Logger.alginf = alginf
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,
     format="[%(levelname)-5.5s] %(asctime)s [%(threadName)-12.12s]  %(message)s",
     handlers=[logging.FileHandler("server.log"), logging.StreamHandler()],
 )
