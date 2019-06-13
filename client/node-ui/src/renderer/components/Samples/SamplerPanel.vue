@@ -17,14 +17,26 @@
       </div>
       <div class="border-b border-gray-200 px-2 py-1">
         <div class="font-bold tracking-wide uppercase text-xs mb-1">Threshold</div>
-        <input
-          class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
-          type="number"
-          v-model="threshold"
-          min="0"
-          max="1"
-          step="0.001"
-        >
+        <div class="flex">
+          <select
+            v-model="thresholdMode"
+            class="w-2/3 text-sm font-mono p-1 mr-2 bg-gray-800 text-gray-light"
+          >
+            <option
+              v-for="option in thresholdModes"
+              v-bind:value="option.val"
+              :key="option.val"
+            >{{ option.text }}</option>
+          </select>
+          <input
+            class="w-1/3 standard-text-field"
+            type="number"
+            v-model="threshold"
+            min="0"
+            max="1"
+            step="0.001"
+          >
+        </div>
       </div>
       <!-- <div class="border-b border-gray-200 px-2 py-1">
         <div class="font-bold tracking-wide uppercase text-xs mb-1">Burn-in</div>
@@ -69,6 +81,32 @@
 import Sample from './Sample';
 import { ACTION } from '../../store/constants';
 
+const THRESHOLD_MODE = {
+  ABSOLUTE: 'ABSOLUTE',
+  MAX_REL: 'MAX_REL',
+  CURRENT_REL: 'CURRENT_REL',
+  CURRENT_ABS: 'CURRENT_ABS'
+};
+
+const THRESHOLD_TEXT = {
+  ABSOLUTE: 'Absolute',
+  MAX_REL: '% of Max',
+  CURRENT_REL: '+% Current',
+  CURRENT_ABS: '+x Current'
+};
+
+function computeThreshold(t, mode, max, current) {
+  if (mode === THRESHOLD_MODE.ABSOLUTE) {
+    return t;
+  } else if (mode === THRESHOLD_MODE.MAX_REL) {
+    return t * max;
+  } else if (mode === THRESHOLD_MODE.CURRENT_REL) {
+    return t * current + current;
+  } else if (mode === THRESHOLD_MODE.CURRENT_ABS) {
+    return t + current;
+  }
+}
+
 export default {
   name: 'sampler-panel',
   components: {
@@ -79,7 +117,8 @@ export default {
       n: 10,
       threshold: 0.7,
       burnin: 100,
-      free: 3
+      free: 3,
+      thresholdMode: THRESHOLD_MODE.ABSOLUTE
     };
   },
   computed: {
@@ -112,6 +151,17 @@ export default {
     },
     maxParams() {
       return this.$store.getters.paramsAsArray.length;
+    },
+    thresholdModes() {
+      const modes = {};
+      for (const key in THRESHOLD_MODE) {
+        modes[key] = {
+          val: key,
+          text: THRESHOLD_TEXT[key]
+        };
+      }
+
+      return modes;
     }
   },
   methods: {
@@ -124,7 +174,12 @@ export default {
           name: this.$store.state.snippets.activeSnippet.name,
           data: {
             n: parseInt(this.n),
-            threshold: parseFloat(this.threshold),
+            threshold: computeThreshold(
+              parseFloat(this.threshold),
+              this.thresholdMode,
+              this.$store.getters.maxCurrentSnippetScore,
+              this.$store.getters.currentSnippetScore
+            ),
             freeParams: parseInt(this.free)
           }
         });

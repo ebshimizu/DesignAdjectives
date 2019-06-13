@@ -150,6 +150,16 @@ export default {
     },
     snippetSettings: state => {
       return state.settings;
+    },
+    maxCurrentSnippetScore: state => {
+      if ('meanMax' in state.paramData) {
+        return state.paramData.meanMax;
+      }
+
+      return 0;
+    },
+    currentSnippetScore: state => {
+      return state.activeSnippetScore.mean;
     }
   },
   mutations: {
