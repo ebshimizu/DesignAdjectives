@@ -1,6 +1,6 @@
 <template>
   <div class="h-full w-full flex flex-col border-l border-gray-200 text-gray-200 overflow-hidden">
-    <div class="overflow-auto flex flex-grow flex-col-reverse flex-shrink">
+    <div class="param-controls overflow-auto flex flex-col-reverse">
       <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
     </div>
     <div class="param-panel overflow-auto flex-no-shrink border-t border-gray-200">
@@ -29,7 +29,11 @@ export default {
 
 <style lang="scss" scoped>
 .param-panel {
-  height: 64rem;
+  height: 25vh;
+}
+
+.param-controls {
+  height: 75vh;
 }
 </style>
 
