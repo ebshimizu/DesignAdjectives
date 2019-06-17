@@ -18,6 +18,14 @@
       "console": "integratedTerminal"
     },
     {
+      "name": "Python: Current File in Core Folder",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/core"
+    },
+    {
       "name": "Python: Remote Attach",
       "type": "python",
       "request": "attach",

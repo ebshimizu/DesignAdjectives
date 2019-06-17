@@ -40,7 +40,8 @@ export const MUTATION = {
   RESET_SNAPSHOT: 'Reset Snapshot State',
   SET_BACKEND_SETTING: 'Set Backend Setting',
   COPY_SNIPPET: 'Copy Snippet',
-  RENAME_SNIPPET: 'Rename Snippet'
+  RENAME_SNIPPET: 'Rename Snippet',
+  CLEAR_CACHE: 'Clear Snippet Cache'
 };
 
 export const ACTION = {

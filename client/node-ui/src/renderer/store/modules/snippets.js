@@ -343,6 +343,14 @@ export default {
           state.settings[key].value = loadedSettings[key].value;
         }
       }
+    },
+    [Constants.MUTATION.CLEAR_CACHE](state) {
+      // deletes the cached training data for all snippets
+      for (const key in state.snippets) {
+        delete state.snippets[key].trainData;
+        state.snippets[key].trained = false;
+      }
+      settings.set(state.cacheKey, state.snippets);
     }
   },
   actions: {
@@ -446,7 +454,7 @@ export default {
             context.state.snippets[name].data,
             context.getters.params
           ),
-          context.state.snippets[name].trainData
+          context.state.snippets[name].trainData.state
         );
 
         // done

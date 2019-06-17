@@ -6,6 +6,7 @@
     <menu-group name="Snippets">
       <menu-item @click.native="connect()">{{ connected }} Server</menu-item>
       <menu-item @click.native="exportSnippets()">Export Snippets...</menu-item>
+      <menu-item @click.native="clearCache()">Clear Snippet Cache</menu-item>
     </menu-group>
   </ul>
 </template>
@@ -78,6 +79,9 @@ export default {
           }
         }
       );
+    },
+    clearCache() {
+      this.$store.commit(MUTATION.CLEAR_CACHE);
     }
   }
 };

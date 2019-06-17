@@ -140,13 +140,6 @@ class Snippet:
         # TODO: allow custom overrides for the filter
         self.setDefaultFilter()
 
-        # TODO: allow kernel settings per-snippet?
-        # for retraining, use exising variance/lengthscale
-        # if self.gpr and ~self.dirtyKernel:
-        #    kernel = self.gpr.kernel
-        # else:
-        #    kernel = self.getNewKernel()
-
         # generate X matrix
         X = self.getXTrain()
 
