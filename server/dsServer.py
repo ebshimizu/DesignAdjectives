@@ -26,7 +26,7 @@ def alginf(self, message, *args, **kws):
 
 logging.Logger.alginf = alginf
 logging.basicConfig(
-    level=logging.WARNING,
+    level=logging.INFO,
     format="[%(levelname)-5.5s] %(asctime)s [%(threadName)-12.12s]  %(message)s",
     handlers=[logging.FileHandler("server.log"), logging.StreamHandler()],
 )
@@ -258,8 +258,7 @@ def reset(args):
 def snippetLoadKernel(args):
     s = snippetServer.getSnippet(args["name"])
     if s:
-        s.setKernelParams(args["kernelData"])
-        s.loadGPR()
+        s.loadGPR(args["trainData"], args["state"])
         return None, True
     else:
         return None, False

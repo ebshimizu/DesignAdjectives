@@ -5,20 +5,31 @@ import os
 import torch
 import math
 import random
-import pyro
-import pyro.contrib.gp as gp
-import pyro.distributions as dist
+import gpytorch
 
 import graphUtils
 
 # what if design intent is just sampling from the prior distribution over the preference function
 
 # debug
-pyro.enable_validation(True)
+# pyro.enable_validation(True)
 
 # use gpu by default?
 # torch.set_default_tensor_type(torch.cuda.FloatTensor)
 # torch.cuda.init()
+
+
+class ExactGPModel(gpytorch.models.ExactGP):
+    def __init__(self, train_x, train_y, likelihood):
+        super(ExactGPModel, self).__init__(train_x, train_y, likelihood)
+        self.mean_module = gpytorch.means.ConstantMean()
+        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+
+    def forward(self, x):
+        mean_x = self.mean_module(x)
+        covar_x = self.covar_module(x)
+        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+
 
 # couple snippet notes
 # - Input vectors are assumed to already be normalized. They don't technically have to be for training,
@@ -30,11 +41,12 @@ class Snippet:
         self.filter = []
         self.optSteps = 2000
         self.learningRate = 0.005
-        self.lossTolerance = -1e2
+        self.lossTolerance = 1e-5
         self.gpr = None
         self.kernelMode = "RBF"
         self.kernel = {"variance": 1.0, "lengthscale": 1.0}
         self.dirtyKernel = False
+        self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
 
     # param filter is a list of which parameter vector indices are to be used
     # for sampling and training
@@ -65,29 +77,38 @@ class Snippet:
         self.dirtyKernel = True
 
     def getNewKernel(self):
-        # check types, RBF is only valid one for now
-        return gp.kernels.RBF(
-            input_dim=len(self.filter),
-            variance=torch.tensor(self.kernel["variance"]),
-            lengthscale=torch.tensor(self.kernel["lengthscale"]),
-        )
+        # TODO: remove or fix, using new gpr module
+        return None
 
     def setKernelParams(self, data):
         self.kernel = data
 
-    def loadGPR(self):
-        # might need to change this at some point
+    def unTorchStateDict(self):
+        stateDict = self.gpr.state_dict()
+        for key in stateDict:
+            stateDict[key] = stateDict[key].numpy().tolist()
+
+        print(stateDict)
+        return stateDict
+
+    def torchStateDict(self, state):
+        for key in state:
+            state[key] = torch.tensor(state[key])
+
+        return state
+
+    # load data
+    def loadGPR(self, trainData, state):
+        # set the X and Y examples
+        self.setData(trainData)
+
+        # construct GPR
         self.setDefaultFilter()
-
-        # generate X matrix
-        X = self.getXTrain()
-
-        # generate y vector
-        y = self.getYTrain()
+        self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        self.gpr = ExactGPModel(self.getXTrain(), self.getYTrain(), self.likelihood)
 
         # load kernel settings
-        # after this line, should be ok to eval (only relies on kernel params and input data)
-        self.gpr = gp.models.GPRegression(X, y, self.getNewKernel())
+        self.gpr.load_state_dict(self.torchStateDict(state))
 
     def getXTrain(self):
         # returns training data vector. Row-wise (?)
@@ -121,10 +142,10 @@ class Snippet:
 
         # TODO: allow kernel settings per-snippet?
         # for retraining, use exising variance/lengthscale
-        if self.gpr and ~self.dirtyKernel:
-            kernel = self.gpr.kernel
-        else:
-            kernel = self.getNewKernel()
+        # if self.gpr and ~self.dirtyKernel:
+        #    kernel = self.gpr.kernel
+        # else:
+        #    kernel = self.getNewKernel()
 
         # generate X matrix
         X = self.getXTrain()
@@ -133,30 +154,42 @@ class Snippet:
         y = self.getYTrain()
 
         # TODO: allow gpr settings per-snippet?
-        self.gpr = gp.models.GPRegression(X, y, kernel)
+        # self.gpr = gp.models.GPRegression(X, y, kernel)
+        self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        self.gpr = ExactGPModel(X, y, self.likelihood)
+
+        self.gpr.train()
+        self.likelihood.train()
 
         # hyperparams
-        optimizer = torch.optim.Adam(self.gpr.parameters(), lr=self.learningRate)
-        loss_fn = pyro.infer.Trace_ELBO().differentiable_loss
+        optimizer = torch.optim.Adam(
+            [{"params": self.gpr.parameters()}], lr=self.learningRate
+        )
+        mll = gpytorch.mlls.ExactMarginalLogLikelihood(self.likelihood, self.gpr)
         self.losses = []
         for i in range(self.optSteps):
             optimizer.zero_grad()
-            loss = loss_fn(self.gpr.model, self.gpr.guide)
+            output = self.gpr(X)
+            loss = -mll(output, y)
             loss.backward()
-            optimizer.step()
-            self.losses.append(loss.item())
+            print(
+                "Iter %d/%d - Loss: %.3f   lengthscale: %.3f   noise: %.3f"
+                % (
+                    i + 1,
+                    self.optSteps,
+                    loss.item(),
+                    self.gpr.covar_module.base_kernel.lengthscale.item(),
+                    self.gpr.likelihood.noise.item(),
+                )
+            )
 
-            # short-circuit past an arbitrary threshold
-            if loss.item() < self.lossTolerance:
-                print("Loss tolerance met early, breaking. Loss {0}".format(loss))
-                break
+            self.losses.append(loss.item())
+            optimizer.step()
 
         # debug
         # plt.plot(losses)
         retData = {}
-        retData["variance"] = self.gpr.kernel.variance.item()
-        retData["lengthscale"] = self.gpr.kernel.lengthscale.item()
-        retData["noise"] = self.gpr.noise.item()
+        retData["state"] = self.unTorchStateDict()
         retData["type"] = self.kernelMode
         retData["code"] = 0
         retData["message"] = "Snippet {0} training complete".format(self.name)
@@ -170,15 +203,15 @@ class Snippet:
         graphUtils.plot1DPredictions(x, self, paramIdx=dim, rmin=rmin, rmax=rmax, n=n)
 
     def predict(self, items):
+        self.gpr.eval()
+        self.likelihood.eval()
+
         # need to filter the input based on the current filter val
         Xtest = torch.tensor(self.applyFilter(items))
-        with torch.no_grad():
-            if type(self.gpr) == gp.models.VariationalSparseGP:
-                mean, cov = self.gpr(Xtest, full_cov=True)
-            else:
-                mean, cov = self.gpr(Xtest, full_cov=True, noiseless=False)
+        with torch.no_grad(), gpytorch.settings.fast_pred_var():
+            observed_pred = self.likelihood(self.gpr(Xtest))
 
-        return {"mean": mean, "cov": cov}
+        return {"mean": observed_pred.mean, "cov": observed_pred.variance}
 
     def predictOne(self, item):
         # identical to predict, but returns scalars

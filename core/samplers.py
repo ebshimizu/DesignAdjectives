@@ -12,6 +12,23 @@ from threading import Thread, Event
 # logging setup
 import logging
 
+# additional levels
+SAMPLE_INFO_LEVEL = 32
+logging.addLevelName(SAMPLE_INFO_LEVEL, "SAMPLE")
+
+
+def sample(self, message, *args, **kws):
+    if self.isEnabledFor(SAMPLE_INFO_LEVEL):
+        self._log(SAMPLE_INFO_LEVEL, message, args, **kws)
+
+
+logging.Logger.sample = sample
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(levelname)-5.5s] %(asctime)s [%(threadName)-12.12s]  %(message)s",
+    handlers=[logging.FileHandler("server.log"), logging.StreamHandler()],
+)
+
 logger = logging.getLogger()
 
 
@@ -76,7 +93,7 @@ class Rejection(SamplerThread):
         self.final = final
 
     def run(self):
-        logger.alginf("[{0}] Rejection sampler initializing".format(self.name))
+        logger.sample("[{0}] Rejection sampler initializing".format(self.name))
         count = 0
         accept = []
         rejected = 0
@@ -87,17 +104,17 @@ class Rejection(SamplerThread):
 
         g = dist.Uniform(torch.zeros(len(filter)), torch.ones(len(filter)))
 
-        logger.alginf("[{0}] Filter: {1}".format(self.name, filter))
-        logger.alginf(
+        logger.sample("[{0}] Filter: {1}".format(self.name, filter))
+        logger.sample(
             "[{0}] Initial Free Params: {1}".format(self.name, self.freeParams)
         )
-        logger.alginf(
+        logger.sample(
             "[{0}] Positive Example Count: {1}".format(self.name, len(posExamples))
         )
 
         while count < self.n:
             if self.stopped():
-                logger.alginf("[{0}] Rejection Sampler early stop".format(self.name))
+                logger.sample("[{0}] Rejection Sampler early stop".format(self.name))
                 break
 
             # determine which parameters are fixed (randomly select from the filter params)
@@ -127,7 +144,7 @@ class Rejection(SamplerThread):
 
             # check score
             if score["mean"] > self.threshold:
-                logger.alginf(
+                logger.sample(
                     "[{0}/{1}] Accepted {2} mean score: {3}".format(
                         count + 1, self.n, xp, score["mean"]
                     )
@@ -144,8 +161,8 @@ class Rejection(SamplerThread):
                 rejected = rejected + 1
 
         # finalize
-        logger.alginf("[{0}] Finalizing sampler".format(self.name))
-        logger.alginf(
+        logger.sample("[{0}] Finalizing sampler".format(self.name))
+        logger.sample(
             "[{0}] Rejection Rate: {1}% ({2}/{3})".format(
                 self.name,
                 100 * (rejected / (rejected + len(accept))),
@@ -190,7 +207,7 @@ class Metropolis(SamplerThread):
 
     def run(self):
         # initialize
-        logger.alginf("[{0}] Metropolis sampler initializing".format(self.name))
+        logger.sample("[{0}] Metropolis sampler initializing".format(self.name))
         fx = self.f.predictOne(self.x0)
         x = torch.tensor(self.x0)
         count = 0
@@ -201,10 +218,10 @@ class Metropolis(SamplerThread):
             torch.zeros(len(filter)), torch.eye(len(filter)) * self.scale
         )
 
-        logger.alginf("[{0} Metropolis sampler starting".format(self.name))
+        logger.sample("[{0} Metropolis sampler starting".format(self.name))
         while count < self.limit:
             if self.stopped():
-                logger.alginf("[{0}] Metropolis sampler early stop".format(self.name))
+                logger.sample("[{0}] Metropolis sampler early stop".format(self.name))
                 break
 
             # generate
@@ -248,7 +265,7 @@ class Metropolis(SamplerThread):
                 ):
                     # acceptance check
                     if checkSimilarity(xp, accept, self.epsilon, l2Dist):
-                        logger.alginf(
+                        logger.sample(
                             "[{0}/{1} ct: {2}] Accepted {3} mean: {4}".format(
                                 len(accept) + 1, self.n, count, xp, fxp["mean"]
                             )
