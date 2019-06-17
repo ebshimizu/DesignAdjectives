@@ -1,35 +1,37 @@
 <template>
-  <div
-    class="exemplar overflow-hidden flex flex-col w-1/5 border border-gray-200 hover:border-yellow-500 rounded m-2"
-  >
+  <div class="w-1/3 p-2">
     <div
-      class="w-full h-auto relative"
-      v-on:mouseenter="onHover()"
-      v-on:mouseleave="onHoverStop()"
-      tabindex="0"
-      ref="exemplar"
+      class="exemplar overflow-hidden flex flex-col w-full border border-gray-200 hover:border-yellow-500 rounded"
     >
       <div
-        v-show="showActions"
-        class="absolute bottom-0 left-0 w-full flex flex-row bg-gray-800 border-t border-gray-200 text-sm font-mono text-center"
+        class="w-full h-auto relative"
+        v-on:mouseenter="onHover()"
+        v-on:mouseleave="onHoverStop()"
+        tabindex="0"
+        ref="exemplar"
       >
         <div
-          @click="lockExample()"
-          class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 border-r text-gray-200 flex-grow"
-        >Lock</div>
-        <div
-          @click="removeExample()"
-          class="cursor-pointer bg-red-900 hover:bg-red-700 py-1 px-2 text-gray-200 flex-grow"
-        >X</div>
+          v-show="showActions"
+          class="absolute bottom-0 left-0 w-full flex flex-row bg-gray-800 border-t border-gray-200 text-sm font-mono text-center"
+        >
+          <div
+            @click="lockExample()"
+            class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 border-r text-gray-200 flex-grow"
+          >Lock</div>
+          <div
+            @click="removeExample()"
+            class="cursor-pointer bg-red-900 hover:bg-red-700 py-1 px-2 text-gray-200 flex-grow"
+          >X</div>
+        </div>
+        <canvas ref="canvas" class="exemplarCanvas"/>
       </div>
-      <canvas ref="canvas" class="exemplarCanvas"/>
-    </div>
-    <div
-      class="flex flex-row text-gray-200 font-mono text-sm px-2 py-1 border-t border-gray-200 justify-between"
-      :class="[scoreClass]"
-    >
-      <div class="flex-auto">ID: {{ id }}</div>
-      <div class="flex-no-grow">{{ score }}</div>
+      <div
+        class="flex flex-row text-gray-200 font-mono text-sm px-2 py-1 border-t border-gray-200 justify-between"
+        :class="[scoreClass]"
+      >
+        <div class="flex-auto">ID: {{ id }}</div>
+        <div class="flex-no-grow">{{ score }}</div>
+      </div>
     </div>
   </div>
 </template>

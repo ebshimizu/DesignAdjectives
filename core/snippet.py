@@ -88,7 +88,6 @@ class Snippet:
         for key in stateDict:
             stateDict[key] = stateDict[key].numpy().tolist()
 
-        print(stateDict)
         return stateDict
 
     def torchStateDict(self, state):
@@ -165,16 +164,16 @@ class Snippet:
             output = self.gpr(X)
             loss = -mll(output, y)
             loss.backward()
-            print(
-                "Iter %d/%d - Loss: %.3f   lengthscale: %.3f   noise: %.3f"
-                % (
-                    i + 1,
-                    self.optSteps,
-                    loss.item(),
-                    self.gpr.covar_module.base_kernel.lengthscale.item(),
-                    self.gpr.likelihood.noise.item(),
-                )
-            )
+            # print(
+            #     "Iter %d/%d - Loss: %.3f   lengthscale: %.3f   noise: %.3f"
+            #     % (
+            #         i + 1,
+            #         self.optSteps,
+            #         loss.item(),
+            #         self.gpr.covar_module.base_kernel.lengthscale.item(),
+            #         self.gpr.likelihood.noise.item(),
+            #     )
+            # )
 
             self.losses.append(loss.item())
             optimizer.step()
