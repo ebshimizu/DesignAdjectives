@@ -56,6 +56,14 @@ export default {
           Constants.PARAM_COLOR_MODE.REDBLUE,
           Constants.PARAM_COLOR_MODE.GREYSCALE
         ]
+      },
+      optSteps: {
+        value: 200,
+        type: 'number',
+        name: 'Optimization Steps',
+        min: 0,
+        max: 2000,
+        step: 1
       }
     },
     snippets: {},
@@ -410,6 +418,12 @@ export default {
 
         // ensure snippet exists
         await driver.addSnippet(name);
+        await driver.setProp(
+          name,
+          'optSteps',
+          context.state.settings.optSteps.value
+        );
+
         // sync data
         await driver.setData(
           name,
