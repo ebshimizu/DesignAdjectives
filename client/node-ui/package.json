@@ -55,6 +55,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bluebird": "^3.5.4",
+    "chart.js": "^2.8.0",
     "electron-settings": "^3.2.0",
     "fs-extra": "^7.0.1",
     "socket.io-client": "^2.2.0",

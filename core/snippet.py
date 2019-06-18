@@ -132,7 +132,7 @@ class Snippet:
         return torch.tensor(y)
 
     # runs GPR based on current data set
-    def train(self):
+    def train(self, optCB=None):
         # check that training data exists
         if len(self.data) == 0:
             return DSStatus(
@@ -183,6 +183,9 @@ class Snippet:
             #     )
             # )
 
+            if optCB:
+                optCB(loss.item())
+
             self.losses.append(loss.item())
             optimizer.step()
 
@@ -192,6 +195,7 @@ class Snippet:
         retData["state"] = self.unTorchStateDict()
         retData["type"] = self.kernelMode
         retData["code"] = 0
+        retData["losses"] = self.losses
         retData["message"] = "Snippet {0} training complete".format(self.name)
 
         return retData

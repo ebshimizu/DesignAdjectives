@@ -15,6 +15,7 @@ export class DsDriver {
     this.sampleCallback = null;
     this.connectCallback = null;
     this.sampleFinalCallback = null;
+    this.lossCallback = null;
     this.connected = false;
     this.snippetServerOnline = false;
 
@@ -52,6 +53,10 @@ export class DsDriver {
 
     socket.on('sampler complete', function(data, snippetName) {
       self.samplerComplete(data, snippetName);
+    });
+
+    socket.on('training loss', function(data, snippetName) {
+      if (self.lossCallback) self.lossCallback(data, snippetName);
     });
 
     socket.on('no server', function() {

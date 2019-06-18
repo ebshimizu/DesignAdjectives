@@ -55,6 +55,10 @@ def sampleFinal(data, name):
     sio.emit("sampler complete", {"data": data, "name": name})
 
 
+def trainResult(loss, name):
+    sio.emit("training loss", {"loss": loss, "name": name})
+
+
 @sio.on("connect")
 def onConnect():
     logger.info("connected")
@@ -191,7 +195,7 @@ def snippetPredict(args):
 
 
 @sio.on("snippet predict one")
-def snippetPredict(args):
+def snippetPredictOne(args):
     s = snippetServer.getSnippet(args["name"])
     if s:
         print(args["data"])

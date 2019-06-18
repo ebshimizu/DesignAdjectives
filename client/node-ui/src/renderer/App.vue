@@ -16,6 +16,9 @@
             <tab title="Sampler">
               <sampler-panel></sampler-panel>
             </tab>
+            <tab title="Debug">
+              <debug-panel></debug-panel>
+            </tab>
           </tabs>
         </div>
       </div>
@@ -39,6 +42,7 @@ import Tabs from '@/components/Tabs/Tabs';
 import Tab from '@/components/Tabs/Tab';
 import SnippetInspector from '@/components/Snippets/SnippetInspector';
 import SamplerPanel from '@/components/Samples/SamplerPanel';
+import DebugPanel from '@/components/Snippets/DebugPanel';
 import '@/assets/tailwind.css';
 import { MUTATION, ACTION } from '@/store/constants';
 
@@ -53,7 +57,8 @@ export default {
     Tab,
     Tabs,
     SnippetInspector,
-    SamplerPanel
+    SamplerPanel,
+    DebugPanel
   },
   mounted() {
     this.$store.commit(MUTATION.LOAD_SNIPPET_SETTINGS);

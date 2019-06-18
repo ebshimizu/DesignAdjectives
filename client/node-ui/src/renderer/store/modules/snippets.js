@@ -168,6 +168,11 @@ export default {
     },
     currentSnippetScore: state => {
       return state.activeSnippetScore.mean;
+    },
+    currentLosses: state => {
+      if (state.activeSnippet.trained)
+        return state.activeSnippet.trainData.losses;
+      else return [];
     }
   },
   mutations: {
@@ -526,7 +531,6 @@ export default {
       driver.sampleFinalCallback = function(data, name) {
         context.dispatch(Constants.ACTION.STOP_SAMPLER);
       };
-
       // reset the server state completely
       await driver.reset();
 
