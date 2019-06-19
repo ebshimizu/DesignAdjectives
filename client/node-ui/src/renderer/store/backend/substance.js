@@ -303,7 +303,7 @@ function deleteMaterialMaps(material) {
   material.map.dispose();
   material.metalnessMap.dispose();
   material.normalMap.dispose();
-  material.roughness.dispose();
+  material.roughnessMap.dispose();
   material.aoMap.dispose();
   material.displacementMap.dispose();
 }

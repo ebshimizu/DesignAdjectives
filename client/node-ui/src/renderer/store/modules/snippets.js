@@ -491,6 +491,10 @@ export default {
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
         );
+        context.dispatch(
+          Constants.ACTION.TRAIN,
+          context.getters.activeSnippetName
+        );
         // await driver.addData(data.name, data.point.x, data.point.y);
       } catch (e) {
         console.log(e);
@@ -503,6 +507,10 @@ export default {
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
+        );
+        context.dispatch(
+          Constants.ACTION.TRAIN,
+          context.getters.activeSnippetName
         );
         // await driver.removeData(data.name, data.index);
       } catch (e) {
@@ -602,14 +610,17 @@ export default {
       }
     },
     async [Constants.ACTION.LOAD_PARAM_COLOR_DATA](context, snippet) {
-      const current = context.getters.paramsAsArray;
-      const paramData = await driver.predictAll1D(snippet, {
-        x: normalizeVector(current, context.getters.params),
-        rmin: 0,
-        rmax: 1,
-        n: 20
-      });
-      context.commit(Constants.MUTATION.SET_PARAM_COLOR_DATA, paramData);
+      if (context.getters.status === 'IDLE') {
+        const current = context.getters.paramsAsArray;
+        const paramData = await driver.predictAll1D(snippet, {
+          x: normalizeVector(current, context.getters.params),
+          rmin: 0,
+          rmax: 1,
+          n: 20
+        });
+        context.commit(Constants.MUTATION.SET_PARAM_COLOR_DATA, paramData);
+      }
+      // todo: may want a message in app saying that system is busy and can't run the command
     }
   }
 };
