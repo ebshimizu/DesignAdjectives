@@ -334,7 +334,7 @@ function loadThenDelete(renderer, material, id, destCanvas) {
       `${id}_metallic.png?${new Date().getTime()}`
     ),
     normalMap: path.join(renderDir, `${id}_normal.png?${new Date().getTime()}`),
-    roughness: path.join(
+    roughnessMap: path.join(
       renderDir,
       `${id}_roughness.png?${new Date().getTime()}`
     ),
@@ -383,7 +383,7 @@ function loadContinuous(material, id) {
   material.normalMap = threeLoader.load(
     path.join(renderDir, `${id}_normal.png?${new Date().getTime()}`)
   );
-  material.roughness = threeLoader.load(
+  material.roughnessMap = threeLoader.load(
     path.join(renderDir, `${id}_roughness.png?${new Date().getTime()}`)
   );
   material.aoMap = threeLoader.load(
