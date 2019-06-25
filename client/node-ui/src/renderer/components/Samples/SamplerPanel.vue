@@ -194,7 +194,10 @@ export default {
     },
     randomSample() {
       if (this.$store.getters.idle) {
-        this.$store.dispatch(ACTION.GENERATE_RANDOM, parseInt(this.n));
+        this.$store.dispatch(ACTION.GENERATE_RANDOM, {
+          count: parseInt(this.n),
+          freeParams: parseInt(this.free)
+        });
       }
     },
     stop() {

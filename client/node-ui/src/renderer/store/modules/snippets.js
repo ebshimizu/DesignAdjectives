@@ -11,6 +11,22 @@ let driver = null;
 // external counter, can't be accessed during runtime
 let randIDStart = 0;
 
+/**
+ * Shuffles array in place.
+ * https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle(a) {
+  var j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = a[i];
+    a[i] = a[j];
+    a[j] = x;
+  }
+  return a;
+}
+
 // normalize a single vector
 function normalizeVector(x, key) {
   // key has min/max data for each element
@@ -40,11 +56,15 @@ function unnormalizeSample(sample, key) {
   sample.x = unnormalizeVector(sample.x, key);
 }
 
-function randomVector(length) {
-  const x = [];
+function randomVector(length, x0, freeParams) {
+  const x = x0.slice(0);
 
-  for (let i = 0; i < length; i++) {
-    x.push(Math.random());
+  // select free params
+  const keys = [...x.keys()];
+  shuffle(keys);
+
+  for (let i = 0; i < freeParams; i++) {
+    x[keys[i]] = Math.random();
   }
 
   return x;
@@ -638,16 +658,23 @@ export default {
       }
       // todo: may want a message in app saying that system is busy and can't run the command
     },
-    [Constants.ACTION.GENERATE_RANDOM](context, count) {
+    [Constants.ACTION.GENERATE_RANDOM](context, params) {
       if (context.getters.status === Constants.SERVER_STATUS.IDLE) {
         // clears sample array
         context.commit(Constants.MUTATION.CLEAR_SAMPLES);
 
         // adds count random samples to the sample array
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < params.count; i++) {
           context.commit(Constants.MUTATION.ADD_SAMPLE, {
             x: unnormalizeVector(
-              randomVector(context.getters.params.length),
+              randomVector(
+                context.getters.params.length,
+                normalizeVector(
+                  context.getters.paramsAsArray,
+                  context.getters.params
+                ),
+                params.freeParams
+              ),
               context.getters.params
             ),
             mean: 0,
@@ -656,7 +683,7 @@ export default {
           });
         }
 
-        randIDStart = randIDStart + count;
+        randIDStart = randIDStart + params.count;
       }
     }
   }
