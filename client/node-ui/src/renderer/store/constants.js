@@ -66,5 +66,12 @@ export const ACTION = {
   HIDE_TEMPORARY_STATE: 'Hide Temporary Snapshot State',
   LOCK_TEMPORARY_STATE: 'Lock Temporary Snapshot State',
   COPY_SNIPPET: 'Copy Snippet',
-  RENAME_SNIPPET: 'Rename Snippet'
+  RENAME_SNIPPET: 'Rename Snippet',
+  GENERATE_RANDOM: 'Generate Random Set'
+};
+
+export const SERVER_STATUS = {
+  TRAIN: 'Training',
+  SAMPLE: 'Sampling',
+  IDLE: 'Idle'
 };

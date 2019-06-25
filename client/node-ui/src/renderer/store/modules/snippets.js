@@ -8,6 +8,9 @@ import settings from 'electron-settings';
 // would be able to invoke things outside of mutations/actions
 let driver = null;
 
+// external counter, can't be accessed during runtime
+let randIDStart = 0;
+
 // normalize a single vector
 function normalizeVector(x, key) {
   // key has min/max data for each element
@@ -35,6 +38,16 @@ function unnormalizeVector(x, key) {
 // takes the sample's vector and normalizes it
 function unnormalizeSample(sample, key) {
   sample.x = unnormalizeVector(sample.x, key);
+}
+
+function randomVector(length) {
+  const x = [];
+
+  for (let i = 0; i < length; i++) {
+    x.push(Math.random());
+  }
+
+  return x;
 }
 
 // this state maintains a list of snippet objects and sync's to the server as needed.
@@ -74,7 +87,7 @@ export default {
     serverOnline: false,
     cacheKey: '',
     serverStatus: {
-      action: 'IDLE',
+      action: Constants.SERVER_STATUS.IDLE,
       message: ''
     },
     paramData: {},
@@ -88,10 +101,13 @@ export default {
       return driver.getCurrentState();
     },
     training: state => {
-      return state.serverStatus.action === 'TRAIN';
+      return state.serverStatus.action === Constants.SERVER_STATUS.TRAIN;
     },
     sampling: state => {
-      return state.serverStatus.action === 'SAMPLE';
+      return state.serverStatus.action === Constants.SERVER_STATUS.SAMPLE;
+    },
+    idle: state => {
+      return state.serverStatus.action === Constants.SERVER_STATUS.IDLE;
     },
     status: state => {
       return state.serverStatus.action;
@@ -198,7 +214,7 @@ export default {
         driver.disconnect();
         state.connected = false;
         state.serverOnline = false;
-        state.serverStatus.action = 'IDLE';
+        state.serverStatus.action = Constants.SERVER_STATUS.IDLE;
       }
     },
     [Constants.MUTATION.STATUS_UPDATE](state, status) {
@@ -280,15 +296,15 @@ export default {
       state.samples.push(sample);
     },
     [Constants.MUTATION.SET_SERVER_STATUS_IDLE](state) {
-      state.serverStatus.action = 'IDLE';
+      state.serverStatus.action = Constants.SERVER_STATUS.IDLE;
       state.serverStatus.message = '';
     },
     [Constants.MUTATION.SET_SERVER_STATUS_TRAIN](state, name) {
-      state.serverStatus.action = 'TRAIN';
+      state.serverStatus.action = Constants.SERVER_STATUS.TRAIN;
       state.serverStatus.message = `Training ${name}`;
     },
     [Constants.MUTATION.SET_SERVER_STATUS_SAMPLE](state, name) {
-      state.serverStatus.action = 'SAMPLE';
+      state.serverStatus.action = Constants.SERVER_STATUS.SAMPLE;
       state.serverStatus.message = `Sampling ${name}`;
     },
     [Constants.MUTATION.EXPORT_SNIPPETS](state, file) {
@@ -610,7 +626,7 @@ export default {
       }
     },
     async [Constants.ACTION.LOAD_PARAM_COLOR_DATA](context, snippet) {
-      if (context.getters.status === 'IDLE') {
+      if (context.getters.status === Constants.SERVER_STATUS.IDLE) {
         const current = context.getters.paramsAsArray;
         const paramData = await driver.predictAll1D(snippet, {
           x: normalizeVector(current, context.getters.params),
@@ -621,6 +637,27 @@ export default {
         context.commit(Constants.MUTATION.SET_PARAM_COLOR_DATA, paramData);
       }
       // todo: may want a message in app saying that system is busy and can't run the command
+    },
+    [Constants.ACTION.GENERATE_RANDOM](context, count) {
+      if (context.getters.status === Constants.SERVER_STATUS.IDLE) {
+        // clears sample array
+        context.commit(Constants.MUTATION.CLEAR_SAMPLES);
+
+        // adds count random samples to the sample array
+        for (let i = 0; i < count; i++) {
+          context.commit(Constants.MUTATION.ADD_SAMPLE, {
+            x: unnormalizeVector(
+              randomVector(context.getters.params.length),
+              context.getters.params
+            ),
+            mean: 0,
+            cov: 0,
+            idx: i + randIDStart
+          });
+        }
+
+        randIDStart = randIDStart + count;
+      }
     }
   }
 };

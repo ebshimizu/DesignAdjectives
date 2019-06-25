@@ -70,6 +70,13 @@
           @click="toggleSampler()"
         >{{ sampleStatus }}</div>
       </div>
+      <div class="px-2 pb-2">
+        <div
+          class="btn btn-green"
+          @click="randomSample()"
+          :class="{ 'disabled': !this.$store.getters.idle }"
+        >Random Sample</div>
+      </div>
     </div>
     <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
       <sample v-for="sample in samples" :key="sample.idx" v-bind:sample="sample"></sample>
@@ -183,6 +190,11 @@ export default {
             freeParams: parseInt(this.free)
           }
         });
+      }
+    },
+    randomSample() {
+      if (this.$store.getters.idle) {
+        this.$store.dispatch(ACTION.GENERATE_RANDOM, parseInt(this.n));
       }
     },
     stop() {
