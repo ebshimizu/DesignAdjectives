@@ -1,5 +1,7 @@
 <template>
-  <div class="h-full w-full flex flex-col border-l border-gray-200 text-gray-200 overflow-hidden">
+  <div
+    class="h-full w-full flex flex-col border-l border-gray-200 text-gray-200 overflow-hidden relative"
+  >
     <div class="param-controls overflow-auto flex flex-col-reverse">
       <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
     </div>

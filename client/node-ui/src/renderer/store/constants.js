@@ -41,7 +41,9 @@ export const MUTATION = {
   SET_BACKEND_SETTING: 'Set Backend Setting',
   COPY_SNIPPET: 'Copy Snippet',
   RENAME_SNIPPET: 'Rename Snippet',
-  CLEAR_CACHE: 'Clear Snippet Cache'
+  CLEAR_CACHE: 'Clear Snippet Cache',
+  SHOW_EXTENTS: 'Show Extents Panel',
+  HIDE_EXTENTS: 'Hide Extents Panel'
 };
 
 export const ACTION = {

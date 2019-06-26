@@ -29,6 +29,12 @@
     <div class="flex-none w-full h-6 border-t border-gray-200 bg-gray-900">
       <status-bar></status-bar>
     </div>
+    <div
+      class="param-extents-modal overflow-auto w-48 h-full absolute z-10"
+      v-show="this.$store.getters.extentsVisible"
+    >
+      <parameter-extents></parameter-extents>
+    </div>
   </div>
 </template>
 
@@ -43,6 +49,8 @@ import Tab from '@/components/Tabs/Tab';
 import SnippetInspector from '@/components/Snippets/SnippetInspector';
 import SamplerPanel from '@/components/Samples/SamplerPanel';
 import DebugPanel from '@/components/Snippets/DebugPanel';
+import ParameterExtents from '@/components/Parameters/ParameterExtents';
+
 import '@/assets/tailwind.css';
 import { MUTATION, ACTION } from '@/store/constants';
 
@@ -58,7 +66,8 @@ export default {
     Tabs,
     SnippetInspector,
     SamplerPanel,
-    DebugPanel
+    DebugPanel,
+    ParameterExtents
   },
   mounted() {
     this.$store.commit(MUTATION.LOAD_SNIPPET_SETTINGS);
@@ -88,5 +97,11 @@ export default {
 
 .sampler-panel {
   height: 35%;
+}
+
+.param-extents-modal {
+  right: 25%;
+  height: calc(100% - 1.5rem - 32px);
+  top: 32px;
 }
 </style>

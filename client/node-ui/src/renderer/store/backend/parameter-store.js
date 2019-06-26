@@ -19,7 +19,9 @@ export function createStore(backend, type) {
       cacheKey: '',
       backend,
       lastCommittedVector: [],
-      snapshot: []
+      snapshot: [],
+      extentsParam: '',
+      extentsVisible: true
     },
     getters: {
       param: state => id => {
@@ -40,6 +42,12 @@ export function createStore(backend, type) {
       },
       backendType: state => {
         return state.backend.type();
+      },
+      extentsParam: state => {
+        return state.extentsParam;
+      },
+      extentsVisible: state => {
+        return state.extentsVisible;
       }
     },
     mutations: {
@@ -89,6 +97,12 @@ export function createStore(backend, type) {
       },
       [MUTATION.SET_BACKEND_SETTING](state, data) {
         state.backend.setSetting(data.key, data.value);
+      },
+      [MUTATION.SHOW_EXTENTS](state) {
+        state.extentsVisible = true;
+      },
+      [MUTATION.HIDE_EXTENTS](state) {
+        state.extentsVisible = false;
       }
     },
     actions: {
