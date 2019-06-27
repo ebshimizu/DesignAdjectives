@@ -79,6 +79,8 @@ class Rejection(SamplerThread):
         threshold=0.7,
         freeParams=1000,
         n=10,
+        paramFloor=3,
+        retries=20,
         cb=None,
         final=None,
     ):
@@ -88,15 +90,24 @@ class Rejection(SamplerThread):
         self.x0 = x0
         self.threshold = threshold
         self.freeParams = freeParams
+
+        if self.freeParams > len(self.snippet.filter):
+            self.freeParams = len(self.snippet.filter)
+
         self.n = n
         self.cb = cb
         self.final = final
+        self.paramFloor = paramFloor
+        self.retries = retries
 
     def run(self):
         logger.sample("[{0}] Rejection sampler initializing".format(self.name))
         count = 0
         accept = []
         rejected = 0
+        currentFreeParams = self.freeParams
+        attempts = 0
+        log = []
 
         # duplicate, we're going to shuffle it a lot
         filter = list(self.snippet.filter)
@@ -111,6 +122,7 @@ class Rejection(SamplerThread):
         logger.sample(
             "[{0}] Positive Example Count: {1}".format(self.name, len(posExamples))
         )
+        logger.sample("[{0}] Free Param Floor: {1}".format(self.name, self.paramFloor))
 
         while count < self.n:
             if self.stopped():
@@ -119,7 +131,7 @@ class Rejection(SamplerThread):
 
             # determine which parameters are fixed (randomly select from the filter params)
             random.shuffle(filter)
-            selected = filter[0 : self.freeParams]
+            selected = filter[0:currentFreeParams]
 
             # pull a random positive example to use as the base
             random.shuffle(posExamples)
@@ -156,9 +168,48 @@ class Rejection(SamplerThread):
                         self.cb, xp.tolist(), score["mean"], score["cov"], count
                     )
 
+                log.append(
+                    {
+                        "accept": True,
+                        "attempts": attempts,
+                        "score": score["mean"],
+                        "freeParams": currentFreeParams,
+                        "count": rejected + len(accept),
+                    }
+                )
+
                 count = count + 1
+                attempts = 0
+
+                if currentFreeParams < self.freeParams:
+                    currentFreeParams = currentFreeParams + 1
+                    logger.sample(
+                        "[{0}] Sample accepted. Raising free param limit to {1}.".format(
+                            self.name, currentFreeParams
+                        )
+                    )
             else:
+                log.append(
+                    {
+                        "accept": False,
+                        "score": score["mean"],
+                        "freeParams": currentFreeParams,
+                        "attempt": attempts,
+                        "count": rejected + len(accept),
+                    }
+                )
+
+                attempts = attempts + 1
                 rejected = rejected + 1
+
+                if (attempts > self.retries) & (currentFreeParams > self.paramFloor):
+                    currentFreeParams = currentFreeParams - 1
+                    attempts = 0
+                    logger.sample(
+                        "[{0}] Retry limit reached. Decreasing free params to {1}".format(
+                            self.name, currentFreeParams
+                        )
+                    )
 
         # finalize
         logger.sample("[{0}] Finalizing sampler".format(self.name))
@@ -172,7 +223,8 @@ class Rejection(SamplerThread):
         )
 
         if self.final:
-            self.final(accept, self.name)
+            # sends the trace back to the client for whatever use
+            self.final(log, self.name)
 
 
 class Metropolis(SamplerThread):
