@@ -1,6 +1,7 @@
 <template>
   <div
-    class="sample overflow-hidden flex flex-col w-48 border border-gray-200 hover:border-yellow-500 rounded m-2"
+    class="sample overflow-hidden flex flex-col border border-gray-200 hover:border-yellow-500 rounded m-2"
+    v-bind:class="[widthClass]"
   >
     <div
       class="w-full h-auto relative"
@@ -52,7 +53,7 @@ export default {
       showActions: false
     };
   },
-  props: ['sample'],
+  props: ['sample', 'width'],
   computed: {
     score() {
       return this.sample.mean;
@@ -65,6 +66,11 @@ export default {
     },
     x() {
       return this.sample.x;
+    },
+    widthClass() {
+      if (this.width) return this.width;
+
+      return 'w-48';
     }
   },
   methods: {

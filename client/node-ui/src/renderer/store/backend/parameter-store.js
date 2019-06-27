@@ -21,7 +21,9 @@ export function createStore(backend, type) {
       lastCommittedVector: [],
       snapshot: [],
       extentsParam: '',
-      extentsVisible: true
+      extentsId: -1,
+      extentsVisible: false,
+      extentsVectors: []
     },
     getters: {
       param: state => id => {
@@ -48,6 +50,12 @@ export function createStore(backend, type) {
       },
       extentsVisible: state => {
         return state.extentsVisible;
+      },
+      extentsVectors: state => {
+        return state.extentsVectors;
+      },
+      extentsId: state => {
+        return state.extentsId;
       }
     },
     mutations: {
@@ -103,6 +111,28 @@ export function createStore(backend, type) {
       },
       [MUTATION.HIDE_EXTENTS](state) {
         state.extentsVisible = false;
+      },
+      [MUTATION.CLEAR_EXTENTS](state) {
+        state.extentsVectors = [];
+        state.extentsParam = '';
+        state.extentsId = -1;
+      },
+      [MUTATION.GENERATE_EXTENTS](state, params) {
+        // copy current param state
+        const current = state.parameters.map(p => p.value);
+        const paramID = params.id;
+        const param = state.parameters[paramID];
+        state.extentsParam = param.name;
+        state.extentsId = paramID;
+
+        for (let i = 0; i <= params.count; i++) {
+          const paramCopy = current.slice(0);
+          const a = (1 / params.count) * i;
+
+          // unnormalized value
+          paramCopy[paramID] = param.min + (param.max - param.min) * a;
+          state.extentsVectors.push(paramCopy);
+        }
       }
     },
     actions: {
@@ -146,6 +176,12 @@ export function createStore(backend, type) {
           ACTION.LOAD_PARAM_COLOR_DATA,
           context.getters.activeSnippetName
         );
+      },
+      [ACTION.GENERATE_EXTENTS](context, params) {
+        // clear computed extents vectors
+        context.commit(MUTATION.CLEAR_EXTENTS);
+        context.commit(MUTATION.GENERATE_EXTENTS, params);
+        context.commit(MUTATION.SHOW_EXTENTS);
       }
     }
   };

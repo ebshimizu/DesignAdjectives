@@ -43,7 +43,9 @@ export const MUTATION = {
   RENAME_SNIPPET: 'Rename Snippet',
   CLEAR_CACHE: 'Clear Snippet Cache',
   SHOW_EXTENTS: 'Show Extents Panel',
-  HIDE_EXTENTS: 'Hide Extents Panel'
+  HIDE_EXTENTS: 'Hide Extents Panel',
+  CLEAR_EXTENTS: 'Clear Current Extents Elements',
+  GENERATE_EXTENTS: 'Generate Extents for Parameter'
 };
 
 export const ACTION = {
@@ -69,7 +71,8 @@ export const ACTION = {
   LOCK_TEMPORARY_STATE: 'Lock Temporary Snapshot State',
   COPY_SNIPPET: 'Copy Snippet',
   RENAME_SNIPPET: 'Rename Snippet',
-  GENERATE_RANDOM: 'Generate Random Set'
+  GENERATE_RANDOM: 'Generate Random Set',
+  GENERATE_EXTENTS: 'Generate Parameter Extents'
 };
 
 export const SERVER_STATUS = {
