@@ -1,21 +1,23 @@
 <template>
   <div class="flex flex-row h-full w-full overflow-hidden">
-    <div class="w-1/5 border-r border-gray-200 font-sans overflow-auto text-gray-200">
+    <div class="flex flex-col w-1/5 border-r border-gray-200 font-sans overflow-auto text-gray-200">
       <div
         class="border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm overflow-hidden"
       >
         <div
           class="font-bold overflow-hidden"
         >{{ activeSnippet.name ? activeSnippet.name : '[No Active Snippet]' }}</div>
-        <div>{{ status }}</div>
+        <div class="mb-2">{{ status }}</div>
       </div>
-      <div
-        class="border-b border-gray-200 px-2 py-1 overflow-hidden"
-        v-for="(val, key) in trainData.state"
-        :key="key"
-      >
-        <div class="font-bold tracking-wide uppercase text-xs mb-1 break-all">{{ key }}</div>
-        <div class="font-mono text-sm">{{ val }}</div>
+      <div class="w-full h-full overflow-auto">
+        <div
+          class="border-b border-gray-200 px-2 py-1 overflow-hidden"
+          v-for="(val, key) in trainData.state"
+          :key="key"
+        >
+          <div class="font-bold tracking-wide uppercase text-xs mb-1 break-all">{{ key }}</div>
+          <div class="font-mono text-sm">{{ val }}</div>
+        </div>
       </div>
     </div>
     <div class="flex flex-row h-full w-full">

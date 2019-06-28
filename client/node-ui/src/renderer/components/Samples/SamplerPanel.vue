@@ -1,106 +1,114 @@
 <template>
   <div class="flex flex-row h-full w-full overflow-hidden">
-    <div class="w-1/5 border-r border-gray-200 font-sans overflow-auto text-gray-200">
+    <div class="flex flex-col w-1/5 border-r border-gray-200 font-sans overflow-auto text-gray-200">
       <div class="border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm">
         <div class="font-bold">{{ activeSnippetName ? activeSnippetName : '[No Active Snippet]' }}</div>
         <div>Sampler Control</div>
       </div>
-      <div class="border-b border-gray-200 px-2 py-1">
-        <div class="font-bold tracking-wide uppercase text-xs mb-1">Count</div>
-        <input
-          class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
-          type="number"
-          v-model="n"
-          min="1"
-          step="1"
-        >
-      </div>
-      <div class="border-b border-gray-200 px-2 py-1">
-        <div class="font-bold tracking-wide uppercase text-xs mb-1">Threshold</div>
-        <div class="flex">
-          <select
-            v-model="thresholdMode"
-            class="w-2/3 text-sm font-mono p-1 mr-2 bg-gray-800 text-gray-light"
-          >
-            <option
-              v-for="option in thresholdModes"
-              v-bind:value="option.val"
-              :key="option.val"
-            >{{ option.text }}</option>
-          </select>
+      <div class="w-full h-full overflow-auto">
+        <div class="border-b border-gray-200 px-2 py-1">
+          <div class="font-bold tracking-wide uppercase text-xs mb-1">Count</div>
           <input
-            class="w-1/3 standard-text-field"
+            class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
             type="number"
-            v-model="threshold"
-            min="0"
-            max="1"
-            step="0.001"
-          >
-        </div>
-      </div>
-      <!-- <div class="border-b border-gray-200 px-2 py-1">
-        <div class="font-bold tracking-wide uppercase text-xs mb-1">Burn-in</div>
-        <input
-          class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
-          type="number"
-          v-model="burnin"
-          min="0"
-          max="10000"
-          step="1"
-        >
-      </div>-->
-      <div class="border-b border-gray-200 px-2 py-1">
-        <div class="font-bold tracking-wide uppercase text-xs mb-1">Free Params</div>
-        <div class="flex">
-          <input class="w-2/3 mx-2" type="range" v-model="free" min="0" :max="maxParams" step="1">
-          <input
-            class="w-1/3 standard-text-field"
-            type="number"
-            v-model="free"
-            min="0"
-            :max="maxParams"
+            v-model="n"
+            min="1"
             step="1"
           >
         </div>
-      </div>
-      <div class="border-b border-gray-200 px-2 py-1">
-        <div class="font-bold tracking-wide uppercase text-xs mb-1">Param Floor</div>
-        <div class="flex">
+        <div class="border-b border-gray-200 px-2 py-1">
+          <div class="font-bold tracking-wide uppercase text-xs mb-1">Threshold</div>
+          <div class="flex">
+            <select
+              v-model="thresholdMode"
+              class="w-2/3 text-sm font-mono p-1 mr-2 bg-gray-800 text-gray-light"
+            >
+              <option
+                v-for="option in thresholdModes"
+                v-bind:value="option.val"
+                :key="option.val"
+              >{{ option.text }}</option>
+            </select>
+            <input
+              class="w-1/3 standard-text-field"
+              type="number"
+              v-model="threshold"
+              min="0"
+              max="1"
+              step="0.001"
+            >
+          </div>
+        </div>
+        <!-- <div class="border-b border-gray-200 px-2 py-1">
+          <div class="font-bold tracking-wide uppercase text-xs mb-1">Burn-in</div>
           <input
-            class="w-2/3 mx-2"
-            type="range"
-            v-model="paramFloor"
+            class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
+            type="number"
+            v-model="burnin"
             min="0"
-            :max="maxParams"
+            max="10000"
             step="1"
           >
+        </div>-->
+        <div class="border-b border-gray-200 px-2 py-1">
+          <div class="font-bold tracking-wide uppercase text-xs mb-1">Free Params</div>
+          <div class="flex">
+            <input class="w-2/3 mx-2" type="range" v-model="free" min="0" :max="maxParams" step="1">
+            <input
+              class="w-1/3 standard-text-field"
+              type="number"
+              v-model="free"
+              min="0"
+              :max="maxParams"
+              step="1"
+            >
+          </div>
+        </div>
+        <div class="border-b border-gray-200 px-2 py-1">
+          <div class="font-bold tracking-wide uppercase text-xs mb-1">Param Floor</div>
+          <div class="flex">
+            <input
+              class="w-2/3 mx-2"
+              type="range"
+              v-model="paramFloor"
+              min="0"
+              :max="maxParams"
+              step="1"
+            >
+            <input
+              class="w-1/3 standard-text-field"
+              type="number"
+              v-model="paramFloor"
+              min="0"
+              :max="maxParams"
+              step="1"
+            >
+          </div>
+        </div>
+        <div class="border-b border-gray-200 px-2 py-1">
+          <div class="font-bold tracking-wide uppercase text-xs mb-1">Retries Before Decrease</div>
           <input
-            class="w-1/3 standard-text-field"
+            class="w-full standard-text-field"
             type="number"
-            v-model="paramFloor"
+            v-model="retries"
             min="0"
-            :max="maxParams"
             step="1"
           >
         </div>
-      </div>
-      <div class="border-b border-gray-200 px-2 py-1">
-        <div class="font-bold tracking-wide uppercase text-xs mb-1">Retries Before Decrease</div>
-        <input class="w-full standard-text-field" type="number" v-model="retries" min="0" step="1">
-      </div>
-      <div class="p-2">
-        <div
-          class="btn btn-green"
-          :class="{ 'btn-red': isSampling, 'disabled': !canSample }"
-          @click="toggleSampler()"
-        >{{ sampleStatus }}</div>
-      </div>
-      <div class="px-2 pb-2">
-        <div
-          class="btn btn-green"
-          @click="randomSample()"
-          :class="{ 'disabled': !this.$store.getters.idle }"
-        >Random Sample</div>
+        <div class="p-2">
+          <div
+            class="btn btn-green"
+            :class="{ 'btn-red': isSampling, 'disabled': !canSample }"
+            @click="toggleSampler()"
+          >{{ sampleStatus }}</div>
+        </div>
+        <div class="px-2 pb-2">
+          <div
+            class="btn btn-green"
+            @click="randomSample()"
+            :class="{ 'disabled': !this.$store.getters.idle }"
+          >Random Sample</div>
+        </div>
       </div>
     </div>
     <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
