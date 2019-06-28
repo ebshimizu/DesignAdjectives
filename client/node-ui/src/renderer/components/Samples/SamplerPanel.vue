@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row h-full w-full overflow-hidden">
-    <div class="w-64 border-r border-gray-200 font-sans overflow-auto text-gray-200">
+    <div class="w-1/5 border-r border-gray-200 font-sans overflow-auto text-gray-200">
       <div class="border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm">
         <div class="font-bold">{{ activeSnippetName ? activeSnippetName : '[No Active Snippet]' }}</div>
         <div>Sampler Control</div>
@@ -62,6 +62,31 @@
             step="1"
           >
         </div>
+      </div>
+      <div class="border-b border-gray-200 px-2 py-1">
+        <div class="font-bold tracking-wide uppercase text-xs mb-1">Param Floor</div>
+        <div class="flex">
+          <input
+            class="w-2/3 mx-2"
+            type="range"
+            v-model="paramFloor"
+            min="0"
+            :max="maxParams"
+            step="1"
+          >
+          <input
+            class="w-1/3 standard-text-field"
+            type="number"
+            v-model="paramFloor"
+            min="0"
+            :max="maxParams"
+            step="1"
+          >
+        </div>
+      </div>
+      <div class="border-b border-gray-200 px-2 py-1">
+        <div class="font-bold tracking-wide uppercase text-xs mb-1">Retries Before Decrease</div>
+        <input class="w-full standard-text-field" type="number" v-model="retries" min="0" step="1">
       </div>
       <div class="p-2">
         <div
@@ -125,6 +150,8 @@ export default {
       threshold: 0.7,
       burnin: 100,
       free: 3,
+      paramFloor: 3,
+      retries: 20,
       thresholdMode: THRESHOLD_MODE.ABSOLUTE
     };
   },
@@ -187,7 +214,9 @@ export default {
               this.$store.getters.maxCurrentSnippetScore,
               this.$store.getters.currentSnippetScore
             ),
-            freeParams: parseInt(this.free)
+            freeParams: parseInt(this.free),
+            paramFloor: parseInt(this.paramFloor),
+            retries: parseInt(this.retries)
           }
         });
       }
