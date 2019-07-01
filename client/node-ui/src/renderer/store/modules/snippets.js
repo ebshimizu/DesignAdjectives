@@ -111,7 +111,10 @@ export default {
       message: ''
     },
     paramData: {},
-    samples: []
+    samples: [],
+    mixA: [],
+    mixB: [],
+    mixResults: {}
   },
   getters: {
     ready: state => {
@@ -400,6 +403,21 @@ export default {
         state.snippets[key].trained = false;
       }
       settings.set(state.cacheKey, state.snippets);
+    },
+    [Constants.MUTATION.SET_MIX_A](state, vec) {
+      state.mixA = vec;
+    },
+    [Constants.MUTATION.SET_MIX_B](state, vec) {
+      state.mixB = vec;
+    },
+    [Constants.MUTATION.LOAD_NEW_FILE](state) {
+      // state resets for new file
+      state.mixA = [];
+      state.mixB = [];
+      state.mixResults = {};
+    },
+    [Constants.MUTATION.SET_MIX_RESULTS](state, results) {
+      state.mixResults = results;
     }
   },
   actions: {
@@ -684,6 +702,12 @@ export default {
         }
 
         randIDStart = randIDStart + params.count;
+      }
+    },
+    async [Constants.ACTION.MIX](context, params) {
+      if (context.getters.status === Constants.SERVER_STATUS.IDLE) {
+        const results = await driver.mix(params.a, params.b, params.count);
+        context.commit(Constants.MUTATION.SET_MIX_RESULTS, results);
       }
     }
   }

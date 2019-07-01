@@ -19,11 +19,19 @@
             class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 border-r text-gray-200 flex-grow"
           >Lock</div>
           <div
+            @click="setA()"
+            class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 text-gray-200 border-r"
+          >+A</div>
+          <div
+            @click="setB()"
+            class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 text-gray-200 border-r"
+          >+B</div>
+          <div
             @click="removeExample()"
             class="cursor-pointer bg-red-900 hover:bg-red-700 py-1 px-2 text-gray-200 flex-grow"
           >X</div>
         </div>
-        <canvas ref="canvas" class="exemplarCanvas"/>
+        <canvas ref="canvas" class="exemplarCanvas" />
       </div>
       <div
         class="flex flex-row text-gray-200 font-mono text-sm px-2 py-1 border-t border-gray-200 justify-between"
@@ -37,7 +45,7 @@
 </template>
 
 <script>
-import { ACTION } from '../../store/constants';
+import { ACTION, MUTATION } from '../../store/constants';
 
 export default {
   name: 'exemplar',
@@ -88,6 +96,12 @@ export default {
     },
     lockExample() {
       this.$store.dispatch(ACTION.LOCK_TEMPORARY_STATE, this.data.x);
+    },
+    setA() {
+      this.$store.commit(MUTATION.SET_MIX_A, this.data.x);
+    },
+    setB() {
+      this.$store.commit(MUTATION.SET_MIX_B, this.data.x);
     }
   },
   mounted: function() {

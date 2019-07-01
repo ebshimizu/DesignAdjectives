@@ -45,7 +45,10 @@ export const MUTATION = {
   SHOW_EXTENTS: 'Show Extents Panel',
   HIDE_EXTENTS: 'Hide Extents Panel',
   CLEAR_EXTENTS: 'Clear Current Extents Elements',
-  GENERATE_EXTENTS: 'Generate Extents for Parameter'
+  GENERATE_EXTENTS: 'Generate Extents for Parameter',
+  SET_MIX_A: 'Set Mix A Element',
+  SET_MIX_B: 'Set Mix B Element',
+  SET_MIX_RESULTS: 'Set Mix Results'
 };
 
 export const ACTION = {
@@ -72,7 +75,8 @@ export const ACTION = {
   COPY_SNIPPET: 'Copy Snippet',
   RENAME_SNIPPET: 'Rename Snippet',
   GENERATE_RANDOM: 'Generate Random Set',
-  GENERATE_EXTENTS: 'Generate Parameter Extents'
+  GENERATE_EXTENTS: 'Generate Parameter Extents',
+  MIX: 'Run Parameter Mix'
 };
 
 export const SERVER_STATUS = {

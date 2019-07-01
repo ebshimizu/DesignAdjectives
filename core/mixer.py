@@ -33,6 +33,7 @@ logger = logging.getLogger()
 def mix(a, b, count):
     results = []
     length = len(a)
+    print("Mixer starting")
 
     for i in range(0, count):
         # generate 0/1 vector
