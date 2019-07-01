@@ -15,12 +15,12 @@
       <div class="font-bold tracking-wide uppercase text-xs break-all mb-1">Active Parameter</div>
       <div class="font-mono text-xs break-all">{{ activeParam }}</div>
     </div>
-    <div class="w-full h-full pr-4 overflow-y-auto overflow-x-hidden">
+    <div class="flex flex-wrap content-start w-full h-full pr-4 overflow-y-auto overflow-x-hidden">
       <sample
         v-for="sample in extentsSamples"
         :key="sample.idx"
         v-bind:sample="sample"
-        v-bind:width="'w-full'"
+        v-bind:width="'w-1/3'"
       ></sample>
     </div>
   </div>
@@ -67,3 +67,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.paramExtentsSample {
+  height: 100px;
+}
+</style>
