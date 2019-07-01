@@ -374,6 +374,19 @@ export class DsDriver {
   }
 
   /**
+   * Mixes parameter values randomly between the two vectors
+   * @param {number[]} a
+   * @param {number[]} b
+   * @param {number} count
+   */
+  async mix(a, b, count) {
+    // might need a snippet name at some point
+
+    const res = await this.exec('mix', { a, b, count });
+    return res;
+  }
+
+  /**
    * Stop the sampler
    */
   async stopSampler() {
