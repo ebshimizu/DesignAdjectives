@@ -21,6 +21,14 @@
             class="cursor-pointer bg-blue-900 hover:bg-blue-600 px-2 py-1 flex-grow text-gray-200 border-r border-gray-200"
           >Lock</div>
           <div
+            @click="setA()"
+            class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 text-gray-200 border-r"
+          >+A</div>
+          <div
+            @click="setB()"
+            class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 text-gray-200 border-r"
+          >+B</div>
+          <div
             @click="addPositive()"
             class="cursor-pointer font-bold flex-grow bg-green-900 hover:bg-green-700 px-2 py-1 border-r text-gray-200"
           >+</div>
@@ -42,7 +50,7 @@
 </template>
 
 <script>
-import { ACTION } from '../../store/constants';
+import { ACTION, MUTATION } from '../../store/constants';
 // keyboard shortcuts
 // z = add positive
 // x = add negative
@@ -104,6 +112,12 @@ export default {
         name: this.$store.getters.activeSnippetName,
         point: { x: this.x, y: -1 }
       });
+    },
+    setA() {
+      this.$store.commit(MUTATION.SET_MIX_A, this.x);
+    },
+    setB() {
+      this.$store.commit(MUTATION.SET_MIX_B, this.x);
     }
   },
   mounted: function() {
