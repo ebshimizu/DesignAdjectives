@@ -45,7 +45,7 @@ def isDuplicate(x, results):
 # - the vector itself
 # - the bitvector that created it
 # a snippet parameter may be required in the future
-def mix(a, b, count, attempts=100):
+def mix(a, b, count, bias=0.5, attempts=100):
     results = []
     logger.mixer("Mixer starting")
 
@@ -53,8 +53,9 @@ def mix(a, b, count, attempts=100):
     # only want to swap things that actually make a visual difference
     activeParams = []
     for i in range(0, len(a)):
-        if math.isclose(a[i], b[i], rel_tol=1e-3):
+        if not math.isclose(a[i], b[i], rel_tol=1e-3):
             activeParams.append(i)
+
     length = len(activeParams)
     logger.mixer("Identified {0} different params: {1}".format(length, activeParams))
 
@@ -63,7 +64,9 @@ def mix(a, b, count, attempts=100):
     else:
         for i in range(0, attempts):
             # generate 0/1 vector
-            zvec = list(map(lambda x: random.randint(0, 1), range(0, length)))
+            zvec = list(
+                map(lambda x: 0 if random.random() > bias else 1, range(0, length))
+            )
 
             # check that the vector isn't already in the results
             if not isDuplicate(zvec, results):
@@ -82,4 +85,4 @@ def mix(a, b, count, attempts=100):
                     break
 
     # expect to return more in info eventually
-    return {"results": results, "info": {"count": len(results)}}
+    return {"results": results, "info": {"count": len(results), "active": activeParams}}
