@@ -1,5 +1,6 @@
 from dsTypes import *
 from functools import reduce
+import math
 import random
 
 # logging setup
@@ -52,7 +53,7 @@ def mix(a, b, count, attempts=100):
     # only want to swap things that actually make a visual difference
     activeParams = []
     for i in range(0, len(a)):
-        if a[i] != b[i]:
+        if math.isclose(a[i], b[i], rel_tol=1e-3):
             activeParams.append(i)
     length = len(activeParams)
     logger.mixer("Identified {0} different params: {1}".format(length, activeParams))
