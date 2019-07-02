@@ -19,9 +19,13 @@
       </div>
     </div>
     <div class="w-full flex-grow-1 flex flex-col">
-      <div class="w-full flex-grow-0 border-b border-gray-200">
+      <div class="w-full flex-grow-0 border-b border-gray-200 flex">
+        <div class="flex p-1">
+          <label class="text-xs font-bold tracking-wide uppercase text-gray-200 my-auto mr-2">Count</label>
+          <input class="standard-text-field w-16" type="number" v-model="count" min="0" step="1" />
+        </div>
         <div
-          class="w-full bg-green-800 hover:bg-green-700 cursor-pointer font-mono text-center text-gray-200"
+          class="p-2 bg-green-800 hover:bg-green-700 cursor-pointer font-mono text-center text-gray-200 w-48"
           @click="mix()"
         >Mix</div>
       </div>
@@ -58,6 +62,11 @@ export default {
   name: 'mix-panel',
   components: {
     Sample
+  },
+  data() {
+    return {
+      count: 20
+    };
   },
   computed: {
     mixA() {
@@ -110,7 +119,7 @@ export default {
       this.$store.dispatch(ACTION.MIX, {
         a: this.mixA,
         b: this.mixB,
-        count: 20
+        count: parseInt(this.count)
       });
     }
   },
