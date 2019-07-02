@@ -24,6 +24,12 @@
           <label class="text-xs font-bold tracking-wide uppercase text-gray-200 my-auto mr-2">Count</label>
           <input class="standard-text-field w-16" type="number" v-model="count" min="0" step="1" />
         </div>
+        <div class="w-full flex p-1">
+          <label
+            class="w-24 text-xs font-bold tracking-wide uppercase text-gray-200 my-auto mr-2 text-center"
+          >Bias (A - B)</label>
+          <input class="bg-gray-900 w-full" type="range" v-model="bias" min="0" max="1" step="0.01" />
+        </div>
         <div
           class="p-2 bg-green-800 hover:bg-green-700 cursor-pointer font-mono text-center text-gray-200 w-48"
           @click="mix()"
@@ -65,7 +71,8 @@ export default {
   },
   data() {
     return {
-      count: 20
+      count: 20,
+      bias: 0.5
     };
   },
   computed: {
@@ -152,5 +159,36 @@ export default {
 .mixCanvas {
   width: 100%;
   height: auto;
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 3.55px 6px 3.55px 0;
+}
+input[type='range']:focus {
+  outline: none;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 15px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border-radius: 1.3px;
+  border: 0.2px solid #0b0101;
+  background: #2d3748;
+}
+input[type='range']::-webkit-slider-thumb {
+  box-shadow: 0.9px 0.9px 1px #ffffff, 0px 0px 0.9px #ffffff;
+  border: 1px solid #000000;
+  height: 24px;
+  width: 8px;
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -3.75px;
+}
+input[type='range']:focus::-webkit-slider-runnable-track {
 }
 </style>
