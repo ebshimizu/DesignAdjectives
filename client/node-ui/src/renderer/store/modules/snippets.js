@@ -706,7 +706,12 @@ export default {
     },
     async [Constants.ACTION.MIX](context, params) {
       if (context.getters.status === Constants.SERVER_STATUS.IDLE) {
-        const results = await driver.mix(params.a, params.b, params.count);
+        const results = await driver.mix(
+          params.a,
+          params.b,
+          params.count,
+          params.args
+        );
         context.commit(Constants.MUTATION.SET_MIX_RESULTS, results);
       }
     }

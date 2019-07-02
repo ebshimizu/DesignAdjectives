@@ -379,10 +379,10 @@ export class DsDriver {
    * @param {number[]} b
    * @param {number} count
    */
-  async mix(a, b, count) {
+  async mix(a, b, count, args) {
     // might need a snippet name at some point
 
-    const res = await this.exec('mix', { a, b, count });
+    const res = await this.exec('mix', { a, b, count, args });
     return res;
   }
 

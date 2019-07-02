@@ -126,7 +126,10 @@ export default {
       this.$store.dispatch(ACTION.MIX, {
         a: this.mixA,
         b: this.mixB,
-        count: parseInt(this.count)
+        count: parseInt(this.count),
+        args: {
+          bias: parseFloat(this.bias)
+        }
       });
     }
   },

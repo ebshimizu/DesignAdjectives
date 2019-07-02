@@ -294,7 +294,7 @@ def snippet1DPredictAll(args):
 @sio.on("mix")
 def mixS(args):
     # no fancy stuff for now, eventually expect more complex arguments
-    results = mix(args["a"], args["b"], args["count"])
+    results = mix(args["a"], args["b"], args["count"], **args["args"])
     return None, results
 
 
