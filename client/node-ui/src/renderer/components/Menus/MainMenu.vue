@@ -6,6 +6,7 @@
     <menu-group name="Snippets">
       <menu-item @click.native="connect()">{{ connected }} Server</menu-item>
       <menu-item @click.native="exportSnippets()">Export Snippets...</menu-item>
+      <menu-item @click.native="importSnippets()">Import Snippets...</menu-item>
       <menu-item @click.native="clearCache()">Clear Snippet Cache</menu-item>
     </menu-group>
   </ul>
@@ -76,6 +77,20 @@ export default {
         filename => {
           if (filename) {
             this.$store.commit(MUTATION.EXPORT_SNIPPETS, filename);
+          }
+        }
+      );
+    },
+    importSnippets() {
+      this.$electron.remote.dialog.showOpenDialog(
+        {
+          title: 'Import Snippets (JSON)',
+          properties: ['openFile'],
+          filters: [{ name: 'JSON', extension: ['json'] }]
+        },
+        files => {
+          if (files) {
+            this.$store.commit(MUTATION.IMPORT_SNIPPETS, files[0]);
           }
         }
       );
