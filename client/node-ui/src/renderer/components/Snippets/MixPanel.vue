@@ -31,6 +31,10 @@
           <input class="bg-gray-900 w-full" type="range" v-model="bias" min="0" max="1" step="0.01" />
         </div>
         <div
+          class="p-2 w-40 bg-red-800 hover:bg-red-700 cursor-pointer font-mono text-center text-gray-200"
+          @click="bias = 0.5"
+        >Reset Bias</div>
+        <div
           class="p-2 bg-green-800 hover:bg-green-700 cursor-pointer font-mono text-center text-gray-200 w-48"
           @click="mix()"
         >Mix</div>
