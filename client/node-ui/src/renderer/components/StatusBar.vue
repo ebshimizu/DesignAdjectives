@@ -45,7 +45,8 @@ export default {
     snippetEvalText() {
       if (
         this.$store.getters.activeSnippetName &&
-        this.$store.state.snippets.activeSnippet.trained
+        this.$store.state.snippets.activeSnippet.trained &&
+        this.score.mean
       ) {
         return `${
           this.$store.getters.activeSnippetName

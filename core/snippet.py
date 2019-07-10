@@ -20,7 +20,7 @@ import graphUtils
 
 
 class ExactGPModel(gpytorch.models.ExactGP):
-    def __init__(self, train_x, train_y, likelihood):
+    def __init__(self, train_x, train_y, likelihood, num_dims):
         super(ExactGPModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = gpytorch.means.ConstantMean()
         # self.base_covar_module = gpytorch.kernels.ScaleKernel(
@@ -31,7 +31,9 @@ class ExactGPModel(gpytorch.models.ExactGP):
         #     inducing_points=train_x[:100, :],
         #     likelihood=likelihood,
         # )
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.covar_module = gpytorch.kernels.ScaleKernel(
+            gpytorch.kernels.RBFKernel(ard_num_dims=num_dims)
+        )
 
     def forward(self, x):
         mean_x = self.mean_module(x)
@@ -112,7 +114,9 @@ class Snippet:
         # construct GPR
         self.setDefaultFilter()
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
-        self.gpr = ExactGPModel(self.getXTrain(), self.getYTrain(), self.likelihood)
+        self.gpr = ExactGPModel(
+            self.getXTrain(), self.getYTrain(), self.likelihood, len(self.filter)
+        )
 
         # load kernel settings
         self.gpr.load_state_dict(self.torchStateDict(state))
@@ -156,7 +160,7 @@ class Snippet:
         # TODO: allow gpr settings per-snippet?
         # self.gpr = gp.models.GPRegression(X, y, kernel)
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
-        self.gpr = ExactGPModel(X, y, self.likelihood)
+        self.gpr = ExactGPModel(X, y, self.likelihood, len(self.filter))
 
         self.gpr.train()
         self.likelihood.train()
