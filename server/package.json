@@ -1,0 +1,12 @@
+{
+  "name": "parameter-toolbox",
+  "version": "0.1.0",
+  "author": "Evan Shimizu <ebshimizu@gmail.com>",
+  "description": "A toolbox for exploration of parameter spaces for visual design tasks",
+  "dependencies": {
+    "winston": "^3.2.1",
+    "logform": "^2.1.2",
+    "minimist": "^1.2.0",
+    "socket.io": "^2.2.0"
+  }
+}

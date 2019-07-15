@@ -10,7 +10,7 @@ sys.path.append("../core")
 import dsCore
 import dsTypes
 import samplers
-from mixer import mix
+from mixer import mix, mixSnippets
 
 # logging setup
 import logging
@@ -296,6 +296,15 @@ def mixS(args):
     # no fancy stuff for now, eventually expect more complex arguments
     results = mix(args["a"], args["b"], args["count"], **args["args"])
     return None, results
+
+
+@sio.on("mix snippet")
+def mixSnippet(args):
+    # currently runs the basic snippet combiner for two snippets
+    # should start sampler after creating mix
+    mxSnp = mixSnippets(
+        snippetServer.getSnippet(args["a"]), snippetServer.getSnippet(args["b"])
+    )
 
 
 sio.connect("http://localhost:5234")
