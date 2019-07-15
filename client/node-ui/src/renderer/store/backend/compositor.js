@@ -88,7 +88,7 @@ export default {
   async renderer(canvasTarget, settings) {
     const size = 'size' in settings ? settings.size : 'full';
     const state =
-      'state' in settings
+      'state' in settings && settings.state.length > 0
         ? c.contextFromVector(settings.state)
         : c.getContext();
 
