@@ -85,6 +85,10 @@ export class DsDriver {
       this.connectCallback(this.connected, this.snippetServerOnline);
   }
 
+  async setParamInfo(params) {
+    await socket.emitAsync('set param info', params);
+  }
+
   /**
    * This is the function that gets executed when a sample gets returned from the server.
    * @param {Object} data

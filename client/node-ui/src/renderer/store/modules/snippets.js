@@ -637,6 +637,9 @@ export default {
       context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET, key);
       context.commit(Constants.MUTATION.CLEAR_SAMPLES);
 
+      // send parameter info
+      driver.setParamInfo(context.getters.params);
+
       // call load snippet on all trained snippets, assumes connected
       if (context.state.serverOnline) {
         for (const s of Object.keys(context.state.snippets)) {

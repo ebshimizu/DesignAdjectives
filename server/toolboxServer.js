@@ -10,6 +10,8 @@ const args = require('minimist')(process.argv.slice(2), {
   }
 });
 
+const { ACTION } = require('./actions');
+
 const io = require('socket.io')(args.port);
 
 const alignedWithColorsAndTime = format.combine(
@@ -55,9 +57,13 @@ if (!args.detached) {
 
 var snippetSocket;
 
+// parameters have the following fields:
+// name, type, value (current, not relevant for this), min, max, id (usually an index)
+var paramInfo = [];
+
 logger.info('Initializing socket.io');
 
-io.on('connect', function(socket) {
+io.on(ACTION.CONNECT, function(socket) {
   logger.info(`connection from ${socket.id}`);
 
   if (!snippetSocket) {
@@ -67,7 +73,7 @@ io.on('connect', function(socket) {
   }
 
   // determine if client or server connected
-  socket.emit('getType', function(type) {
+  socket.emit(ACTION.GET_TYPE, function(type) {
     if (type === 'server') {
       if (!snippetSocket) {
         snippetSocket = socket;
@@ -79,7 +85,7 @@ io.on('connect', function(socket) {
     }
   });
 
-  socket.on('disconnect', function() {
+  socket.on(ACTION.DISCONNECT, function() {
     if (snippetSocket && snippetSocket.id === socket.id) {
       snippetSocket = null;
       logger.warn('Snippet server disconnected');
@@ -89,7 +95,7 @@ io.on('connect', function(socket) {
     logger.info(`disconnect: ${socket.id}`);
   });
 
-  socket.on('action', function(data, clientCB) {
+  socket.on(ACTION.ACTION, function(data, clientCB) {
     if (snippetSocket) {
       logger.log(
         'verbose',
@@ -97,6 +103,12 @@ io.on('connect', function(socket) {
         data.fn,
         data.args
       );
+
+      // inject parameter info into args
+      if (data.args) {
+        data.args.paramInfo = paramInfo;
+      }
+
       snippetSocket.emit(data.fn, data.args, function(err, result) {
         logger.log('verbose', 'Relayed action returned %j', result);
         clientCB(err, result);
@@ -106,14 +118,20 @@ io.on('connect', function(socket) {
     }
   });
 
-  socket.on('single sample', function(data) {
+  socket.on(ACTION.SINGLE_SAMPLE, function(data) {
     logger.info(`Relaying sample from ${data.name}`);
     io.sockets.emit('single sample', data.data, data.name);
   });
 
-  socket.on('sampler complete', function(data) {
+  socket.on(ACTION.SAMPLER_COMPLETE, function(data) {
     logger.info(`Relaying final sample data from ${data.name}`);
     io.sockets.emit('sampler complete', data.data, data.name);
+  });
+
+  // parameter management bindings
+  socket.on(ACTION.SET_PARAM_INFO, function(params) {
+    paramInfo = params;
+    logger.info(`Server parameter info cache updated: ${paramInfo}`);
   });
 });
 
