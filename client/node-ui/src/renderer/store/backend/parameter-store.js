@@ -23,7 +23,9 @@ export function createStore(backend, type) {
       extentsParam: '',
       extentsId: -1,
       extentsVisible: false,
-      extentsVectors: []
+      extentsVectors: [],
+      activeParams: [],
+      paramSets: {}
     },
     getters: {
       param: state => id => {
