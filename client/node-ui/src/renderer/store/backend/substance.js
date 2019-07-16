@@ -8,8 +8,7 @@ import Settings from 'electron-settings';
 // import fs from 'fs-extra';
 
 // Fill in path with your toolkit dir
-const tkDir =
-  'C:/Program Files/Allegorithmic/Substance Automation Toolkit';
+const tkDir = 'C:/Program Files/Allegorithmic/Substance Automation Toolkit';
 const renderDir = './sbsRender';
 const sbsmutator = path.join(tkDir, 'sbsmutator');
 const sbsrender = path.join(tkDir, 'sbsrender');

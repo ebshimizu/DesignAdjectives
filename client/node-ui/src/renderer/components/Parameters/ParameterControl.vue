@@ -1,5 +1,8 @@
 <template>
-  <div class="text-gray-200 font-mono font-sm w-full border-b border-gray-200 p-1 h-24">
+  <div
+    class="text-gray-200 font-mono font-sm w-full border-b border-gray-200 p-1 h-24"
+    :class="[activeClass]"
+  >
     <div class="flex">
       <div
         class="label w-full text-xs cursor-pointer hover:text-yellow-500"
@@ -7,6 +10,12 @@
       >{{ param.name }}</div>
     </div>
     <div class="flex">
+      <div
+        class="flex justify-center items-center bg-green-900 hover:bg-green-700 w-16 mr-1 cursor-pointer"
+        @click="toggleActive()"
+      >
+        <div class="text-xs">SEL</div>
+      </div>
       <input
         class="w-5/6 mx-2"
         type="range"
@@ -48,6 +57,13 @@ export default {
           val: parseFloat(value)
         });
       }
+    },
+    activeClass() {
+      if (this.param.active) {
+        return 'bg-gray-700';
+      }
+
+      return '';
     },
     sliderGoodnessStyle() {
       // if an entry exists in the param data
@@ -96,8 +112,11 @@ export default {
         count: 10
       });
     },
-    lock() {
-      // lock the parameter, updating relevant state and possibly re-training active snippets?
+    toggleActive() {
+      this.$store.commit(MUTATION.CHANGE_PARAM_ACTIVE, {
+        id: this.param.id,
+        active: !this.param.active
+      });
     }
   }
 };

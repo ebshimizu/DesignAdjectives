@@ -48,7 +48,10 @@ export const MUTATION = {
   GENERATE_EXTENTS: 'Generate Extents for Parameter',
   SET_MIX_A: 'Set Mix A Element',
   SET_MIX_B: 'Set Mix B Element',
-  SET_MIX_RESULTS: 'Set Mix Results'
+  SET_MIX_RESULTS: 'Set Mix Results',
+  CHANGE_PARAM_ACTIVE: 'Add/Remove Parameter from Active Set',
+  SET_ALL_ACTIVE: 'Add All Parameters to Active Set',
+  SET_NONE_ACTIVE: 'Remove All Parameters from Active Set'
 };
 
 export const ACTION = {

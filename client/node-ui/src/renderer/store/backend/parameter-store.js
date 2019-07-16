@@ -10,6 +10,7 @@ import SbsBackend from '../backend/substance';
 import CmpBackend from '../backend/compositor';
 
 import { ACTION, MUTATION } from '../constants';
+import settings from 'electron-settings';
 
 export function createStore(backend, type) {
   return {
@@ -24,8 +25,8 @@ export function createStore(backend, type) {
       extentsId: -1,
       extentsVisible: false,
       extentsVectors: [],
-      activeParams: [],
-      paramSets: {}
+      paramSets: {},
+      hideNonActiveParams: false
     },
     getters: {
       param: state => id => {
@@ -37,6 +38,20 @@ export function createStore(backend, type) {
       },
       paramsAsArray: state => {
         return state.parameters.map(p => p.value);
+      },
+      activeParams: state => {
+        const active = [];
+        for (const param of state.parameters) {
+          if (param.active) active.push(param);
+        }
+        return active;
+      },
+      activeParamIDs: state => {
+        const active = [];
+        for (const i in state.parameters) {
+          if (state.parameters[i].active) active.push(i);
+        }
+        return active;
       },
       renderer: state => {
         return state.backend.renderer;
@@ -66,7 +81,18 @@ export function createStore(backend, type) {
         state.cacheKey = path.join(config.dir, config.filename);
 
         // at this point we need to re-load all of the parameter data
-        state.parameters = state.backend.getParams();
+        // params should include an active param
+        const stateParams = state.backend.getParams();
+        for (const id in stateParams) {
+          stateParams[id].active = false;
+        }
+
+        state.parameters = stateParams;
+
+        // load saved parameter groups
+        const loadedSets = settings.get(`saved-groups-${state.cacheKey}`);
+        state.paramSets = loadedSets || {};
+
         state.lastCommittedVector = state.parameters.map(p => p.value);
       },
       [MUTATION.DETECT_BACKEND](state, filename) {
@@ -134,6 +160,20 @@ export function createStore(backend, type) {
           // unnormalized value
           paramCopy[paramID] = param.min + (param.max - param.min) * a;
           state.extentsVectors.push(paramCopy);
+        }
+      },
+      [MUTATION.CHANGE_PARAM_ACTIVE](state, data) {
+        // expects data to contain an id/index and an active flag
+        Vue.set(state.parameters[data.id], 'active', data.active);
+      },
+      [MUTATION.SET_ALL_ACTIVE](state) {
+        for (const param in state.parameters) {
+          state.parameters[param].active = true;
+        }
+      },
+      [MUTATION.SET_NONE_ACTIVE](state) {
+        for (const param in state.parameters) {
+          state.parameters[param].active = false;
         }
       }
     },
