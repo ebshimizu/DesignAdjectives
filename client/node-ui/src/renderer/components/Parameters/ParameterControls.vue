@@ -17,7 +17,7 @@
               <div @click="selectNone()">None</div>
             </div>
             <div class="wide selection-tool-button">
-              <div>Hide Inactive</div>
+              <div @click="toggleHideInactive()">{{ hideInactiveText }}</div>
             </div>
             <div class="w-full text-center uppercase text-sm font-bold mb-1">Groups</div>
             <div class="w-5/6 pr-1">
@@ -69,6 +69,10 @@ export default {
   computed: {
     parameters() {
       return this.$store.state.paramStore.parameters;
+    },
+    hideInactiveText() {
+      if (this.$store.getters.hideNonActiveParams) return 'Show Inactive';
+      else return 'Hide Inactive';
     }
   },
   methods: {
@@ -77,6 +81,12 @@ export default {
     },
     selectNone() {
       this.$store.commit(MUTATION.SET_NONE_ACTIVE);
+    },
+    toggleHideInactive() {
+      this.$store.commit(
+        MUTATION.SET_INACTIVE_VISIBILITY,
+        !this.$store.getters.hideNonActiveParams
+      );
     }
   }
 };

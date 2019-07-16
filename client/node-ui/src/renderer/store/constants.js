@@ -51,7 +51,8 @@ export const MUTATION = {
   SET_MIX_RESULTS: 'Set Mix Results',
   CHANGE_PARAM_ACTIVE: 'Add/Remove Parameter from Active Set',
   SET_ALL_ACTIVE: 'Add All Parameters to Active Set',
-  SET_NONE_ACTIVE: 'Remove All Parameters from Active Set'
+  SET_NONE_ACTIVE: 'Remove All Parameters from Active Set',
+  SET_INACTIVE_VISIBILITY: 'Change Visibility of Inactive Parameters'
 };
 
 export const ACTION = {

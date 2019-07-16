@@ -2,6 +2,7 @@
   <div
     class="text-gray-200 font-mono font-sm w-full border-b border-gray-200 p-1 h-24"
     :class="[activeClass]"
+    v-show="showParam"
   >
     <div class="flex">
       <div
@@ -64,6 +65,9 @@ export default {
       }
 
       return '';
+    },
+    showParam() {
+      return !this.$store.getters.hideNonActiveParams || this.param.active;
     },
     sliderGoodnessStyle() {
       // if an entry exists in the param data

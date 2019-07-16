@@ -73,6 +73,9 @@ export function createStore(backend, type) {
       },
       extentsId: state => {
         return state.extentsId;
+      },
+      hideNonActiveParams: state => {
+        return state.hideNonActiveParams;
       }
     },
     mutations: {
@@ -175,6 +178,9 @@ export function createStore(backend, type) {
         for (const param in state.parameters) {
           state.parameters[param].active = false;
         }
+      },
+      [MUTATION.SET_INACTIVE_VISIBILITY](state, shouldHideInactive) {
+        state.hideNonActiveParams = shouldHideInactive;
       }
     },
     actions: {
