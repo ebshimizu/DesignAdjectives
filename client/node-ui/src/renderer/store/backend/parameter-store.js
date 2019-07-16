@@ -49,7 +49,7 @@ export function createStore(backend, type) {
       activeParamIDs: state => {
         const active = [];
         for (const i in state.parameters) {
-          if (state.parameters[i].active) active.push(i);
+          if (state.parameters[i].active) active.push(parseInt(i));
         }
         return active;
       },
@@ -76,6 +76,9 @@ export function createStore(backend, type) {
       },
       hideNonActiveParams: state => {
         return state.hideNonActiveParams;
+      },
+      paramSets: state => {
+        return state.paramSets;
       }
     },
     mutations: {
@@ -181,6 +184,25 @@ export function createStore(backend, type) {
       },
       [MUTATION.SET_INACTIVE_VISIBILITY](state, shouldHideInactive) {
         state.hideNonActiveParams = shouldHideInactive;
+      },
+      [MUTATION.NEW_PARAM_SET](state, groupName) {
+        state.paramSets[groupName] = [];
+        settings.set(`saved-groups-${state.cacheKey}`, state.paramSets);
+      },
+      [MUTATION.UPDATE_PARAM_SET](state, setData) {
+        state.paramSets[setData.name] = setData.params;
+        settings.set(`saved-groups-${state.cacheKey}`, state.paramSets);
+      },
+      [MUTATION.DELETE_PARAM_SET](state, setName) {
+        delete state.paramSets[setName];
+        settings.set(`saved-groups-${state.cacheKey}`, state.paramSets);
+      },
+      [MUTATION.LOAD_PARAM_SET](state, setName) {
+        if (setName in state.paramSets) {
+          for (const id of state.paramSets[setName]) {
+            state.parameters[id].active = true;
+          }
+        }
       }
     },
     actions: {
@@ -230,6 +252,10 @@ export function createStore(backend, type) {
         context.commit(MUTATION.CLEAR_EXTENTS);
         context.commit(MUTATION.GENERATE_EXTENTS, params);
         context.commit(MUTATION.SHOW_EXTENTS);
+      },
+      [ACTION.LOAD_PARAM_SET](context, setName) {
+        context.commit(MUTATION.SET_NONE_ACTIVE);
+        context.commit(MUTATION.LOAD_PARAM_SET, setName);
       }
     }
   };

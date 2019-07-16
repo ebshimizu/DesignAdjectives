@@ -52,7 +52,11 @@ export const MUTATION = {
   CHANGE_PARAM_ACTIVE: 'Add/Remove Parameter from Active Set',
   SET_ALL_ACTIVE: 'Add All Parameters to Active Set',
   SET_NONE_ACTIVE: 'Remove All Parameters from Active Set',
-  SET_INACTIVE_VISIBILITY: 'Change Visibility of Inactive Parameters'
+  SET_INACTIVE_VISIBILITY: 'Change Visibility of Inactive Parameters',
+  NEW_PARAM_SET: 'New Parameter Set',
+  UPDATE_PARAM_SET: 'Update Parameter Set',
+  DELETE_PARAM_SET: 'Delete Parameter Set',
+  LOAD_PARAM_SET: 'Load Parameter Set'
 };
 
 export const ACTION = {
@@ -80,7 +84,8 @@ export const ACTION = {
   RENAME_SNIPPET: 'Rename Snippet',
   GENERATE_RANDOM: 'Generate Random Set',
   GENERATE_EXTENTS: 'Generate Parameter Extents',
-  MIX: 'Run Parameter Mix'
+  MIX: 'Run Parameter Mix',
+  LOAD_PARAM_SET: 'Load Parameter Group'
 };
 
 export const SERVER_STATUS = {
