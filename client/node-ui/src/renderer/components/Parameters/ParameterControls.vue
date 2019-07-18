@@ -5,68 +5,61 @@
     <div class="param-controls overflow-auto flex flex-col-reverse">
       <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
     </div>
-    <div class="param-panel overflow-auto flex-no-shrink">
-      <tabs>
-        <tab title="Selection">
-          <div class="flex flex-wrap p-1 relative w-full h-full overflow-hidden items-start">
-            <div class="w-full text-center uppercase text-sm font-bold mb-1">Selection Tools</div>
-            <div class="selection-tool-button">
-              <div @click="selectAll()">All</div>
-            </div>
-            <div class="selection-tool-button">
-              <div @click="selectNone()">None</div>
-            </div>
-            <div class="wide selection-tool-button">
-              <div @click="toggleHideInactive()">{{ hideInactiveText }}</div>
-            </div>
-            <div class="w-full text-center uppercase text-sm font-bold mb-1">Groups</div>
-            <div class="w-5/6 pr-1">
-              <select
-                class="text-sm font-mono p-1 w-full bg-gray-800 text-grey-light cursor-pointer"
-                v-model="activeGroup"
-              >
-                <option
-                  v-for="(val, name) in paramSets"
-                  v-bind:value="name"
-                  v-bind:key="name"
-                >{{ name }}</option>
-              </select>
-            </div>
-            <div class="w-1/6 selection-tool-button">
-              <div @click="loadActiveSet()">Load</div>
-            </div>
-            <div class="selection-tool-button">
-              <div @click="showNewModal()">New</div>
-            </div>
-            <div class="selection-tool-button">
-              <div @click="updateActiveSet()">Update</div>
-            </div>
-            <div class="selection-tool-button">
-              <div @click="deleteActiveSet()">Delete</div>
-            </div>
-            <div class="new-modal snippet-panel-modal" v-show="showNew">
-              <div class="title">New Parameter Set</div>
-              <div class="w-full flex flex-row items-center border-b border-b-2 border-green">
-                <input
-                  v-model="paramSetName"
-                  placeholder="Enter Parameter Set Name"
-                  class="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                  type="text"
-                />
-                <div class="flex-no-shrink btn btn-green mr-2" @click="createParamSet()">Create</div>
-                <div class="flex-no-shrink btn hover:bg-red-900" @click="hideAllModals()">Cancel</div>
-              </div>
-              <div
-                class="w-full text-sm my-2 bg-red-200 border border-red-300 text-red-800 py-3 px-4 rounded"
-                v-show="paramSetError"
-              >A Parameter Set with this name already exists</div>
-            </div>
+    <div class="param-panel overflow-auto flex-no-shrink border-t border-gray-200">
+      <div class="flex flex-wrap p-1 relative w-full h-full overflow-hidden items-start">
+        <div class="w-full text-center uppercase text-sm font-bold mb-1">Selection Tools</div>
+        <div class="selection-tool-button">
+          <div @click="selectAll()">All</div>
+        </div>
+        <div class="selection-tool-button">
+          <div @click="selectNone()">None</div>
+        </div>
+        <div class="wide selection-tool-button">
+          <div @click="toggleHideInactive()">{{ hideInactiveText }}</div>
+        </div>
+        <div class="w-full text-center uppercase text-sm font-bold mb-1">Groups</div>
+        <div class="w-5/6 pr-1">
+          <select
+            class="text-sm font-mono p-1 w-full bg-gray-800 text-grey-light cursor-pointer"
+            v-model="activeGroup"
+          >
+            <option
+              v-for="(val, name) in paramSets"
+              v-bind:value="name"
+              v-bind:key="name"
+            >{{ name }}</option>
+          </select>
+        </div>
+        <div class="w-1/6 selection-tool-button">
+          <div @click="loadActiveSet()">Load</div>
+        </div>
+        <div class="selection-tool-button">
+          <div @click="showNewModal()">New</div>
+        </div>
+        <div class="selection-tool-button">
+          <div @click="updateActiveSet()">Update</div>
+        </div>
+        <div class="selection-tool-button">
+          <div @click="deleteActiveSet()">Delete</div>
+        </div>
+        <div class="new-modal snippet-panel-modal" v-show="showNew">
+          <div class="title">New Parameter Set</div>
+          <div class="w-full flex flex-row items-center border-b border-b-2 border-green">
+            <input
+              v-model="paramSetName"
+              placeholder="Enter Parameter Set Name"
+              class="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
+              type="text"
+            />
+            <div class="flex-no-shrink btn btn-green mr-2" @click="createParamSet()">Create</div>
+            <div class="flex-no-shrink btn hover:bg-red-900" @click="hideAllModals()">Cancel</div>
           </div>
-        </tab>
-        <tab title="Snippets">
-          <snippets-panel></snippets-panel>
-        </tab>
-      </tabs>
+          <div
+            class="w-full text-sm my-2 bg-red-200 border border-red-300 text-red-800 py-3 px-4 rounded"
+            v-show="paramSetError"
+          >A Parameter Set with this name already exists</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

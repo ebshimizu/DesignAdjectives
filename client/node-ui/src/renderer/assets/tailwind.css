@@ -71,3 +71,35 @@
 .selection-tool-button div:hover {
   @apply bg-blue-700;
 }
+
+.axis-button {
+  @apply flex items-center justify-center p-1;
+}
+
+.axis-button div {
+  @apply rounded w-full h-full text-xs tracking-wide uppercase text-center cursor-pointer;
+}
+
+.blue.axis-button div {
+  @apply bg-blue-800;
+}
+
+.blue.axis-button div:hover {
+  @apply bg-blue-700;
+}
+
+.red.axis-button div {
+  @apply bg-red-800;
+}
+
+.red.axis-button div:hover {
+  @apply bg-red-700;
+}
+
+.green.axis-button div {
+  @apply bg-green-800;
+}
+
+.green.axis-button div:hover {
+  @apply bg-green-700;
+}

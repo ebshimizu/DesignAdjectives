@@ -126,7 +126,7 @@ class Snippet:
         X = []
         for t in self.data:
             v = t.data
-            X.append([v[idx] for idx in self.filter])
+            X.append([float(v[idx]) for idx in self.filter])
 
         return torch.tensor(X)
 

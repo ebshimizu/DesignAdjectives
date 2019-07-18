@@ -1,13 +1,15 @@
 <template>
-  <div class="snippet-panel h-full flex-none font-sans relative">
+  <div
+    class="snippet-panel h-full flex flex-col font-sans relative text-gray-200 border-l border-gray-200"
+  >
     <div class="h-auto flex flex-wrap flex-row mb-4">
       <label
         class="block uppercase tracking-wide text-grey-lighter text-xs font-bold m-2"
         for="current-snippet"
-      >Current Snippet</label>
-      <div class="w-full m-2 relative">
+      >Active Axis</label>
+      <div class="w-full flex mb-2 mx-2 relative">
         <select
-          class="text-sm font-mono p-1 w-full bg-gray-800 text-grey-light cursor-pointer"
+          class="text-sm w-5/6 font-mono p-1 w-full bg-gray-800 text-grey-light cursor-pointer"
           id="current-snippet"
           v-model="activeSnippet"
         >
@@ -18,23 +20,37 @@
             v-bind:key="option.name"
           >{{ option.name }}</option>
         </select>
+        <div
+          class="w-1/6 ml-1 rounded axis-button bg-green-800 hover:bg-green-700 text-xs text-center cursor-pointer uppercase"
+          @click="showNewModal()"
+        >New</div>
+      </div>
+      <div
+        class="w-full bg-gray-800 border-b border-t border-gray-200 py-2 font-bold text-gray-200 tracking-wide uppercase text-center text-sm"
+      >Defined Axes</div>
+      <div class="w-full h-full overflow-auto px-2">
+        <div v-for="snippet in snippetOptions" :key="snippet.name">
+          <div class="flex flex-wrap">
+            <div class="w-1/3 font-mono text-sm">{{ snippet.name }}</div>
+            <div class="w-1/6 blue axis-button">
+              <div>Edit</div>
+            </div>
+            <div class="w-1/6 blue axis-button">
+              <div @click="showRenameModal(snippet.name)">Rename</div>
+            </div>
+            <div class="w-1/6 blue axis-button">
+              <div @click="showCopyModal(snippet.name)">Copy</div>
+            </div>
+            <div class="w-1/6 red axis-button">
+              <div @click="deleteSnippet(snippet.name)">Delete</div>
+            </div>
+          </div>
+        </div>
       </div>
       <div
         class="w-full block uppercase tracking-wide text-grey-lighter text-xs font-bold m-2"
       >Actions</div>
       <div class="w-full ml-2 flex text-sm flex-wrap flex-row">
-        <div class="w-1/4 pr-2">
-          <div class="btn btn-green" @click="showNewModal()">New</div>
-        </div>
-        <div class="w-1/4 pr-2">
-          <div class="btn btn-blue" @click="showCopyModal()">Copy</div>
-        </div>
-        <div class="w-1/4 pr-2">
-          <div class="btn btn-blue" @click="showRenameModal()">Rename</div>
-        </div>
-        <div class="w-1/4 pr-2">
-          <div class="btn btn-red w-full" @click="deleteSnippet()">Delete</div>
-        </div>
         <div class="w-1/4 pr-2">
           <div class="btn btn-blue w-full" @click="addExample(1)">Add +</div>
         </div>
@@ -58,7 +74,7 @@
           placeholder="Enter Snippet Name"
           class="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
           type="text"
-        >
+        />
         <div class="flex-no-shrink btn btn-green mr-2" @click="createNewSnippet()">Create</div>
         <div class="flex-no-shrink btn hover:bg-red-900" @click="hideAllModals()">Cancel</div>
       </div>
@@ -75,14 +91,14 @@
           placeholder="Enter Copied Snippet Name"
           class="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
           type="text"
-        >
+        />
         <div class="flex-no-shrink btn btn-green mr-2" @click="copySnippet()">Copy</div>
         <div class="flex-no-shrink btn hover:bg-red-900" @click="hideAllModals()">Cancel</div>
       </div>
       <div
-        class="w-full text-sm my-2 bg-red-lightest border border-red-light text-red-dark py-3 px-4 rounded"
+        class="w-full text-sm my-2 bg-red-300 border border-red-400 text-red-800 py-3 px-4 rounded"
         v-show="newSnippetError"
-      >A Snippet with this name already exists</div>
+      >An Axis with this name already exists</div>
     </div>
     <div class="copy-modal snippet-panel-modal" v-show="showRename">
       <div class="title">Rename Snippet</div>
@@ -92,7 +108,7 @@
           placeholder="Rename Snippet"
           class="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
           type="text"
-        >
+        />
         <div class="flex-no-shrink btn btn-green mr-2" @click="renameSnippet()">Rename</div>
         <div class="flex-no-shrink btn hover:bg-red-900" @click="hideAllModals()">Cancel</div>
       </div>
@@ -115,6 +131,7 @@ export default {
       showCopy: false,
       showRename: false,
       newSnippetError: false,
+      modalSnippetTarget: '',
       newSnippetName: ''
     };
   },
@@ -152,21 +169,27 @@ export default {
       this.showCopy = false;
       this.showRename = false;
     },
-    showCopyModal() {
-      if (this.activeSnippet === '') {
-        // cannot copy without active snippet, unsure where to show message for this
+    showCopyModal(prefillName = null) {
+      if (!prefillName) {
+        // cannot copy without specified snippet, unsure where to show message for this
         return;
       }
+
+      this.newSnippetName = prefillName;
+      this.modalSnippetTarget = prefillName;
 
       this.showCopy = true;
       this.showNew = false;
       this.showRename = false;
     },
-    showRenameModal() {
-      if (this.activeSnippet === '') {
+    showRenameModal(prefillName) {
+      if (!prefillName) {
         // cannot rename without active snippet, unsure where to show message for this
         return;
       }
+
+      this.newSnippetName = prefillName;
+      this.modalSnippetTarget = prefillName;
 
       this.showRename = true;
       this.showNew = false;
@@ -192,11 +215,13 @@ export default {
       }
 
       this.$store.dispatch(ACTION.COPY_SNIPPET, {
-        active: this.activeSnippet,
+        active: this.modalSnippetTarget,
         copyTo: this.newSnippetName
       });
+
       this.showCopy = false;
       this.newSnippetName = '';
+      this.modalSnippetTarget = '';
       this.newSnippetError = false;
     },
     renameSnippet() {
@@ -206,20 +231,18 @@ export default {
       }
 
       this.$store.dispatch(ACTION.RENAME_SNIPPET, {
-        active: this.activeSnippet,
+        active: this.modalSnippetTarget,
         renameTo: this.newSnippetName
       });
       this.showRename = false;
       this.newSnippetName = '';
       this.newSnippetError = false;
     },
-    deleteSnippet() {
-      if (this.activeSnippet !== '') {
-        this.$store.dispatch(ACTION.DELETE_SNIPPET, {
-          name: this.activeSnippet
-        });
-        this.activeSnippet = '';
-      }
+    deleteSnippet(name) {
+      this.$store.dispatch(ACTION.DELETE_SNIPPET, {
+        name
+      });
+      this.activeSnippet = '';
     },
     addExample(y) {
       // check active
