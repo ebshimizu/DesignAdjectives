@@ -131,7 +131,7 @@ io.on(ACTION.CONNECT, function(socket) {
   // parameter management bindings
   socket.on(ACTION.SET_PARAM_INFO, function(params) {
     paramInfo = params;
-    logger.info(`Server parameter info cache updated: ${paramInfo}`);
+    logger.info('Server parameter info cache updated');
   });
 });
 

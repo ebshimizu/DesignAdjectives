@@ -136,7 +136,7 @@ class Snippet:
         return torch.tensor(y)
 
     # runs GPR based on current data set
-    def train(self, optCB=None):
+    def train(self, optCB=None, customFilter=None):
         # check that training data exists
         if len(self.data) == 0:
             return DSStatus(
@@ -149,7 +149,10 @@ class Snippet:
         # In the event that additional data points have extended the relevant dimensions,
         # adjust the filter.
         # TODO: allow custom overrides for the filter
-        self.setDefaultFilter()
+        if customFilter is not None:
+            self.setParamFilter(customFilter)
+        else:
+            self.setDefaultFilter()
 
         # generate X matrix
         X = self.getXTrain()

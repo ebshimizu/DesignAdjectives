@@ -83,6 +83,7 @@ class Rejection(SamplerThread):
         retries=20,
         cb=None,
         final=None,
+        paramFilter=None,
     ):
         super().__init__()
         self.snippet = snippet
@@ -99,6 +100,7 @@ class Rejection(SamplerThread):
         self.final = final
         self.paramFloor = paramFloor
         self.retries = retries
+        self.paramFilter = paramFilter
 
     def run(self):
         logger.sample("[{0}] Rejection sampler initializing".format(self.name))
@@ -111,6 +113,16 @@ class Rejection(SamplerThread):
 
         # duplicate, we're going to shuffle it a lot
         filter = list(self.snippet.filter)
+
+        # anything that's not in the custom filter is a locked parameter.
+        # we'll need to remove things that are in the snippet filter but not in the
+        # custom filter here.
+        # if there is no custom filter, proceed
+        if self.paramFilter is not None:
+            for elem in filter:
+                if elem not in self.paramFilter:
+                    filter.remove(elem)
+
         posExamples = self.snippet.posExamples()
 
         g = dist.Uniform(torch.zeros(len(filter)), torch.ones(len(filter)))
