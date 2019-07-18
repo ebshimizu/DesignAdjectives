@@ -12,15 +12,15 @@
       >
         <div
           v-show="showActions"
-          class="absolute bottom-0 left-0 w-full flex flex-row bg-gray-800 border-t border-gray-200 text-sm font-mono text-center"
+          class="absolute bottom-0 left-0 w-full flex flex-row flex-wrap bg-gray-800 border-t border-gray-200 text-sm font-mono text-center"
         >
           <div
             @click="lockExample()"
-            class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 border-r text-gray-200 flex-grow"
+            class="cursor-pointer border-b bg-blue-900 hover:bg-blue-700 py-1 px-2 border-r text-gray-200 flex-grow"
           >Lock</div>
           <div
             @click="setA()"
-            class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 text-gray-200 border-r"
+            class="cursor-pointer border-b bg-blue-900 hover:bg-blue-700 py-1 px-2 text-gray-200 border-r"
           >+A</div>
           <div
             @click="setB()"

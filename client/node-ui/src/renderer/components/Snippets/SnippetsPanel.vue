@@ -2,14 +2,14 @@
   <div
     class="snippet-panel h-full flex flex-col font-sans relative text-gray-200 border-l border-gray-200"
   >
-    <div class="h-auto flex flex-wrap flex-row mb-4">
+    <div class="h-full flex flex-col mb-4">
       <label
         class="block uppercase tracking-wide text-grey-lighter text-xs font-bold m-2"
         for="current-snippet"
       >Active Axis</label>
-      <div class="w-full flex mb-2 mx-2 relative">
+      <div class="w-full flex flex-row mb-2 mx-2 relative">
         <select
-          class="text-sm w-5/6 font-mono p-1 w-full bg-gray-800 text-grey-light cursor-pointer"
+          class="text-sm w-2/3 flex-grow font-mono p-1 w-full bg-gray-800 text-grey-light cursor-pointer"
           id="current-snippet"
           v-model="activeSnippet"
         >
@@ -21,14 +21,14 @@
           >{{ option.name }}</option>
         </select>
         <div
-          class="w-1/6 ml-1 rounded axis-button bg-green-800 hover:bg-green-700 text-xs text-center cursor-pointer uppercase"
+          class="w-1/6 ml-1 flex-shrink rounded axis-button bg-green-800 hover:bg-green-700 text-xs text-center cursor-pointer uppercase"
           @click="showNewModal()"
         >New</div>
       </div>
       <div
         class="w-full bg-gray-800 border-b border-t border-gray-200 py-2 font-bold text-gray-200 tracking-wide uppercase text-center text-sm"
       >Defined Axes</div>
-      <div class="w-full h-full overflow-auto px-2">
+      <div class="w-full h-full flex-shrink overflow-auto px-2">
         <div v-for="snippet in snippetOptions" :key="snippet.name">
           <div class="flex flex-wrap">
             <div class="w-1/3 font-mono text-sm">{{ snippet.name }}</div>
@@ -45,24 +45,6 @@
               <div @click="deleteSnippet(snippet.name)">Delete</div>
             </div>
           </div>
-        </div>
-      </div>
-      <div
-        class="w-full block uppercase tracking-wide text-grey-lighter text-xs font-bold m-2"
-      >Actions</div>
-      <div class="w-full ml-2 flex text-sm flex-wrap flex-row">
-        <div class="w-1/4 pr-2">
-          <div class="btn btn-blue w-full" @click="addExample(1)">Add +</div>
-        </div>
-        <div class="w-1/4 pr-2">
-          <div class="btn btn-blue w-full" @click="addExample(-1)">Add -</div>
-        </div>
-        <div class="w-1/4 pr-2">
-          <div
-            class="btn btn-blue"
-            :class="{ disabled: isTraining }"
-            @click="train()"
-          >{{ isTraining ? 'Training...' : 'Train' }}</div>
         </div>
       </div>
     </div>
@@ -243,25 +225,6 @@ export default {
         name
       });
       this.activeSnippet = '';
-    },
-    addExample(y) {
-      // check active
-      if (this.activeSnippet !== '') {
-        // snapshot current state
-        const x = this.$store.getters.paramsAsArray;
-
-        this.$store.dispatch(ACTION.ADD_EXAMPLE, {
-          name: this.activeSnippet,
-          point: { x, y }
-        });
-      }
-    },
-    train() {
-      if (this.activeSnippet !== '' && !this.isTraining && this.trained) {
-        this.$store.dispatch(ACTION.LOAD_SNIPPET, this.activeSnippet);
-      } else if (this.activeSnippet !== '' && !this.isTraining) {
-        this.$store.dispatch(ACTION.TRAIN, this.activeSnippet);
-      }
     }
   }
 };

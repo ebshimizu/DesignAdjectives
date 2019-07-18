@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row h-full w-full overflow-hidden">
-    <div class="flex flex-col w-1/5 border-r border-gray-200 font-sans overflow-auto text-gray-200">
+    <div class="flex flex-col w-1/4 border-r border-gray-200 font-sans overflow-auto text-gray-200">
       <div class="border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm">
         <div class="font-bold">{{ activeSnippetName ? activeSnippetName : '[No Active Snippet]' }}</div>
         <div>Sampler Control</div>
@@ -14,7 +14,7 @@
             v-model="n"
             min="1"
             step="1"
-          >
+          />
         </div>
         <div class="border-b border-gray-200 px-2 py-1">
           <div class="font-bold tracking-wide uppercase text-xs mb-1">Threshold</div>
@@ -36,7 +36,7 @@
               min="0"
               max="1"
               step="0.001"
-            >
+            />
           </div>
         </div>
         <!-- <div class="border-b border-gray-200 px-2 py-1">
@@ -53,7 +53,7 @@
         <div class="border-b border-gray-200 px-2 py-1">
           <div class="font-bold tracking-wide uppercase text-xs mb-1">Free Params</div>
           <div class="flex">
-            <input class="w-2/3 mx-2" type="range" v-model="free" min="0" :max="maxParams" step="1">
+            <input class="w-2/3 mx-2" type="range" v-model="free" min="0" :max="maxParams" step="1" />
             <input
               class="w-1/3 standard-text-field"
               type="number"
@@ -61,7 +61,7 @@
               min="0"
               :max="maxParams"
               step="1"
-            >
+            />
           </div>
         </div>
         <div class="border-b border-gray-200 px-2 py-1">
@@ -74,7 +74,7 @@
               min="0"
               :max="maxParams"
               step="1"
-            >
+            />
             <input
               class="w-1/3 standard-text-field"
               type="number"
@@ -82,7 +82,7 @@
               min="0"
               :max="maxParams"
               step="1"
-            >
+            />
           </div>
         </div>
         <div class="border-b border-gray-200 px-2 py-1">
@@ -93,7 +93,7 @@
             v-model="retries"
             min="0"
             step="1"
-          >
+          />
         </div>
         <div class="p-2">
           <div

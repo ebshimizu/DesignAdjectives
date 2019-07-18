@@ -130,7 +130,8 @@ export default {
 input[type='range'] {
   -webkit-appearance: none;
   width: 100%;
-  margin: 3.55px 0;
+  margin: 4.55px 0;
+  height: 14px;
 }
 input[type='range']:focus {
   outline: none;

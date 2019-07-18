@@ -10,9 +10,6 @@
         </div>
         <div class="sampler-panel w-full flex-no-shrink">
           <tabs>
-            <tab title="Snippet Inspector">
-              <snippet-inspector></snippet-inspector>
-            </tab>
             <tab title="Sampler">
               <sampler-panel></sampler-panel>
             </tab>
@@ -25,7 +22,10 @@
           </tabs>
         </div>
       </div>
-      <div class="h-full w-1/4 flex-none overflow-hidden">
+      <div class="h-full w-1/5 flex-none overflow-hidden">
+        <snippet-inspector />
+      </div>
+      <div class="h-full w-1/5 flex-none overflow-hidden">
         <parameter-panel></parameter-panel>
       </div>
     </div>

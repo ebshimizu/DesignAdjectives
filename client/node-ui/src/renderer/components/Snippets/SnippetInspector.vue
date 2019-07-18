@@ -1,51 +1,70 @@
 <template>
-  <div class="flex flex-row h-full w-full overflow-hidden">
-    <div class="flex flex-col w-1/5 border-r border-gray-200 font-sans overflow-auto text-gray-200">
+  <div class="flex flex-col h-full w-full overflow-hidden border-l border-gray-200">
+    <div class="flex flex-row w-full font-sans overflow-hidden text-gray-200">
       <div
-        class="border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm overflow-hidden"
+        class="w-5/6 border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm overflow-hidden"
       >
         <div
           class="font-bold overflow-hidden"
         >{{ activeSnippet.name ? activeSnippet.name : '[No Active Snippet]' }}</div>
         <div class="mb-2">{{ status }}</div>
       </div>
-      <div class="w-full h-full overflow-auto">
-        <div
-          class="border-b border-gray-200 px-2 py-1 overflow-hidden"
-          v-for="(val, key) in trainData.state"
-          :key="key"
-        >
-          <div class="font-bold tracking-wide uppercase text-xs mb-1 break-all">{{ key }}</div>
-          <div class="font-mono text-sm">{{ val }}</div>
-        </div>
+      <div
+        class="px-2 font-bold flex-shrink bg-blue-800 hover:bg-blue-700 flex justify-center items-center border-b border-l border-gray-200 cursor-pointer"
+        :class="{ disabled: isTraining }"
+        @click="train()"
+      >
+        <div class="text-center uppercase font-sm">{{ isTraining ? 'Training...' : 'Train' }}</div>
       </div>
     </div>
-    <div class="flex flex-row h-full w-full">
-      <div class="w-1/2 overflow-hidden flex flex-col h-full border-r border-gray-200">
+    <div class="w-full half-height overflow-hidden flex flex-col h-full">
+      <div
+        class="flex w-full bg-green-900 text-gray-200 font-mono text-sm h-10 border-b border-gray-200"
+      >
+        <div class="w-full p-2">Positive</div>
         <div
-          class="w-full bg-green-900 text-gray-200 font-mono text-sm h-10 p-2 border-b border-gray-200"
-        >Positive</div>
-        <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
-          <exemplar
-            v-for="exId in positiveExamples"
-            :key="exId + activeSnippet.name"
-            v-bind:snippet-name="activeSnippet.name"
-            v-bind:id="exId"
-          ></exemplar>
+          class="border-l border-gray-200 flex justify-center items-center bg-blue-800 hover:bg-blue-700 w-10 cursor-pointer"
+        >
+          <div class="font-sans text-lg font-bold tracking-wide uppercase" @click="addExample(1)">+</div>
         </div>
       </div>
-      <div class="w-1/2 overflow-hidden flex flex-col h-full border-r border-gray-200">
+      <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
+        <exemplar
+          v-for="exId in positiveExamples"
+          :key="exId + activeSnippet.name"
+          v-bind:snippet-name="activeSnippet.name"
+          v-bind:id="exId"
+        ></exemplar>
+      </div>
+    </div>
+    <div class="border-t w-full half-height overflow-hidden flex flex-col h-full border-gray-200">
+      <div
+        class="flex w-full bg-red-900 text-gray-200 font-mono text-sm h-10 border-b border-gray-200"
+      >
+        <div class="w-full p-2">Negative</div>
         <div
-          class="w-full bg-red-900 text-gray-200 font-mono text-sm h-10 p-2 border-b border-gray-200"
-        >Negative</div>
-        <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
-          <exemplar
-            v-for="exId in negativeExamples"
-            :key="exId + activeSnippet.name"
-            v-bind:snippet-name="activeSnippet.name"
-            v-bind:id="exId"
-          ></exemplar>
+          class="border-l border-gray-200 flex justify-center items-center bg-blue-800 hover:bg-blue-700 w-10 cursor-pointer"
+        >
+          <div class="font-sans text-lg font-bold tracking-wide uppercase" @click="addExample(-1)">+</div>
         </div>
+      </div>
+      <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
+        <exemplar
+          v-for="exId in negativeExamples"
+          :key="exId + activeSnippet.name"
+          v-bind:snippet-name="activeSnippet.name"
+          v-bind:id="exId"
+        ></exemplar>
+      </div>
+    </div>
+    <div class="debug-info w-full overflow-auto text-gray-200 border-t border-gray-200">
+      <div
+        class="border-b border-gray-200 px-2 py-1 overflow-hidden"
+        v-for="(val, key) in trainData.state"
+        :key="key"
+      >
+        <div class="font-bold tracking-wide uppercase text-xs mb-1 break-all">{{ key }}</div>
+        <div class="font-mono text-sm">{{ val }}</div>
       </div>
     </div>
   </div>
@@ -53,6 +72,7 @@
 
 <script>
 import Exemplar from '../Samples/Exemplar';
+import { ACTION } from '../../store/constants';
 
 export default {
   name: 'snippet-inspector',
@@ -60,6 +80,14 @@ export default {
     Exemplar
   },
   computed: {
+    isTraining() {
+      return this.$store.getters.training;
+    },
+    trained() {
+      return this.activeSnippet
+        ? this.$store.state.snippets.activeSnippet.trained
+        : false;
+    },
     activeSnippet() {
       return this.$store.state.snippets.activeSnippet;
     },
@@ -105,7 +133,38 @@ export default {
       }
 
       return {};
+    },
+    train() {
+      if (this.activeSnippet && !this.isTraining && this.trained) {
+        this.$store.dispatch(ACTION.LOAD_SNIPPET, this.activeSnippet.name);
+      } else if (this.activeSnippet && !this.isTraining) {
+        this.$store.dispatch(ACTION.TRAIN, this.activeSnippet.name);
+      }
+    }
+  },
+  methods: {
+    addExample(y) {
+      // check active
+      if (this.activeSnippet) {
+        // snapshot current state
+        const x = this.$store.getters.paramsAsArray;
+
+        this.$store.dispatch(ACTION.ADD_EXAMPLE, {
+          name: this.activeSnippet.name,
+          point: { x, y }
+        });
+      }
     }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.debug-info {
+  height: 10vw;
+}
+
+.half-height {
+  height: 50%;
+}
+</style>
