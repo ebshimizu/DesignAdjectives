@@ -6,7 +6,9 @@
       <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
     </div>
     <div class="param-panel overflow-auto flex-no-shrink border-t border-gray-200">
-      <div class="flex flex-wrap p-1 relative w-full h-full overflow-hidden items-start">
+      <div
+        class="flex flex-wrap p-1 relative w-full h-full overflow-hidden items-start content-start"
+      >
         <div class="w-full text-center uppercase text-sm font-bold mb-1">Selection Tools</div>
         <div class="selection-tool-button">
           <div @click="selectAll()">All</div>

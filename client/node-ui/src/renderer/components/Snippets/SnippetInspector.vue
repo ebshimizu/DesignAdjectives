@@ -4,10 +4,15 @@
       <div
         class="w-5/6 border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm overflow-hidden"
       >
-        <div
-          class="font-bold overflow-hidden"
-        >{{ activeSnippet.name ? activeSnippet.name : '[No Active Snippet]' }}</div>
-        <div class="mb-2">{{ status }}</div>
+        <select class="font-bold w-full cursor-pointer bg-blue-700" v-model="activeSnippetName">
+          <option disabled value>Select an Axis</option>
+          <option
+            v-for="option in snippetOptions"
+            v-bind:value="option.name"
+            v-bind:key="option.name"
+          >{{ option.name }}</option>
+        </select>
+        <div class="mb-3">{{ status }}</div>
       </div>
       <div
         class="px-2 font-bold flex-shrink bg-blue-800 hover:bg-blue-700 flex justify-center items-center border-b border-l border-gray-200 cursor-pointer"
@@ -80,6 +85,19 @@ export default {
     Exemplar
   },
   computed: {
+    activeSnippetName: {
+      get() {
+        return this.$store.state.snippets.activeSnippet
+          ? this.$store.state.snippets.activeSnippet.name
+          : '';
+      },
+      set(newVal) {
+        this.$store.dispatch(ACTION.SET_ACTIVE_SNIPPET, newVal);
+      }
+    },
+    snippetOptions() {
+      return this.$store.state.snippets.snippets;
+    },
     isTraining() {
       return this.$store.getters.training;
     },
@@ -133,16 +151,16 @@ export default {
       }
 
       return {};
-    },
+    }
+  },
+  methods: {
     train() {
       if (this.activeSnippet && !this.isTraining && this.trained) {
         this.$store.dispatch(ACTION.LOAD_SNIPPET, this.activeSnippet.name);
       } else if (this.activeSnippet && !this.isTraining) {
         this.$store.dispatch(ACTION.TRAIN, this.activeSnippet.name);
       }
-    }
-  },
-  methods: {
+    },
     addExample(y) {
       // check active
       if (this.activeSnippet) {
