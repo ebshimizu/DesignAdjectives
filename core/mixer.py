@@ -92,23 +92,25 @@ def mix(a, b, count, bias=0.5, attempts=100):
 # simple snippet mixing scheme:
 # combines training data and then re-trains the snippet
 # likely to be a somewhat naive approach
-def mixSnippets(a, b):
-    abSnippet = Snippet("{0}-{1}".format(a.name, b.name))
+def mixSnippets(snippets, params):
+    # stub for now
+    return
+    # abSnippet = Snippet("{0}-{1}".format(a.name, b.name))
 
-    # copy a few things, assume a has the defaults
-    abSnippet.optSteps = a.optSteps
-    abSnippet.learningRate = a.learningRate
-    abSnippet.lossTolerance = a.lossTolerance
+    # # copy a few things, assume a has the defaults
+    # abSnippet.optSteps = a.optSteps
+    # abSnippet.learningRate = a.learningRate
+    # abSnippet.lossTolerance = a.lossTolerance
 
-    # add training data
-    for tdata in a.data:
-        abSnippet.addData(tdata)
+    # # add training data
+    # for tdata in a.data:
+    #     abSnippet.addData(tdata)
 
-    for tdata in b.data:
-        abSnippet.addData(tdata)
+    # for tdata in b.data:
+    #     abSnippet.addData(tdata)
 
-    # train the new snippet
-    abSnippet.train()
+    # # train the new snippet
+    # abSnippet.train()
 
-    # return the trained snippet
-    return abSnippet
+    # # return the trained snippet
+    # return abSnippet

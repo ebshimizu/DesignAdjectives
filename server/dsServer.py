@@ -300,11 +300,17 @@ def mixS(args):
 
 @sio.on("mix snippet")
 def mixSnippet(args):
-    # currently runs the basic snippet combiner for two snippets
-    # should start sampler after creating mix
-    mxSnp = mixSnippets(
-        snippetServer.getSnippet(args["a"]), snippetServer.getSnippet(args["b"])
-    )
+    # input: list of snippet names (convert to snippet objects)
+    #        Additional parameters (in dictionary)
+    logger.info("Starting snippet mixer")
+    snippets = []
+    for (name in args["snippets"])
+        s = snippetServer.getSnippet(name)
+        if s:
+            snippets.append(s)
+            logger.info("Adding snippet {0} to mix".format(name))
+    
+    mxSnp = mixSnippets(snippets, **args["params"])
 
 
 sio.connect("http://localhost:5234")

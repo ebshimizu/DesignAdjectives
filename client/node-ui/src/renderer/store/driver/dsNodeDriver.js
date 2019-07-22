@@ -391,6 +391,20 @@ export class DsDriver {
   }
 
   /**
+   * Combines multiple snippets together. The parameter signature will change constantly while testing.
+   * See mixSnippets() in core/mixer.py
+   * @param {string[]} snippetNames List of snippet identifiers, assumes all have been trained already
+   * @param {Object} params
+   */
+  async mixSnippets(snippetNames, params) {
+    const res = await this.exec('mix snippet', {
+      snippets: snippetNames,
+      params
+    });
+    return res;
+  }
+
+  /**
    * Stop the sampler
    */
   async stopSampler() {
