@@ -4,7 +4,10 @@
       <div
         class="w-5/6 border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm overflow-hidden"
       >
-        <select class="font-bold w-full cursor-pointer bg-blue-700" v-model="activeSnippetName">
+        <select
+          class="font-bold w-full border-2 border-blue-800 cursor-pointer bg-blue-700"
+          v-model="activeSnippetName"
+        >
           <option disabled value>Select an Axis</option>
           <option
             v-for="option in snippetOptions"
@@ -12,7 +15,7 @@
             v-bind:key="option.name"
           >{{ option.name }}</option>
         </select>
-        <div class="mb-3">{{ status }}</div>
+        <div class="mb-3 p-1">{{ status }}</div>
       </div>
       <div
         class="px-2 font-bold flex-shrink bg-blue-800 hover:bg-blue-700 flex justify-center items-center border-b border-l border-gray-200 cursor-pointer"

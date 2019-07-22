@@ -101,6 +101,7 @@ export default {
     },
     snippets: {},
     activeSnippet: {},
+    activeMixAxes: {},
     activeSnippetScore: { mean: 0, cov: 0 },
     log: [],
     connected: false,
@@ -415,9 +416,23 @@ export default {
       state.mixA = [];
       state.mixB = [];
       state.mixResults = {};
+      state.activeMixAxes = {};
     },
     [Constants.MUTATION.SET_MIX_RESULTS](state, results) {
       state.mixResults = results;
+    },
+    [Constants.MUTATION.ADD_ACTIVE_MIX_AXIS](state, name) {
+      if (!(name in state.activeMixAxes)) {
+        Vue.set(state.activeMixAxes, name, { name, weight: 1 });
+      }
+    },
+    [Constants.MUTATION.REMOVE_ACTIVE_MIX_AXIS](state, name) {
+      if (name in state.activeMixAxes) {
+        Vue.delete(state.activeMixAxes, name);
+      }
+    },
+    [Constants.MUTATION.CLEAR_ACTIVE_MIX_AXES](state) {
+      state.activeMixAxes = {};
     }
   },
   actions: {

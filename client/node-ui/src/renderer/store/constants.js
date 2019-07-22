@@ -56,7 +56,10 @@ export const MUTATION = {
   NEW_PARAM_SET: 'New Parameter Set',
   UPDATE_PARAM_SET: 'Update Parameter Set',
   DELETE_PARAM_SET: 'Delete Parameter Set',
-  LOAD_PARAM_SET: 'Load Parameter Set'
+  LOAD_PARAM_SET: 'Load Parameter Set',
+  ADD_ACTIVE_MIX_AXIS: 'Add Active Mix Axis',
+  REMOVE_ACTIVE_MIX_AXIS: 'Remove Active Mix Axis',
+  CLEAR_ACTIVE_MIX_AXES: 'Clear Active Mix Axes'
 };
 
 export const ACTION = {

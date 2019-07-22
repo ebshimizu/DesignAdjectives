@@ -16,6 +16,9 @@
             <tab title="Mix">
               <mix-panel />
             </tab>
+            <tab title="Axis Mixer">
+              <axis-mixer />
+            </tab>
             <tab title="Debug">
               <debug-panel></debug-panel>
             </tab>
@@ -54,6 +57,7 @@ import SamplerPanel from '@/components/Samples/SamplerPanel';
 import DebugPanel from '@/components/Snippets/DebugPanel';
 import ParameterExtents from '@/components/Parameters/ParameterExtents';
 import MixPanel from '@/components/Snippets/MixPanel';
+import AxisMixer from '@/components/Snippets/AxisMixer';
 
 import '@/assets/tailwind.css';
 import { MUTATION, ACTION } from '@/store/constants';
@@ -72,7 +76,8 @@ export default {
     SamplerPanel,
     DebugPanel,
     ParameterExtents,
-    MixPanel
+    MixPanel,
+    AxisMixer
   },
   mounted() {
     this.$store.commit(MUTATION.LOAD_SNIPPET_SETTINGS);
