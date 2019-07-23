@@ -310,7 +310,7 @@ def mixSnippet(args):
             snippets.append(s)
             logger.info("Adding snippet {0} to mix".format(name))
 
-    mxSnp = mixSnippets(snippets, **args["params"])
+    mxSnp = mixSnippets(snippets, args["params"])
     return None, mxSnp
 
 

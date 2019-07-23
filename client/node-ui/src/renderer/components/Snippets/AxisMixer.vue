@@ -36,18 +36,25 @@
       <div class="w-full flex items-center justify-center p-1 mixButton">
         <div
           class="w-full h-full rounded bg-green-800 hover:bg-green-700 uppercase tracking wide text-sm font-bold text-gray-200 text-center cursor-pointer"
+          @click="mix()"
         >Mix</div>
       </div>
     </div>
-    <div class="w-3/4 h-full flex"></div>
+    <div class="w-3/4 h-full flex flex-row flex-wrap overflow-auto items-start">
+      <sample v-for="sample in currentResults" :key="sample.count" v-bind:sample="sample"></sample>
+    </div>
   </div>
 </template>
 
 <script>
-import { MUTATION } from '../../store/constants';
+import { MUTATION, ACTION } from '../../store/constants';
+import Sample from '../Samples/Sample';
 
 export default {
   name: 'axis-mixer',
+  components: {
+    Sample
+  },
   data() {
     return {
       currentSelectedSnippet: ''
@@ -67,6 +74,9 @@ export default {
     },
     activeAxes() {
       return this.$store.state.snippets.activeMixAxes;
+    },
+    currentResults() {
+      return this.$store.state.snippets.axisMixResults;
     }
   },
   methods: {
@@ -78,6 +88,15 @@ export default {
     },
     removeActive(name) {
       this.$store.commit(MUTATION.REMOVE_ACTIVE_MIX_AXIS, name);
+    },
+    mix() {
+      this.$store.dispatch(ACTION.MIX_AXES, {
+        snippetIDs: Object.keys(this.activeAxes),
+        params: {
+          method: 'mixGPAll',
+          x0: this.$store.getters.paramsAsArray
+        }
+      });
     }
   }
 };

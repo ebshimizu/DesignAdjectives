@@ -1,6 +1,7 @@
 from dsTypes import *
 from functools import reduce
 from snippet import Snippet
+from samplers import *
 import math
 import random
 
@@ -89,28 +90,44 @@ def mix(a, b, count, bias=0.5, attempts=100):
     return {"results": results, "info": {"count": len(results), "active": activeParams}}
 
 
+# this method basically just takes the examples and combines them all together
+# this is not expected to work particularly well
+# this is predictably a disaster, as snippets with disjoint parameter sets exert
+# essentially random control over each other when combined.
+def mixGPAll(snippets, params):
+    logger.mixer("Starting mixGPAll mix method")
+    combined = Snippet("combined")
+
+    # copy a few things, assume first snippet has the defaults
+    combined.optSteps = snippets[0].optSteps
+    combined.learningRate = snippets[0].learningRate
+    combined.lossTolerance = snippets[0].lossTolerance
+
+    logger.mixer("Adding training data")
+    # add training data
+    for snippet in snippets:
+        for tdata in snippet.data:
+            combined.addData(tdata)
+
+    # train the new snippet
+    logger.mixer("Training new snippet")
+    combined.train()
+
+    # sample the stuff
+    logger.mixer("Sampling new snippet")
+    sampler = Rejection(combined, params["x0"], n=20)
+    sampler.start()
+
+    # this is threaded so we'll join then pull the results out
+    sampler.join()
+    return sampler.results
+
+
 # simple snippet mixing scheme:
 # combines training data and then re-trains the snippet
 # likely to be a somewhat naive approach
 def mixSnippets(snippets, params):
-    # stub for now
-    return
-    # abSnippet = Snippet("{0}-{1}".format(a.name, b.name))
-
-    # # copy a few things, assume a has the defaults
-    # abSnippet.optSteps = a.optSteps
-    # abSnippet.learningRate = a.learningRate
-    # abSnippet.lossTolerance = a.lossTolerance
-
-    # # add training data
-    # for tdata in a.data:
-    #     abSnippet.addData(tdata)
-
-    # for tdata in b.data:
-    #     abSnippet.addData(tdata)
-
-    # # train the new snippet
-    # abSnippet.train()
-
-    # # return the trained snippet
-    # return abSnippet
+    if params["method"] == "mixGPAll":
+        return mixGPAll(snippets, params)
+    else:
+        return

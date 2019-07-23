@@ -484,7 +484,7 @@ export default {
       state.activeMixAxes = {};
     },
     [Constants.MUTATION.SET_AXIS_MIX_RESULTS](state, results) {
-      state.axisMixResults = {};
+      state.axisMixResults = results;
     }
   },
   actions: {

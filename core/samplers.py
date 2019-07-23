@@ -101,6 +101,7 @@ class Rejection(SamplerThread):
         self.paramFloor = paramFloor
         self.retries = retries
         self.paramFilter = paramFilter
+        self.results = None
 
     def run(self):
         logger.sample("[{0}] Rejection sampler initializing".format(self.name))
@@ -173,7 +174,15 @@ class Rejection(SamplerThread):
                         count + 1, self.n, xp, score["mean"]
                     )
                 )
-                accept.append(xp.tolist())
+                accept.append(
+                    {
+                        "x": xp.tolist(),
+                        "mean": score["mean"],
+                        "cov": score["cov"],
+                        "count": count,
+                        "idx": count,
+                    }
+                )
 
                 if self.cb:
                     self.callback(
@@ -233,6 +242,8 @@ class Rejection(SamplerThread):
                 len(accept),
             )
         )
+
+        self.results = accept
 
         if self.final:
             # sends the trace back to the client for whatever use
