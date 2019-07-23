@@ -70,6 +70,53 @@ function randomVector(length, x0, freeParams) {
   return x;
 }
 
+// load function helper
+async function loadSnippet(driver, context, name) {
+  try {
+    // ensure exists
+    await driver.addSnippet(name);
+
+    // load gpr data
+    await driver.loadGPR(
+      name,
+      normalizeData(context.state.snippets[name].data, context.getters.params),
+      context.state.snippets[name].trainData.state
+    );
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+// snippet trainer helper
+async function trainSnippet(driver, context, name) {
+  try {
+    // ensure snippet exists
+    await driver.addSnippet(name);
+    await driver.setProp(
+      name,
+      'optSteps',
+      context.state.settings.optSteps.value
+    );
+
+    // sync data
+    await driver.setData(
+      name,
+      normalizeData(context.state.snippets[name].data, context.getters.params)
+    );
+
+    // train
+    const trainData = await driver.train(name);
+    context.commit(Constants.MUTATION.ADD_TRAINED_DATA, {
+      name,
+      trainData
+    });
+    context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+    context.commit(Constants.MUTATION.CACHE_SNIPPETS, context.state.cacheKey);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 // this state maintains a list of snippet objects and sync's to the server as needed.
 // data format is same as server
 // snippet.data format: [{ x: vec, y: val }]
@@ -115,7 +162,8 @@ export default {
     samples: [],
     mixA: [],
     mixB: [],
-    mixResults: {}
+    mixResults: {},
+    axisMixResults: {}
   },
   getters: {
     ready: state => {
@@ -417,6 +465,7 @@ export default {
       state.mixB = [];
       state.mixResults = {};
       state.activeMixAxes = {};
+      state.axisMixResults = {};
     },
     [Constants.MUTATION.SET_MIX_RESULTS](state, results) {
       state.mixResults = results;
@@ -433,6 +482,9 @@ export default {
     },
     [Constants.MUTATION.CLEAR_ACTIVE_MIX_AXES](state) {
       state.activeMixAxes = {};
+    },
+    [Constants.MUTATION.SET_AXIS_MIX_RESULTS](state, results) {
+      state.axisMixResults = {};
     }
   },
   actions: {
@@ -487,68 +539,19 @@ export default {
       }
     },
     async [Constants.ACTION.TRAIN](context, name) {
-      try {
-        context.commit(Constants.MUTATION.SET_SERVER_STATUS_TRAIN, name);
+      context.commit(Constants.MUTATION.SET_SERVER_STATUS_TRAIN, name);
 
-        // ensure snippet exists
-        await driver.addSnippet(name);
-        await driver.setProp(
-          name,
-          'optSteps',
-          context.state.settings.optSteps.value
-        );
+      await trainSnippet(driver, context, name);
 
-        // sync data
-        await driver.setData(
-          name,
-          normalizeData(
-            context.state.snippets[name].data,
-            context.getters.params
-          )
-        );
-
-        // train
-        const trainData = await driver.train(name);
-        context.commit(Constants.MUTATION.ADD_TRAINED_DATA, {
-          name,
-          trainData
-        });
-        context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
-        context.commit(
-          Constants.MUTATION.CACHE_SNIPPETS,
-          context.state.cacheKey
-        );
-
-        // load parameter color data
-        await context.dispatch(Constants.ACTION.LOAD_PARAM_COLOR_DATA, name);
-      } catch (e) {
-        console.log(e);
-      }
+      // load parameter color data
+      await context.dispatch(Constants.ACTION.LOAD_PARAM_COLOR_DATA, name);
 
       context.commit(Constants.MUTATION.SET_SERVER_STATUS_IDLE, name);
     },
     async [Constants.ACTION.LOAD_SNIPPET](context, name) {
       // loads the existing train data into the server
-      try {
-        context.commit(Constants.MUTATION.SET_SERVER_STATUS_TRAIN, name);
-
-        // ensure exists
-        await driver.addSnippet(name);
-
-        // load gpr data
-        await driver.loadGPR(
-          name,
-          normalizeData(
-            context.state.snippets[name].data,
-            context.getters.params
-          ),
-          context.state.snippets[name].trainData.state
-        );
-
-        // done
-      } catch (e) {
-        console.log(e);
-      }
+      context.commit(Constants.MUTATION.SET_SERVER_STATUS_TRAIN, name);
+      await loadSnippet(driver, context, name);
 
       context.commit(Constants.MUTATION.SET_SERVER_STATUS_IDLE, name);
     },
@@ -732,6 +735,32 @@ export default {
         );
         context.commit(Constants.MUTATION.SET_MIX_RESULTS, results);
       }
+    },
+    async [Constants.ACTION.MIX_AXES](context, data) {
+      // check that snippets are trained
+      console.log('Preparing for mix operation...');
+      context.commit(Constants.MUTATION.SET_AXIS_MIX_RESULTS, {});
+      const ids = [];
+
+      for (const name of data.snippetIDs) {
+        if (name in context.state.snippets) {
+          if (!context.state.snippets[name].trained) {
+            await trainSnippet(driver, context, name);
+          } else {
+            await loadSnippet(driver, context, name);
+          }
+
+          ids.push(name);
+        } else {
+          console.log(`WARN: no snippet with id ${name} found, skipping`);
+        }
+      }
+
+      console.log('Sending mix command...');
+      const results = await driver.mixSnippets(ids, data.params);
+
+      // update mix results
+      context.commit(Constants.MUTATION.SET_AXIS_MIX_RESULTS, results);
     }
   }
 };

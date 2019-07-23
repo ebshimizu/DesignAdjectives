@@ -304,13 +304,14 @@ def mixSnippet(args):
     #        Additional parameters (in dictionary)
     logger.info("Starting snippet mixer")
     snippets = []
-    for (name in args["snippets"])
+    for name in args["snippets"]:
         s = snippetServer.getSnippet(name)
         if s:
             snippets.append(s)
             logger.info("Adding snippet {0} to mix".format(name))
-    
+
     mxSnp = mixSnippets(snippets, **args["params"])
+    return None, mxSnp
 
 
 sio.connect("http://localhost:5234")

@@ -59,7 +59,8 @@ export const MUTATION = {
   LOAD_PARAM_SET: 'Load Parameter Set',
   ADD_ACTIVE_MIX_AXIS: 'Add Active Mix Axis',
   REMOVE_ACTIVE_MIX_AXIS: 'Remove Active Mix Axis',
-  CLEAR_ACTIVE_MIX_AXES: 'Clear Active Mix Axes'
+  CLEAR_ACTIVE_MIX_AXES: 'Clear Active Mix Axes',
+  SET_AXIS_MIX_RESULTS: 'Set Axis Mix Results'
 };
 
 export const ACTION = {
@@ -88,7 +89,8 @@ export const ACTION = {
   GENERATE_RANDOM: 'Generate Random Set',
   GENERATE_EXTENTS: 'Generate Parameter Extents',
   MIX: 'Run Parameter Mix',
-  LOAD_PARAM_SET: 'Load Parameter Group'
+  LOAD_PARAM_SET: 'Load Parameter Group',
+  MIX_AXES: 'Run Axis Mixer'
 };
 
 export const SERVER_STATUS = {
