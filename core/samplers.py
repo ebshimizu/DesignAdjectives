@@ -70,6 +70,173 @@ class SamplerThread(Thread):
         func({"x": x, "mean": mean, "cov": cov, "idx": id})
 
 
+class GenericRejection(SamplerThread):
+    def __init__(
+        self,
+        x0,
+        startingPts,
+        evalFunc,
+        filter,
+        name="",
+        threshold=0.7,
+        freeParams=1000,
+        n=10,
+        paramFloor=3,
+        retries=20,
+        cb=None,
+        final=None,
+    ):
+        super().__init__()
+        self.name = name
+        self.x0 = x0
+        self.threshold = threshold
+        self.freeParams = freeParams
+        self.filter = filter
+        self.n = n
+        self.cb = cb
+        self.final = final
+        self.retries = retries
+        self.results = None
+        self.paramFloor = paramFloor
+        self.evalFunc = evalFunc
+        self.startingPts = startingPts
+
+        if self.freeParams > len(self.filter):
+            self.freeParams = len(self.filter)
+
+    def run(self):
+        logger.sample("[{0}] Generic Rejection sampler initializing".format(self.name))
+        count = 0
+        accept = []
+        rejected = 0
+        attempts = 0
+        log = []
+        currentFreeParams = self.freeParams
+
+        # duplicate, we're going to shuffle it a lot
+        filter = list(self.filter)
+
+        # generic sampler still uses torch cause it's easy to generate random dists from it
+        g = dist.Uniform(torch.zeros(len(filter)), torch.ones(len(filter)))
+
+        logger.sample("[{0}] Filter: {1}".format(self.name, filter))
+        logger.sample(
+            "[{0}] Initial Free Params: {1}".format(self.name, self.freeParams)
+        )
+        logger.sample(
+            "[{0}] Initial Point Count: {1}".format(self.name, len(self.startingPts))
+        )
+        logger.sample("[{0}] Free Param Floor: {1}".format(self.name, self.paramFloor))
+
+        while count < self.n:
+            if self.stopped():
+                logger.sample("[{0}] Rejection Sampler early stop".format(self.name))
+                break
+
+            # determine which parameters are fixed (randomly select from the filter params)
+            random.shuffle(filter)
+            selected = filter[0:currentFreeParams]
+
+            # pull a random positive example to use as the base
+            random.shuffle(self.startingPts)
+            xp = torch.tensor(self.x0)
+            for i in range(len(filter)):
+                xp[filter[i]] = self.startingPts[0][filter[i]]
+
+            # drop in replace the modified params
+            randVec = g.sample()
+
+            for i in range(len(selected)):
+                xp[selected[i]] = randVec[i]
+
+            # eval (expects return of mean and cov)
+            score = self.evalFunc(xp)
+
+            logger.debug("[{0}] Sample Generated. Score: {1}".format(self.name, score))
+
+            # check score
+            if score["mean"] > self.threshold:
+                logger.sample(
+                    "[{0}/{1}] Accepted {2} mean score: {3}".format(
+                        count + 1, self.n, xp, score["mean"]
+                    )
+                )
+                accept.append(
+                    {
+                        "x": xp.tolist(),
+                        "mean": score["mean"],
+                        "cov": score["cov"],
+                        "count": count,
+                        "idx": count,
+                    }
+                )
+
+                if self.cb:
+                    self.callback(
+                        self.cb, xp.tolist(), score["mean"], score["cov"], count
+                    )
+
+                log.append(
+                    {
+                        "accept": True,
+                        "attempts": attempts,
+                        "score": score["mean"],
+                        "freeParams": currentFreeParams,
+                        "count": rejected + len(accept),
+                    }
+                )
+
+                count = count + 1
+                attempts = 0
+
+                if currentFreeParams < self.freeParams:
+                    currentFreeParams = currentFreeParams + 1
+                    logger.sample(
+                        "[{0}] Sample accepted. Raising free param limit to {1}.".format(
+                            self.name, currentFreeParams
+                        )
+                    )
+            else:
+                log.append(
+                    {
+                        "accept": False,
+                        "score": score["mean"],
+                        "freeParams": currentFreeParams,
+                        "attempt": attempts,
+                        "count": rejected + len(accept),
+                    }
+                )
+
+                attempts = attempts + 1
+                rejected = rejected + 1
+
+                if (attempts > self.retries) & (currentFreeParams > self.paramFloor):
+                    currentFreeParams = currentFreeParams - 1
+                    attempts = 0
+                    logger.sample(
+                        "[{0}] Retry limit reached. Decreasing free params to {1}".format(
+                            self.name, currentFreeParams
+                        )
+                    )
+
+        # finalize
+        logger.sample("[{0}] Finalizing sampler".format(self.name))
+        logger.sample(
+            "[{0}] Rejection Rate: {1}% ({2}/{3})".format(
+                self.name,
+                100 * (rejected / (rejected + len(accept))),
+                rejected,
+                len(accept),
+            )
+        )
+
+        self.results = accept
+
+        if self.final:
+            # sends the trace back to the client for whatever use
+            self.final(log, self.name)
+
+
 class Rejection(SamplerThread):
     def __init__(
         self,
@@ -84,6 +251,7 @@ class Rejection(SamplerThread):
         cb=None,
         final=None,
         paramFilter=None,
+        customEval=None,
     ):
         super().__init__()
         self.snippet = snippet
@@ -103,6 +271,11 @@ class Rejection(SamplerThread):
         self.paramFilter = paramFilter
         self.results = None
 
+        # the custom eval function should return in the same format as
+        # the snippet eval function does. This is an object containing "mean"
+        # and "cov" fields. cov can be optional if the eval function does not provide one
+        self.customEval = customEval
+
     def run(self):
         logger.sample("[{0}] Rejection sampler initializing".format(self.name))
         count = 0
@@ -115,14 +288,18 @@ class Rejection(SamplerThread):
         # duplicate, we're going to shuffle it a lot
         filter = list(self.snippet.filter)
 
+        # filter override
+        if self.paramFilter is not None:
+            filter = list(self.paramFilter)
+
         # anything that's not in the custom filter is a locked parameter.
         # we'll need to remove things that are in the snippet filter but not in the
         # custom filter here.
         # if there is no custom filter, proceed
-        if self.paramFilter is not None:
-            for elem in filter:
-                if elem not in self.paramFilter:
-                    filter.remove(elem)
+        # if self.paramFilter is not None:
+        #     for elem in filter:
+        #         if elem not in self.paramFilter:
+        #             filter.remove(elem)
 
         posExamples = self.snippet.posExamples()
 
@@ -159,7 +336,11 @@ class Rejection(SamplerThread):
                 xp[selected[i]] = randVec[i]
 
             # eval
-            score = self.snippet.predictOne(xp)
+            score = 0
+            if self.customEval:
+                score = self.customEval(xp)
+            else:
+                score = self.snippet.predictOne(xp)
 
             logger.debug(
                 "[{0}] Sample Generated. Mean Score: {1}".format(

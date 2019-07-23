@@ -756,8 +756,16 @@ export default {
         }
       }
 
+      // normalize x0
+      data.params.x0 = normalizeVector(data.params.x0, context.getters.params);
+
       console.log('Sending mix command...');
       const results = await driver.mixSnippets(ids, data.params);
+
+      // unnormalize results
+      for (const r of results) {
+        r.x = unnormalizeVector(r.x, context.getters.params);
+      }
 
       // update mix results
       context.commit(Constants.MUTATION.SET_AXIS_MIX_RESULTS, results);

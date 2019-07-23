@@ -123,11 +123,56 @@ def mixGPAll(snippets, params):
     return sampler.results
 
 
+def weightedObjFunc(x, snippets):
+    # eval x on all snippets
+    scores = []
+    for snippet in snippets:
+        scores.append(snippet.predictOne(x))
+
+    # compute weight (not using covariance at the moment)
+    ret = 0
+    for score in scores:
+        ret = ret + score["mean"] / len(snippets)
+
+    return {"mean": ret, "cov": 0}
+
+
+def mixWeightedObjFunc(snippets, params):
+    logger.mixer("Starting mixed objective function method")
+
+    logger.mixer("collecting starting points and filter")
+    startPts = []
+    paramFilter = []
+    for snippet in snippets:
+        startPts = startPts + snippet.posExamples()
+
+        f = snippet.filter
+        for param in f:
+            if param not in paramFilter:
+                paramFilter.append(param)
+
+    # the threshold here is really hard to just define absolutely
+    # degenerate case probably happens when there is disagreement about goodness of
+    # same parameter values
+    sampler = GenericRejection(
+        params["x0"],
+        startPts,
+        lambda x: weightedObjFunc(x, snippets),
+        paramFilter,
+        threshold=0,
+    )
+    sampler.start()
+    sampler.join()
+    return sampler.results
+
+
 # simple snippet mixing scheme:
 # combines training data and then re-trains the snippet
 # likely to be a somewhat naive approach
 def mixSnippets(snippets, params):
     if params["method"] == "mixGPAll":
         return mixGPAll(snippets, params)
+    if params["method"] == "mixWeightedObjFunc":
+        return mixWeightedObjFunc(snippets, params)
     else:
         return
