@@ -93,8 +93,9 @@ export default {
       this.$store.dispatch(ACTION.MIX_AXES, {
         snippetIDs: Object.keys(this.activeAxes),
         params: {
-          method: 'mixWeightedObjFunc',
-          x0: this.$store.getters.paramsAsArray
+          method: 'multiObjMix',
+          x0: this.$store.getters.paramsAsArray,
+          n: 10
         }
       });
     }

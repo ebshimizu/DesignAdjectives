@@ -4,6 +4,7 @@ from snippet import Snippet
 from samplers import *
 import math
 import random
+import numpy.random
 
 # logging setup
 import logging
@@ -137,6 +138,100 @@ def weightedObjFunc(x, snippets):
     return {"mean": ret, "cov": 0}
 
 
+def nonDetWeightedObjFunc(x, snippets):
+    # eval x on all snippets
+    scores = []
+    for snippet in snippets:
+        scores.append(snippet.predictOne(x))
+
+    # select a distribution
+    distParams = scores[random.randint(0, len(scores) - 1)]
+
+    # sample from dist
+    sampleScore = numpy.random.normal(distParams["mean"], distParams["cov"])
+
+    # do this multiple times???
+    # idk, maybe just return for now
+    return {"mean": sampleScore, "cov": distParams["cov"]}
+
+
+def multiObjSample(x0, snippets):
+    logger.mixer("Starting multi-objective sampler")
+    # order snippets by filter size, randomize order of equal length snippets
+    paramOrder = sorted(
+        snippets, key=lambda snippet: len(snippet.filter) + random.random()
+    )
+
+    fx0 = paramOrder[0].predictOne(x0)["mean"]
+    logger.mixer(
+        "Snippets randomized. First Snippet: {0} score: {1}".format(
+            paramOrder[0].name, fx0
+        )
+    )
+
+    # sample one from the first snippet
+    sampler = Rejection(paramOrder[0], x0, threshold=fx0, n=1, limit=1000)
+    sampler.run()
+    currentResult = sampler.results[0]["x"] if len(sampler.results) > 0 else x0
+
+    # tracking history of snippet values
+    fxs = [paramOrder[0].predictOne(currentResult)["mean"]]
+
+    # for each subsequent thing, run this loop
+    for i in range(1, len(paramOrder)):
+        nextSnippet = paramOrder[i]
+        # sample a thing from the next snippet
+        fxn = nextSnippet.predictOne(currentResult)["mean"]
+        logger.mixer("Next snippet: {0} score: {1}".format(nextSnippet.name, fxn))
+
+        samplerN = Rejection(nextSnippet, currentResult, threshold=fxn, n=1, limit=1000)
+        samplerN.run()
+        nextResult = (
+            samplerN.results[0]["x"] if len(samplerN.results) > 0 else currentResult
+        )
+
+        # accept next result as current with probability relative to how much it improved things overall
+        fxs.append(fxn)
+        nextFxs = []
+        for j in range(0, len(fxs)):
+            nextFxs.append(paramOrder[j].predictOne(nextResult)["mean"])
+
+        # sum diffs
+        previousScoreTotal = reduce(lambda a, b: a + b, fxs)
+        nextScoreTotal = reduce(lambda a, b: a + b, nextFxs)
+
+        logger.mixer(
+            "prev score: {0} next score: {1}".format(previousScoreTotal, nextScoreTotal)
+        )
+
+        # accept this sample as next with probability similar to a MH MCMC decision
+        # probably not gonna work since some of these function values will be negative...
+        a = nextScoreTotal / previousScoreTotal
+        logger.mixer("a: {0}".format(a))
+
+        # generate uniform
+        rng = random.random()
+        if rng <= a:
+            logger.mixer("accepted with u {0}".format(rng))
+            currentResult = nextResult
+            fxs = nextFxs
+        else:
+            logger.mixer("rejected with u {0}".format(rng))
+
+    return {"x": currentResult, "mean": reduce(lambda a, b: a + b, fxs), "cov": 0}
+
+
+def multiObjMix(snippets, params):
+    results = []
+    for i in range(0, params["n"]):
+        sample = multiObjSample(params["x0"], snippets)
+        sample["count"] = i
+        sample["idx"] = i
+        results.append(sample)
+
+    return results
+
+
 def mixWeightedObjFunc(snippets, params):
     logger.mixer("Starting mixed objective function method")
 
@@ -157,9 +252,9 @@ def mixWeightedObjFunc(snippets, params):
     sampler = GenericRejection(
         params["x0"],
         startPts,
-        lambda x: weightedObjFunc(x, snippets),
+        lambda x: nonDetWeightedObjFunc(x, snippets),
         paramFilter,
-        threshold=0,
+        threshold=0.5,
     )
     sampler.start()
     sampler.join()
@@ -174,5 +269,7 @@ def mixSnippets(snippets, params):
         return mixGPAll(snippets, params)
     if params["method"] == "mixWeightedObjFunc":
         return mixWeightedObjFunc(snippets, params)
+    if params["method"] == "multiObjMix":
+        return multiObjMix(snippets, params)
     else:
         return

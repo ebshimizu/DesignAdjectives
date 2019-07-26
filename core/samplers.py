@@ -248,6 +248,7 @@ class Rejection(SamplerThread):
         n=10,
         paramFloor=3,
         retries=20,
+        limit=10000,
         cb=None,
         final=None,
         paramFilter=None,
@@ -259,6 +260,7 @@ class Rejection(SamplerThread):
         self.x0 = x0
         self.threshold = threshold
         self.freeParams = freeParams
+        self.limit = limit
 
         if self.freeParams > len(self.snippet.filter):
             self.freeParams = len(self.snippet.filter)
@@ -314,7 +316,7 @@ class Rejection(SamplerThread):
         )
         logger.sample("[{0}] Free Param Floor: {1}".format(self.name, self.paramFloor))
 
-        while count < self.n:
+        while count < self.n and attempts < self.limit:
             if self.stopped():
                 logger.sample("[{0}] Rejection Sampler early stop".format(self.name))
                 break
