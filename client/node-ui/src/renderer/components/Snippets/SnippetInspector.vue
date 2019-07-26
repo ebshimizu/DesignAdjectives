@@ -32,8 +32,9 @@
         <div class="w-full p-2">Positive</div>
         <div
           class="border-l border-gray-200 flex justify-center items-center bg-blue-800 hover:bg-blue-700 w-10 cursor-pointer"
+          @click="addExample(1)"
         >
-          <div class="font-sans text-lg font-bold tracking-wide uppercase" @click="addExample(1)">+</div>
+          <div class="font-sans text-lg font-bold tracking-wide uppercase">+</div>
         </div>
       </div>
       <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
@@ -52,8 +53,9 @@
         <div class="w-full p-2">Negative</div>
         <div
           class="border-l border-gray-200 flex justify-center items-center bg-blue-800 hover:bg-blue-700 w-10 cursor-pointer"
+          @click="addExample(0)"
         >
-          <div class="font-sans text-lg font-bold tracking-wide uppercase" @click="addExample(-1)">+</div>
+          <div class="font-sans text-lg font-bold tracking-wide uppercase">+</div>
         </div>
       </div>
       <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">

@@ -75,7 +75,7 @@ export default {
       return this.data.y;
     },
     scoreClass() {
-      return this.score >= 0 ? 'bg-green-900' : 'bg-red-900';
+      return this.score > 0 ? 'bg-green-900' : 'bg-red-900';
     }
   },
   methods: {

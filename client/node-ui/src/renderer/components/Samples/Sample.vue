@@ -110,7 +110,7 @@ export default {
     addNegative() {
       this.$store.dispatch(ACTION.ADD_EXAMPLE, {
         name: this.$store.getters.activeSnippetName,
-        point: { x: this.x, y: -1 }
+        point: { x: this.x, y: 0 }
       });
     },
     setA() {
