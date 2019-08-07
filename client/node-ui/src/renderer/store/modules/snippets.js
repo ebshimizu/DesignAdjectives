@@ -366,6 +366,11 @@ export default {
     },
     [Constants.MUTATION.ADD_SAMPLE](state, sample) {
       state.samples.push(sample);
+      state.samples = state.samples.sort(function(a, b) {
+        if (a.mean < b.mean) return 1;
+        if (a.mean > b.mean) return -1;
+        return 0;
+      });
     },
     [Constants.MUTATION.SET_SERVER_STATUS_IDLE](state) {
       state.serverStatus.action = Constants.SERVER_STATUS.IDLE;

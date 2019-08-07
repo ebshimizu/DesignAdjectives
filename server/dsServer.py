@@ -10,6 +10,7 @@ sys.path.append("../core")
 import dsCore
 import dsTypes
 import samplers
+from jitter import jitter
 from mixer import mix, mixSnippets
 
 # logging setup
@@ -312,6 +313,18 @@ def mixSnippet(args):
 
     mxSnp = mixSnippets(snippets, args["params"])
     return None, mxSnp
+
+
+@sio.on("jitter")
+def jitterSample(args):
+    logger.info("Starting jitter sampler")
+    scoreFunc = None
+    if "snippet" in args["opt"]:
+        snippet = snippetServer.getSnippet(args["opt"]["snippet"])
+        scoreFunc = lambda x: snippet.predictOne(x)["mean"]
+
+    samples = jitter(args["x0"], args["delta"], scoreFunc=scoreFunc, **args["opt"])
+    return None, samples
 
 
 sio.connect("http://localhost:5234")
