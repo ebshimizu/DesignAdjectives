@@ -174,20 +174,24 @@ export default {
       return (
         this.$store.getters.ready &&
         this.activeSnippetName &&
-        this.$store.state.snippets.activeSnippet.trained
+        this.$store.state.snippets.snippets[this.activeSnippetName].trained
       );
     },
     sampleStatus() {
       if (this.isSampling) return 'Stop';
       if (!this.$store.getters.ready) return 'No Connection';
       if (!this.activeSnippetName) return 'No Active Snippet';
-      if (!this.$store.state.snippets.activeSnippet.trained) return 'Untrained';
+      if (!this.$store.state.snippets.snippets[this.activeSnippetName].trained)
+        return 'Untrained';
 
       return 'Start';
     },
     activeSnippetName() {
-      if ('name' in this.$store.state.snippets.activeSnippet)
-        return this.$store.state.snippets.activeSnippet.name;
+      if (
+        this.$store.state.snippets.primarySnippet in
+        this.$store.state.snippets.snippets
+      )
+        return this.$store.state.snippets.primarySnippet;
 
       return null;
     },
@@ -213,7 +217,7 @@ export default {
       // - server is not already sampling
       if (this.canSample) {
         this.$store.dispatch(ACTION.START_SAMPLER, {
-          name: this.$store.state.snippets.activeSnippet.name,
+          name: this.$store.state.snippets.primarySnippet,
           data: {
             n: parseInt(this.n),
             threshold: computeThreshold(

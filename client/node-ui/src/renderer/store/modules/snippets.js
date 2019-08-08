@@ -110,7 +110,7 @@ async function trainSnippet(driver, context, name) {
       name,
       trainData
     });
-    context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+    // context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
     context.commit(Constants.MUTATION.CACHE_SNIPPETS, context.state.cacheKey);
   } catch (e) {
     console.log(e);
@@ -648,7 +648,7 @@ export default {
       context.commit(Constants.MUTATION.DISCONNECT);
     },
     [Constants.ACTION.SET_ACTIVE_SNIPPET](context, data) {
-      context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data);
+      // context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data);
       context.dispatch(Constants.ACTION.COMMIT_PARAMS);
 
       if (context.state.activeSnippet && context.state.activeSnippet.trained) {
@@ -658,7 +658,7 @@ export default {
     [Constants.ACTION.LOAD_SNIPPETS](context, key) {
       // reset state during the load
       context.commit(Constants.MUTATION.LOAD_SNIPPETS, key);
-      context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET, key);
+      // context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET, key);
       context.commit(Constants.MUTATION.CLEAR_SAMPLES);
 
       // send parameter info
