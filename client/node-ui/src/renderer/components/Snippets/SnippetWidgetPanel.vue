@@ -84,8 +84,4 @@ export default {
 .half-height {
   height: 50%;
 }
-
-.panel-widget {
-  height: 500px;
-}
 </style>
