@@ -43,13 +43,9 @@ export default {
       return this.$store.state.snippets.activeSnippetScore;
     },
     snippetEvalText() {
-      if (
-        this.$store.getters.activeSnippetName &&
-        this.$store.state.snippets.activeSnippet.trained &&
-        this.score.mean
-      ) {
+      if (this.$store.state.snippets.primarySnippet !== '' && this.score.mean) {
         return `${
-          this.$store.getters.activeSnippetName
+          this.$store.state.snippets.primarySnippet
         }: ${this.score.mean.toFixed(2)} (var: ${this.score.cov.toFixed(2)})`;
       } else {
         return '[Snippet Score Unavailable]';

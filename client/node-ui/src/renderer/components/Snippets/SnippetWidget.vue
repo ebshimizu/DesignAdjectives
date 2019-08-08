@@ -11,7 +11,7 @@
       <div class="red square-button border-r" @click="addExample(0)">
         <div>Add -</div>
       </div>
-      <div class="blue square-button border-r">
+      <div class="blue square-button border-r" @click="setPrimary()">
         <div>Set Primary</div>
       </div>
       <div class="blue square-button border-r" @click="train()">
@@ -87,6 +87,9 @@ export default {
       } else if (!this.isTraining) {
         this.$store.dispatch(ACTION.TRAIN, this.name);
       }
+    },
+    setPrimary() {
+      this.$store.dispatch(ACTION.SET_PRIMARY_SNIPPET, this.name);
     }
   }
 };

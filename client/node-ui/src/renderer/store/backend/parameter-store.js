@@ -212,10 +212,10 @@ export function createStore(backend, type) {
       [ACTION.COMMIT_PARAMS](context) {
         context.commit(MUTATION.COMMIT_PARAMS);
         context.dispatch(ACTION.EVAL_CURRENT, context.getters.paramsAsArray);
-        if (context.getters.activeSnippetName !== null) {
+        if (context.getters.primarySnippet !== '') {
           context.dispatch(
             ACTION.LOAD_PARAM_COLOR_DATA,
-            context.getters.activeSnippetName
+            context.getters.primarySnippet
           );
         }
       },
@@ -224,7 +224,7 @@ export function createStore(backend, type) {
         context.commit(MUTATION.SET_PARAMS, vec);
         context.dispatch(
           ACTION.LOAD_PARAM_COLOR_DATA,
-          context.getters.activeSnippetName
+          context.getters.primarySnippet
         );
       },
       [ACTION.HIDE_TEMPORARY_STATE](context) {
@@ -235,7 +235,7 @@ export function createStore(backend, type) {
         context.commit(MUTATION.RESET_SNAPSHOT);
         context.dispatch(
           ACTION.LOAD_PARAM_COLOR_DATA,
-          context.getters.activeSnippetName
+          context.getters.primarySnippet
         );
       },
       [ACTION.LOCK_TEMPORARY_STATE](context, vec) {
@@ -244,7 +244,7 @@ export function createStore(backend, type) {
         context.dispatch(ACTION.EVAL_CURRENT, vec);
         context.dispatch(
           ACTION.LOAD_PARAM_COLOR_DATA,
-          context.getters.activeSnippetName
+          context.getters.primarySnippet
         );
       },
       [ACTION.GENERATE_EXTENTS](context, params) {

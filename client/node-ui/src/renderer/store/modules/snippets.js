@@ -158,6 +158,7 @@ export default {
       action: Constants.SERVER_STATUS.IDLE,
       message: ''
     },
+    primarySnippet: '',
     paramData: {},
     samples: [],
     mixA: [],
@@ -261,6 +262,9 @@ export default {
       if (state.activeSnippet.trained)
         return state.activeSnippet.trainData.losses;
       else return [];
+    },
+    primarySnippet: state => {
+      return state.primarySnippet;
     }
   },
   mutations: {
@@ -490,6 +494,9 @@ export default {
     },
     [Constants.MUTATION.SET_AXIS_MIX_RESULTS](state, results) {
       state.axisMixResults = results;
+    },
+    [Constants.MUTATION.SET_PRIMARY_SNIPPET](state, name) {
+      state.primarySnippet = name;
     }
   },
   actions: {
@@ -497,7 +504,7 @@ export default {
       try {
         context.commit(Constants.MUTATION.NEW_SNIPPET, data.name);
         // await driver.addSnippet(data.name);
-        context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.name);
+        // context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.name);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
@@ -509,7 +516,7 @@ export default {
     [Constants.ACTION.COPY_SNIPPET](context, data) {
       try {
         context.commit(Constants.MUTATION.COPY_SNIPPET, data);
-        context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.copyTo);
+        // context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.copyTo);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
@@ -521,7 +528,7 @@ export default {
     [Constants.ACTION.RENAME_SNIPPET](context, data) {
       try {
         context.commit(Constants.MUTATION.RENAME_SNIPPET, data);
-        context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.renameTo);
+        // context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.renameTo);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
@@ -533,7 +540,7 @@ export default {
     [Constants.ACTION.DELETE_SNIPPET](context, data) {
       try {
         context.commit(Constants.MUTATION.DELETE_SNIPPET, data.name);
-        context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+        // context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
@@ -666,10 +673,13 @@ export default {
       }
     },
     async [Constants.ACTION.EVAL_CURRENT](context, vec) {
-      if (context.state.activeSnippet && context.state.activeSnippet.trained) {
+      if (
+        context.state.primarySnippet in context.state.snippets &&
+        context.state.snippets[context.state.primarySnippet].trained
+      ) {
         try {
           const score = await driver.predictOne(
-            context.getters.activeSnippetName,
+            context.state.primarySnippet,
             normalizeVector(vec, context.getters.params)
           );
           context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET_SCORE, score);
@@ -768,6 +778,10 @@ export default {
 
       // update mix results
       context.commit(Constants.MUTATION.SET_AXIS_MIX_RESULTS, results);
+    },
+    [Constants.ACTION.SET_PRIMARY_SNIPPET](context, name) {
+      context.commit(Constants.MUTATION.SET_PRIMARY_SNIPPET, name);
+      context.dispatch(Constants.ACTION.LOAD_PARAM_COLOR_DATA, name);
     }
   }
 };

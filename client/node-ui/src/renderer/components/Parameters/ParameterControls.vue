@@ -44,6 +44,15 @@
         <div class="selection-tool-button">
           <div @click="deleteActiveSet()">Delete</div>
         </div>
+        <div class="w-full text-center uppercase text-sm font-bold mb-1">Primary Snippet</div>
+        <div class="w-full p-1">
+          <select
+            class="text-sm font-mono p-1 w-full bg-gray-800 text-grey-light cursor-pointer"
+            v-model="primarySnippet"
+          >
+            <option v-for="name in snippetOptions" v-bind:value="name" v-bind:key="name">{{ name }}</option>
+          </select>
+        </div>
         <div class="new-modal snippet-panel-modal" v-show="showNew">
           <div class="title">New Parameter Set</div>
           <div class="w-full flex flex-row items-center border-b border-b-2 border-green">
@@ -100,6 +109,17 @@ export default {
     },
     paramSets() {
       return this.$store.getters.paramSets;
+    },
+    snippetOptions() {
+      return Object.keys(this.$store.state.snippets.snippets);
+    },
+    primarySnippet: {
+      get() {
+        return this.$store.state.snippets.primarySnippet;
+      },
+      set(val) {
+        this.$store.dispatch(ACTION.SET_PRIMARY_SNIPPET, val);
+      }
     }
   },
   methods: {
