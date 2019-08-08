@@ -563,15 +563,12 @@ export default {
     [Constants.ACTION.ADD_EXAMPLE](context, data) {
       try {
         context.commit(Constants.MUTATION.ADD_EXAMPLE, data);
-        context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+        // context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
         );
-        context.dispatch(
-          Constants.ACTION.TRAIN,
-          context.getters.activeSnippetName
-        );
+        context.dispatch(Constants.ACTION.TRAIN, data.name);
         // await driver.addData(data.name, data.point.x, data.point.y);
       } catch (e) {
         console.log(e);
@@ -580,15 +577,12 @@ export default {
     [Constants.ACTION.DELETE_EXAMPLE](context, data) {
       try {
         context.commit(Constants.MUTATION.DELETE_EXAMPLE, data);
-        context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+        // context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
         );
-        context.dispatch(
-          Constants.ACTION.TRAIN,
-          context.getters.activeSnippetName
-        );
+        context.dispatch(Constants.ACTION.TRAIN, data.name);
         // await driver.removeData(data.name, data.index);
       } catch (e) {
         console.log(e);

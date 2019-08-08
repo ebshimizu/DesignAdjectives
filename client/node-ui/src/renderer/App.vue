@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="h-full w-1/5 flex-none overflow-hidden">
-        <snippet-inspector />
+        <snippet-widget-panel />
       </div>
       <div class="h-full w-1/5 flex-none overflow-hidden">
         <parameter-panel></parameter-panel>
@@ -52,7 +52,7 @@ import MainRenderCanvas from '@/components/MainRenderCanvas';
 import StatusBar from '@/components/StatusBar';
 import Tabs from '@/components/Tabs/Tabs';
 import Tab from '@/components/Tabs/Tab';
-import SnippetInspector from '@/components/Snippets/SnippetInspector';
+import SnippetWidgetPanel from '@/components/Snippets/SnippetWidgetPanel';
 import SamplerPanel from '@/components/Samples/SamplerPanel';
 import DebugPanel from '@/components/Snippets/DebugPanel';
 import ParameterExtents from '@/components/Parameters/ParameterExtents';
@@ -72,7 +72,7 @@ export default {
     StatusBar,
     Tab,
     Tabs,
-    SnippetInspector,
+    SnippetWidgetPanel,
     SamplerPanel,
     DebugPanel,
     ParameterExtents,
@@ -110,7 +110,7 @@ export default {
 }
 
 .param-extents-modal {
-  right: 25%;
+  right: 20%;
   height: calc(100% - 1.5rem - 32px);
   top: 32px;
   width: 400px;
