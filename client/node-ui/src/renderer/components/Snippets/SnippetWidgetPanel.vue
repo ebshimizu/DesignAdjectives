@@ -1,10 +1,14 @@
 <template>
   <div class="flex flex-col h-full w-full overflow-hidden border-l border-gray-200">
     <div class="w-full flex flex-row border-b border-gray-200">
-      <div class="w-3/4 p-2">
+      <div
+        class="w-1/3 p-2 text-xs uppercase text-gray-200 flex items-center content-center font-bold tracking-wide"
+      >Add Active</div>
+      <div class="w-full p-2">
         <select
           class="w-full border-2 border-gray-800 cursor-pointer bg-gray-700 text-gray-200"
           v-model="selectedSnippet"
+          v-on:change="activate(selectedSnippet)"
         >
           <option disabled value>[No Option Selected]</option>
           <option
@@ -14,14 +18,6 @@
             class="text-gray-200"
           >{{ option }}</option>
         </select>
-      </div>
-      <div class="w-1/4 h-full">
-        <div
-          class="h-full flex justify-center items-center p-2 text-gray-200 cursor-pointer bg-green-800 hover:bg-green-700"
-          @click="activate(selectedSnippet)"
-        >
-          <div class="text-sm uppercase tracking-wide font-bold">Activate</div>
-        </div>
       </div>
     </div>
     <div class="h-full overflow-auto">
