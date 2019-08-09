@@ -176,11 +176,11 @@ export default {
 
 <style lang="scss" scoped>
 .param-panel {
-  height: 25vh;
+  height: 30vh;
 }
 
 .param-controls {
-  height: 75vh;
+  height: 70vh;
 }
 </style>
 

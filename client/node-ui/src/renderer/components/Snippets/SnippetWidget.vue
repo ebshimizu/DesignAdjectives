@@ -14,18 +14,18 @@
     </div>
     <div class="w-full flex flex-row flex-no-wrap border-b border-gray-200">
       <ul class="list-reset flex font-sans">
-        <menu-group name="Sample">
-          <menu-item>Towards</menu-item>
-          <menu-item>Away</menu-item>
-          <menu-item>Nearby</menu-item>
-          <menu-item>Axis</menu-item>
+        <menu-group name="Sample" menuStyle="compact">
+          <menu-item menuStyle="compact">Towards</menu-item>
+          <menu-item menuStyle="compact">Away</menu-item>
+          <menu-item menuStyle="compact">Nearby</menu-item>
+          <menu-item menuStyle="compact">Axis</menu-item>
         </menu-group>
-        <menu-group name="Params">
-          <menu-item>Filter by Impact</menu-item>
-          <menu-item>Select Used</menu-item>
+        <menu-group name="Params" menuStyle="compact">
+          <menu-item menuStyle="compact">Filter by Impact</menu-item>
+          <menu-item menuStyle="compact">Select Used</menu-item>
         </menu-group>
-        <menu-group name="Debug">
-          <menu-item @click.native="train()">Retrain</menu-item>
+        <menu-group name="Debug" menuStyle="compact">
+          <menu-item menuStyle="compact" @click.native="train()">Retrain</menu-item>
         </menu-group>
       </ul>
       <div class="flex-grow green square-button border-l border-r" @click="addExample(1)">
