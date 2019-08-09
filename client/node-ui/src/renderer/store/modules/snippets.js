@@ -147,6 +147,7 @@ export default {
       }
     },
     snippets: {},
+    activatedSnippets: [],
     activeSnippet: {},
     activeMixAxes: {},
     activeSnippetScore: { mean: 0, cov: 0 },
@@ -265,6 +266,9 @@ export default {
     },
     primarySnippet: state => {
       return state.primarySnippet;
+    },
+    activatedSnippets: state => {
+      return state.activatedSnippets;
     }
   },
   mutations: {
@@ -497,6 +501,14 @@ export default {
     },
     [Constants.MUTATION.SET_PRIMARY_SNIPPET](state, name) {
       state.primarySnippet = name;
+    },
+    [Constants.MUTATION.ACTIVATE_SNIPPET](state, name) {
+      if (state.activatedSnippets.indexOf(name) === -1)
+        state.activatedSnippets.push(name);
+    },
+    [Constants.MUTATION.DEACTIVATE_SNIPPET](state, name) {
+      const idx = state.activatedSnippets.indexOf(name);
+      if (idx > -1) state.activatedSnippets.splice(idx, 1);
     }
   },
   actions: {

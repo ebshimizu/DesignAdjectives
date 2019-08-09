@@ -59,7 +59,9 @@ export const MUTATION = {
   REMOVE_ACTIVE_MIX_AXIS: 'Remove Active Mix Axis',
   CLEAR_ACTIVE_MIX_AXES: 'Clear Active Mix Axes',
   SET_AXIS_MIX_RESULTS: 'Set Axis Mix Results',
-  SET_PRIMARY_SNIPPET: 'Set Primary Snippet'
+  SET_PRIMARY_SNIPPET: 'Set Primary Snippet',
+  ACTIVATE_SNIPPET: 'Activate Snippet',
+  DEACTIVATE_SNIPPET: 'Deactivate Snippet'
 };
 
 export const ACTION = {

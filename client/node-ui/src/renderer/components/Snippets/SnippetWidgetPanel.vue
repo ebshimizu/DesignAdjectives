@@ -35,6 +35,7 @@
 
 <script>
 import SnippetWidget from './SnippetWidget';
+import { MUTATION } from '../../store/constants';
 // import { ACTION } from '../../store/constants';
 
 export default {
@@ -44,11 +45,13 @@ export default {
   },
   data() {
     return {
-      activeWidgets: [],
       selectedSnippet: ''
     };
   },
   computed: {
+    activeWidgets() {
+      return this.$store.getters.activatedSnippets;
+    },
     activeWidgetObjects() {
       const activeObj = [];
       for (const id of this.activeWidgets) {
@@ -63,14 +66,10 @@ export default {
   },
   methods: {
     activate(name) {
-      if (this.activeWidgets.indexOf(name) === -1)
-        this.activeWidgets.push(name);
+      this.$store.commit(MUTATION.ACTIVATE_SNIPPET, name);
     },
     deactivate(name) {
-      const idx = this.activeWidgets.indexOf(name);
-      if (idx > -1) {
-        this.activeWidgets.splice(idx, 1);
-      }
+      this.$store.commit(MUTATION.DEACTIVATE_SNIPPET, name);
     }
   }
 };
