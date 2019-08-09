@@ -517,6 +517,7 @@ export default {
         context.commit(Constants.MUTATION.NEW_SNIPPET, data.name);
         // await driver.addSnippet(data.name);
         // context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.name);
+        context.commit(Constants.MUTATION.ACTIVATE_SNIPPET, data.name);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
@@ -540,6 +541,12 @@ export default {
     [Constants.ACTION.RENAME_SNIPPET](context, data) {
       try {
         context.commit(Constants.MUTATION.RENAME_SNIPPET, data);
+
+        // if activated, update the id in the list
+        if (context.state.activatedSnippets.indexOf(data.active) > -1) {
+          context.commit(Constants.MUTATION.DEACTIVATE_SNIPPET, data.active);
+          context.commit(Constants.MUTATION.ACTIVATE_SNIPPET, data.renameTo);
+        }
         // context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data.renameTo);
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
@@ -553,6 +560,9 @@ export default {
       try {
         context.commit(Constants.MUTATION.DELETE_SNIPPET, data.name);
         // context.commit(Constants.MUTATION.UPDATE_ACTIVE_SNIPPET);
+        // always deactivate deletions
+        context.commit(Constants.MUTATION.DEACTIVATE_SNIPPET, data.name);
+
         context.commit(
           Constants.MUTATION.CACHE_SNIPPETS,
           context.state.cacheKey
