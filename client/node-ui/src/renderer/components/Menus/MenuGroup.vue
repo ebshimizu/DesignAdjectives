@@ -9,7 +9,7 @@
       class="dropdown list-reset bg-gray-700 border border-gray-200 shadow-md font-normal font-sm"
       v-show="isVisible && items.length > 0"
     >
-      <slot/>
+      <slot />
     </ul>
   </li>
 </template>
@@ -45,5 +45,6 @@ export default {
   top: calc(2.2rem - 3px);
   left: 0;
   width: 12rem;
+  z-index: 51;
 }
 </style>

@@ -1,30 +1,52 @@
 <template>
-  <div class="flex flex-col w-full overflow-hidden border-gray-200 border-b snippet-widget">
-    <div class="w-full text-gray-200 p-1 bg-gray-700 border-b border-gray-200">
-      <div class="w-full font-bold tracking-wide">{{ name }}</div>
-      <div class="w-full text-xs uppercase font-bold tracking-wide">{{ status }}</div>
-    </div>
-    <div class="w-full flex flex-row flex-wrap border-b border-gray-200">
-      <div class="green square-button border-r" @click="addExample(1)">
-        <div>Add +</div>
-      </div>
-      <div class="red square-button border-r" @click="addExample(0)">
-        <div>Add -</div>
-      </div>
-      <div class="blue square-button border-r" @click="setPrimary()">
-        <div>Set Primary</div>
-      </div>
-      <div class="blue square-button border-r" @click="train()">
-        <div>Retrain</div>
-      </div>
-      <div class="red square-button border-r" @click="$emit('deactivate')">
-        <div>Deactivate</div>
+  <div class="flex flex-col w-full border-gray-200 border-b snippet-widget">
+    <div class="w-full text-gray-200 border-b border-gray-200 flex flex-row" :class="titleBgColor">
+      <div class="w-full p-1">
+        <div class="font-bold tracking-wide">{{ name }}</div>
+        <div class="text-xs uppercase font-bold tracking-wide">{{ status }}</div>
       </div>
       <div
-        class="blue square-button border-r border-t"
-        @click="exemplarsVisible = !exemplarsVisible"
+        class="w-6 bg-red-800 hover:bg-red-700 cursor-pointer flex justify-center items-center"
+        @click="$emit('deactivate')"
       >
-        <div>Toggle Exemplars</div>
+        <font-awesome-icon icon="times"></font-awesome-icon>
+      </div>
+    </div>
+    <div class="w-full flex flex-row flex-no-wrap border-b border-gray-200">
+      <ul class="list-reset flex font-sans">
+        <menu-group name="Sample">
+          <menu-item>Towards</menu-item>
+          <menu-item>Away</menu-item>
+          <menu-item>Nearby</menu-item>
+          <menu-item>Axis</menu-item>
+        </menu-group>
+        <menu-group name="Params">
+          <menu-item>Filter by Impact</menu-item>
+          <menu-item>Select Used</menu-item>
+        </menu-group>
+        <menu-group name="Debug">
+          <menu-item @click.native="train()">Retrain</menu-item>
+        </menu-group>
+      </ul>
+      <div class="flex-grow green square-button border-l border-r" @click="addExample(1)">
+        <div>
+          <font-awesome-icon icon="plus-square"></font-awesome-icon>
+        </div>
+      </div>
+      <div class="flex-grow red square-button border-r" @click="addExample(0)">
+        <div>
+          <font-awesome-icon icon="minus-square"></font-awesome-icon>
+        </div>
+      </div>
+      <div class="flex-grow blue square-button border-r" @click="setPrimary()">
+        <div>
+          <font-awesome-icon icon="crosshairs"></font-awesome-icon>
+        </div>
+      </div>
+      <div class="flex-grow blue square-button" @click="exemplarsVisible = !exemplarsVisible">
+        <div>
+          <font-awesome-icon :icon="collapseIcon"></font-awesome-icon>
+        </div>
       </div>
     </div>
     <div
@@ -38,12 +60,16 @@
 
 <script>
 import Exemplar from '../Samples/Exemplar';
+import MenuGroup from '../Menus/MenuGroup';
+import MenuItem from '../Menus/MenuItem';
 import { ACTION } from '../../store/constants';
 
 export default {
   name: 'snippet-widget',
   components: {
-    Exemplar
+    Exemplar,
+    MenuGroup,
+    MenuItem
   },
   props: {
     name: String,
@@ -78,6 +104,14 @@ export default {
     },
     isTraining() {
       return this.$store.getters.training;
+    },
+    collapseIcon() {
+      return this.exemplarsVisible ? 'chevron-up' : 'chevron-down';
+    },
+    titleBgColor() {
+      return this.$store.getters.primarySnippet === this.name
+        ? 'bg-yellow-800'
+        : 'bg-gray-700';
     }
   },
   methods: {
