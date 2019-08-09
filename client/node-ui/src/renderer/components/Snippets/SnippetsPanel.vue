@@ -15,10 +15,7 @@
       <div class="w-full h-full flex-shrink overflow-auto px-2">
         <div v-for="snippet in snippetOptions" :key="snippet.name">
           <div class="flex flex-wrap">
-            <div class="w-1/3 font-mono text-sm">{{ snippet.name }}</div>
-            <div class="w-1/6 blue axis-button">
-              <div @click="activeSnippet = snippet.name">Edit</div>
-            </div>
+            <div class="w-1/2 font-mono text-sm">{{ snippet.name }}</div>
             <div class="w-1/6 blue axis-button">
               <div @click="showRenameModal(snippet.name)">Rename</div>
             </div>
@@ -105,23 +102,8 @@ export default {
     snippetOptions() {
       return this.$store.state.snippets.snippets;
     },
-    activeSnippet: {
-      get() {
-        return this.$store.state.snippets.activeSnippet
-          ? this.$store.state.snippets.activeSnippet.name
-          : '';
-      },
-      set(newVal) {
-        this.$store.dispatch(ACTION.SET_ACTIVE_SNIPPET, newVal);
-      }
-    },
     isTraining() {
       return this.$store.getters.training;
-    },
-    trained() {
-      return this.activeSnippet !== ''
-        ? this.$store.state.snippets.activeSnippet.trained
-        : false;
     }
   },
   methods: {
@@ -208,7 +190,6 @@ export default {
       this.$store.dispatch(ACTION.DELETE_SNIPPET, {
         name
       });
-      this.activeSnippet = '';
     }
   }
 };

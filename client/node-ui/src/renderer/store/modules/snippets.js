@@ -148,7 +148,6 @@ export default {
     },
     snippets: {},
     activatedSnippets: [],
-    activeSnippet: {},
     activeMixAxes: {},
     activeSnippetScore: { mean: 0, cov: 0 },
     log: [],
@@ -185,11 +184,6 @@ export default {
     },
     status: state => {
       return state.serverStatus.action;
-    },
-    activeSnippetName: state => {
-      if (state.activeSnippet.name) return state.activeSnippet.name;
-
-      return null;
     },
     paramData: state => {
       return state.paramData;
@@ -260,8 +254,11 @@ export default {
       return state.activeSnippetScore.mean;
     },
     currentLosses: state => {
-      if (state.activeSnippet.trained)
-        return state.activeSnippet.trainData.losses;
+      if (
+        state.primarySnippet in state.snippets &&
+        state.snippets[state.primarySnippet].trained
+      )
+        return state.snippets[state.primarySnippet].trainData.losses;
       else return [];
     },
     primarySnippet: state => {
@@ -355,19 +352,6 @@ export default {
         state.snippets[data.name].trainData = data.trainData;
         state.snippets[data.name].trained = true;
       }
-    },
-    [Constants.MUTATION.SET_ACTIVE_SNIPPET](state, id) {
-      if (id in state.snippets)
-        state.activeSnippet = Object.assign({}, state.snippets[id]);
-      else state.activeSnippet = {};
-    },
-    [Constants.MUTATION.UPDATE_ACTIVE_SNIPPET](state) {
-      if (state.activeSnippet.name in state.snippets)
-        state.activeSnippet = Object.assign(
-          {},
-          state.snippets[state.activeSnippet.name]
-        );
-      else state.activeSnippet = {};
     },
     [Constants.MUTATION.CLEAR_SAMPLES](state) {
       state.samples = [];
@@ -668,14 +652,6 @@ export default {
     },
     [Constants.ACTION.DISCONNECT](context) {
       context.commit(Constants.MUTATION.DISCONNECT);
-    },
-    [Constants.ACTION.SET_ACTIVE_SNIPPET](context, data) {
-      // context.commit(Constants.MUTATION.SET_ACTIVE_SNIPPET, data);
-      context.dispatch(Constants.ACTION.COMMIT_PARAMS);
-
-      if (context.state.activeSnippet && context.state.activeSnippet.trained) {
-        context.dispatch(Constants.ACTION.LOAD_PARAM_COLOR_DATA, data);
-      }
     },
     [Constants.ACTION.LOAD_SNIPPETS](context, key) {
       // reset state during the load
