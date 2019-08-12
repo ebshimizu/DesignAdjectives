@@ -36,7 +36,6 @@
 <script>
 import SnippetWidget from './SnippetWidget';
 import { MUTATION } from '../../store/constants';
-// import { ACTION } from '../../store/constants';
 
 export default {
   name: 'snippet-widget-panel',

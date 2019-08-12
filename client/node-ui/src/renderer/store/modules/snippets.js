@@ -3,7 +3,8 @@ import {
   MUTATION,
   ACTION,
   PARAM_COLOR_MODE,
-  SERVER_STATUS
+  SERVER_STATUS,
+  THRESHOLD_MODE
 } from '../constants';
 import Vue from 'Vue';
 import fs from 'fs-extra';
@@ -122,6 +123,18 @@ async function trainSnippet(driver, context, name) {
   }
 }
 
+function computeThreshold(t, mode, max, current) {
+  if (mode === THRESHOLD_MODE.ABSOLUTE) {
+    return t;
+  } else if (mode === THRESHOLD_MODE.MAX_REL) {
+    return t * max;
+  } else if (mode === THRESHOLD_MODE.CURRENT_REL) {
+    return t * current + current;
+  } else if (mode === THRESHOLD_MODE.CURRENT_ABS) {
+    return t + current;
+  }
+}
+
 // this state maintains a list of snippet objects and sync's to the server as needed.
 // data format is same as server
 // snippet.data format: [{ x: vec, y: val }]
@@ -169,7 +182,15 @@ export default {
     mixA: [],
     mixB: [],
     mixResults: {},
-    axisMixResults: {}
+    axisMixResults: {},
+    samplerSettings: {
+      n: 10,
+      threshold: 0.7,
+      freeParams: 3,
+      paramFloor: 3,
+      retries: 20,
+      thresholdMode: THRESHOLD_MODE.ABSOLUTE
+    }
   },
   getters: {
     ready: state => {
@@ -261,6 +282,14 @@ export default {
     },
     activatedSnippets: state => {
       return state.activatedSnippets;
+    },
+    canSample: state => snippetId => {
+      return (
+        state.connected &&
+        state.serverOnline &&
+        snippetId in state.snippets &&
+        state.snippets[snippetId].trained
+      );
     }
   },
   mutations: {
@@ -488,6 +517,16 @@ export default {
     [MUTATION.DEACTIVATE_SNIPPET](state, name) {
       const idx = state.activatedSnippets.indexOf(name);
       if (idx > -1) state.activatedSnippets.splice(idx, 1);
+    },
+    [MUTATION.SET_SAMPLER_OPTION](state, data) {
+      // only pre-existing settings are reactive by design
+      state.samplerSettings[data.key] = data.val;
+    },
+    [MUTATION.SET_ALL_SAMPLER_OPTIONS](state, data) {
+      // only iterate through existing keys
+      for (const id in state.samplerSettings) {
+        state.samplerSettings[id] = data[id];
+      }
     }
   },
   actions: {
@@ -607,6 +646,16 @@ export default {
     },
     async [ACTION.START_SAMPLER](context, data) {
       try {
+        // the settings are local now
+        data.data = Object.assign({}, context.state.samplerSettings);
+        data.data.threshold = computeThreshold(
+          context.state.samplerSettings.threshold,
+          context.state.samplerSettings.thresholdMode,
+          context.getters.maxCurrentSnippetScore,
+          context.getters.currentSnippetScore
+        );
+        delete data.data.thresholdMode;
+
         context.commit(MUTATION.SET_SERVER_STATUS_SAMPLE);
         context.commit(MUTATION.CLEAR_SAMPLES);
 
@@ -666,6 +715,25 @@ export default {
           mean: 0,
           cov: 0
         });
+      }
+    },
+    async [ACTION.EVAL_THEN_EXECUTE](context, data) {
+      if (context.state.snippets[data.name].trained) {
+        try {
+          const score = await driver.predictOne(
+            data.name,
+            normalizeVector(
+              context.getters.paramsAsArray,
+              context.getters.params
+            )
+          );
+          context.commit(MUTATION.SET_ACTIVE_SNIPPET_SCORE, score);
+        } catch (e) {
+          console.log(e);
+        }
+
+        // execute callback
+        data.callback();
       }
     },
     async [ACTION.LOAD_PARAM_COLOR_DATA](context, snippet) {

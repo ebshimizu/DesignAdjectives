@@ -15,12 +15,13 @@
     <div class="w-full flex flex-row flex-no-wrap border-b border-gray-200">
       <ul class="list-reset flex font-sans">
         <menu-group name="Sample" menuStyle="compact">
-          <menu-item menuStyle="compact">Towards</menu-item>
+          <menu-item menuStyle="compact" @click.native="sampleTowards()">Towards</menu-item>
           <menu-item menuStyle="compact">Away</menu-item>
           <menu-item menuStyle="compact">Nearby</menu-item>
           <menu-item menuStyle="compact">Axis</menu-item>
         </menu-group>
         <menu-group name="Params" menuStyle="compact">
+          <menu-item menuStyle="compact">Lock</menu-item>
           <menu-item menuStyle="compact">Filter by Impact</menu-item>
           <menu-item menuStyle="compact">Select Used</menu-item>
         </menu-group>
@@ -69,7 +70,7 @@
 import Exemplar from '../Samples/Exemplar';
 import MenuGroup from '../Menus/MenuGroup';
 import MenuItem from '../Menus/MenuItem';
-import { ACTION } from '../../store/constants';
+import { ACTION, MUTATION, THRESHOLD_MODE } from '../../store/constants';
 
 export default {
   name: 'snippet-widget',
@@ -140,6 +141,29 @@ export default {
     },
     setPrimary() {
       this.$store.dispatch(ACTION.SET_PRIMARY_SNIPPET, this.name);
+    },
+    sampleTowards() {
+      if (this.$store.getters.canSample(this.name)) {
+        const store = this.$store;
+        const name = this.name;
+
+        this.$store.dispatch(ACTION.SET_PRIMARY_SNIPPET, name);
+        this.$store.dispatch(ACTION.EVAL_THEN_EXECUTE, {
+          name,
+          callback: () => {
+            // initialize settings
+            store.commit(MUTATION.SET_SAMPLER_OPTION, {
+              key: 'thresholdMode',
+              val: THRESHOLD_MODE.CURRENT_ABS
+            });
+            store.commit(MUTATION.SET_SAMPLER_OPTION, {
+              key: 'threshold',
+              val: 0.1
+            }); // +0.1 of current at least
+            store.dispatch(ACTION.START_SAMPLER, { name });
+          }
+        });
+      }
     }
   }
 };

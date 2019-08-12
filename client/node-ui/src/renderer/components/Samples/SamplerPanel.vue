@@ -2,8 +2,7 @@
   <div class="flex flex-row h-full w-full overflow-hidden">
     <div class="flex flex-col w-1/4 border-r border-gray-200 font-sans overflow-auto text-gray-200">
       <div class="border-b border-blue-200 bg-blue-700 text-blue-200 px-2 py-1 text-sm">
-        <div class="font-bold">{{ activeSnippetName ? activeSnippetName : '[No Active Snippet]' }}</div>
-        <div>Sampler Control</div>
+        <div class="font-bold">Sampler Settings</div>
       </div>
       <div class="w-full h-full overflow-auto">
         <div class="border-b border-gray-200 px-2 py-1">
@@ -95,14 +94,7 @@
             step="1"
           />
         </div>
-        <div class="p-2">
-          <div
-            class="btn btn-green"
-            :class="{ 'btn-red': isSampling, 'disabled': !canSample }"
-            @click="toggleSampler()"
-          >{{ sampleStatus }}</div>
-        </div>
-        <div class="px-2 pb-2">
+        <div class="px-2 py-2">
           <div
             class="btn btn-green"
             @click="randomSample()"
@@ -119,51 +111,85 @@
 
 <script>
 import Sample from './Sample';
-import { ACTION } from '../../store/constants';
-
-const THRESHOLD_MODE = {
-  ABSOLUTE: 'ABSOLUTE',
-  MAX_REL: 'MAX_REL',
-  CURRENT_REL: 'CURRENT_REL',
-  CURRENT_ABS: 'CURRENT_ABS'
-};
-
-const THRESHOLD_TEXT = {
-  ABSOLUTE: 'Absolute',
-  MAX_REL: '% of Max',
-  CURRENT_REL: '+% Current',
-  CURRENT_ABS: '+x Current'
-};
-
-function computeThreshold(t, mode, max, current) {
-  if (mode === THRESHOLD_MODE.ABSOLUTE) {
-    return t;
-  } else if (mode === THRESHOLD_MODE.MAX_REL) {
-    return t * max;
-  } else if (mode === THRESHOLD_MODE.CURRENT_REL) {
-    return t * current + current;
-  } else if (mode === THRESHOLD_MODE.CURRENT_ABS) {
-    return t + current;
-  }
-}
+import {
+  ACTION,
+  MUTATION,
+  THRESHOLD_MODE,
+  THRESHOLD_TEXT
+} from '../../store/constants';
 
 export default {
   name: 'sampler-panel',
   components: {
     Sample
   },
-  data() {
-    return {
-      n: 10,
-      threshold: 0.7,
-      burnin: 100,
-      free: 3,
-      paramFloor: 3,
-      retries: 20,
-      thresholdMode: THRESHOLD_MODE.ABSOLUTE
-    };
-  },
   computed: {
+    n: {
+      get() {
+        return this.$store.state.snippets.samplerSettings['n'];
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+          key: 'n',
+          val: parseInt(val)
+        });
+      }
+    },
+    threshold: {
+      get() {
+        return this.$store.state.snippets.samplerSettings['threshold'];
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+          key: 'threshold',
+          val: parseFloat(val)
+        });
+      }
+    },
+    free: {
+      get() {
+        return this.$store.state.snippets.samplerSettings['freeParams'];
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+          key: 'freeParams',
+          val: parseInt(val)
+        });
+      }
+    },
+    paramFloor: {
+      get() {
+        return this.$store.state.snippets.samplerSettings['paramFloor'];
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+          key: 'paramFloor',
+          val: parseInt(val)
+        });
+      }
+    },
+    retries: {
+      get() {
+        return this.$store.state.snippets.samplerSettings['retries'];
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+          key: 'retries',
+          val: parseInt(val)
+        });
+      }
+    },
+    thresholdMode: {
+      get() {
+        return this.$store.state.snippets.samplerSettings['thresholdMode'];
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+          key: 'thresholdMode',
+          val
+        });
+      }
+    },
     samples() {
       return this.$store.state.snippets.samples;
     },
@@ -185,15 +211,6 @@ export default {
         return 'Untrained';
 
       return 'Start';
-    },
-    activeSnippetName() {
-      if (
-        this.$store.state.snippets.primarySnippet in
-        this.$store.state.snippets.snippets
-      )
-        return this.$store.state.snippets.primarySnippet;
-
-      return null;
     },
     maxParams() {
       return this.$store.getters.paramsAsArray.length;
@@ -217,19 +234,7 @@ export default {
       // - server is not already sampling
       if (this.canSample) {
         this.$store.dispatch(ACTION.START_SAMPLER, {
-          name: this.$store.state.snippets.primarySnippet,
-          data: {
-            n: parseInt(this.n),
-            threshold: computeThreshold(
-              parseFloat(this.threshold),
-              this.thresholdMode,
-              this.$store.getters.maxCurrentSnippetScore,
-              this.$store.getters.currentSnippetScore
-            ),
-            freeParams: parseInt(this.free),
-            paramFloor: parseInt(this.paramFloor),
-            retries: parseInt(this.retries)
-          }
+          name: this.$store.state.snippets.primarySnippet
         });
       }
     },

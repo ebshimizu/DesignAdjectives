@@ -6,6 +6,20 @@ export const PARAM_COLOR_MODE = {
   BLUEYELLOW: 'blue-yellow'
 };
 
+export const THRESHOLD_MODE = {
+  ABSOLUTE: 'ABSOLUTE',
+  MAX_REL: 'MAX_REL',
+  CURRENT_REL: 'CURRENT_REL',
+  CURRENT_ABS: 'CURRENT_ABS'
+};
+
+export const THRESHOLD_TEXT = {
+  ABSOLUTE: 'Absolute',
+  MAX_REL: '% of Max',
+  CURRENT_REL: '+% Current',
+  CURRENT_ABS: '+x Current'
+};
+
 export const MUTATION = {
   SET_PORT: 'Set Snippet Port',
   CONNECT: 'Connect Snippet Server Driver',
@@ -61,7 +75,9 @@ export const MUTATION = {
   SET_AXIS_MIX_RESULTS: 'Set Axis Mix Results',
   SET_PRIMARY_SNIPPET: 'Set Primary Snippet',
   ACTIVATE_SNIPPET: 'Activate Snippet',
-  DEACTIVATE_SNIPPET: 'Deactivate Snippet'
+  DEACTIVATE_SNIPPET: 'Deactivate Snippet',
+  SET_SAMPLER_OPTION: 'Set Sampler Option',
+  SET_ALL_SAMPLER_OPTIONS: 'Set All Sampler Options'
 };
 
 export const ACTION = {
@@ -91,7 +107,8 @@ export const ACTION = {
   MIX: 'Run Parameter Mix',
   LOAD_PARAM_SET: 'Load Parameter Group',
   MIX_AXES: 'Run Axis Mixer',
-  SET_PRIMARY_SNIPPET: 'Set Primary Snippet'
+  SET_PRIMARY_SNIPPET: 'Set Primary Snippet',
+  EVAL_THEN_EXECUTE: 'Evaluate Target Snippet then Execute Callback'
 };
 
 export const SERVER_STATUS = {

@@ -49,7 +49,6 @@ export default {
             canvas = newCanvas;
 
             this.$store.commit(MUTATION.DETECT_BACKEND, file);
-
             this.$store.commit(MUTATION.LOAD_NEW_FILE, {
               filename: file,
               dir
@@ -59,6 +58,10 @@ export default {
               ACTION.LOAD_SNIPPETS,
               this.$store.state.paramStore.cacheKey
             );
+            this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+              key: 'freeParams',
+              val: this.$store.getters.paramsAsArray.length / 2
+            });
           }
         }
       );
