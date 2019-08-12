@@ -21,9 +21,10 @@
           <menu-item menuStyle="compact">Axis</menu-item>
         </menu-group>
         <menu-group name="Params" menuStyle="compact">
-          <menu-item menuStyle="compact">Lock</menu-item>
-          <menu-item menuStyle="compact">Filter by Impact</menu-item>
           <menu-item menuStyle="compact">Select Used</menu-item>
+          <menu-item menuStyle="compact">Lock Used</menu-item>
+          <menu-item menuStyle="compact">Filter by Impact</menu-item>
+          <menu-item menuStyle="compact">Filter by Best</menu-item>
         </menu-group>
         <menu-group name="Debug" menuStyle="compact">
           <menu-item menuStyle="compact" @click.native="train()">Retrain</menu-item>
