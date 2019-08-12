@@ -28,25 +28,32 @@
           <menu-item menuStyle="compact" @click.native="train()">Retrain</menu-item>
         </menu-group>
       </ul>
-      <div class="flex-grow green square-button border-l border-r" @click="addExample(1)">
+      <div class="flex-grow green square-button border-l border-r tooltip" @click="addExample(1)">
         <div>
           <font-awesome-icon icon="plus-square"></font-awesome-icon>
         </div>
+        <span class="tt-text">Add Positive</span>
       </div>
-      <div class="flex-grow red square-button border-r" @click="addExample(0)">
+      <div class="flex-grow red square-button border-r tooltip" @click="addExample(0)">
         <div>
           <font-awesome-icon icon="minus-square"></font-awesome-icon>
         </div>
+        <span class="tt-text">Add Negative</span>
       </div>
-      <div class="flex-grow blue square-button border-r" @click="setPrimary()">
+      <div class="flex-grow blue square-button border-r left tooltip" @click="setPrimary()">
         <div>
           <font-awesome-icon icon="crosshairs"></font-awesome-icon>
         </div>
+        <span class="tt-text">Set As Primary Snippet</span>
       </div>
-      <div class="flex-grow blue square-button" @click="exemplarsVisible = !exemplarsVisible">
+      <div
+        class="flex-grow blue square-button left tooltip"
+        @click="exemplarsVisible = !exemplarsVisible"
+      >
         <div>
           <font-awesome-icon :icon="collapseIcon"></font-awesome-icon>
         </div>
+        <span class="tt-text">Toggle Definition</span>
       </div>
     </div>
     <div

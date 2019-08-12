@@ -135,3 +135,49 @@
 .green.square-button:hover {
   @apply bg-green-700;
 }
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip .tt-text {
+  visibility: hidden;
+  width: 150px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 100;
+  top: 105%;
+  left: 50%;
+  margin-left: -75px;
+  font-size: 14px;
+}
+
+.left.tooltip .tt-text {
+  right: 0;
+  margin-left: 0;
+  left: unset;
+}
+
+.tooltip:hover .tt-text {
+  visibility: visible;
+}
+
+.tooltip .tt-text::after {
+  content: ' ';
+  position: absolute;
+  bottom: 100%; /* At the top of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+
+.left.tooltip .tt-text::after {
+  right: 15px;
+  left: unset;
+}
