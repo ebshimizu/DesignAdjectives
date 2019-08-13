@@ -253,6 +253,8 @@ class Rejection(SamplerThread):
         final=None,
         paramFilter=None,
         customEval=None,
+        thresholdEvalMode="gt",
+        thresholdTarget=None,
     ):
         super().__init__()
         self.snippet = snippet
@@ -277,6 +279,29 @@ class Rejection(SamplerThread):
         # the snippet eval function does. This is an object containing "mean"
         # and "cov" fields. cov can be optional if the eval function does not provide one
         self.customEval = customEval
+
+        # the threshold mode determines the accept criteria
+        self.thresholdEvalMode = thresholdEvalMode
+        self.thresholdTarget = thresholdTarget
+        self.setThresholdFunc()
+
+    def setThresholdFunc(self):
+        # standard greater than
+        if self.thresholdEvalMode == "gt":
+            self.thresholdFunc = lambda x: x > self.threshold
+        # standard less than
+        elif self.thresholdEvalMode == "lt":
+            self.thresholdFunc = lambda x: x < self.threshold
+        # within radius around target (distance)
+        elif self.thresholdEvalMode == "absRadius":
+            self.thresholdFunc = (
+                lambda x: abs(x - self.thresholdTarget) < self.threshold
+            )
+        # within radius but strictly improving
+        elif self.thresholdEvalMode == "radius":
+            self.thresholdFunc = (
+                lambda x: x > self.thresholdTarget and x < self.threshold
+            )
 
     def run(self):
         logger.sample("[{0}] Rejection sampler initializing".format(self.name))
@@ -351,7 +376,7 @@ class Rejection(SamplerThread):
             )
 
             # check score
-            if score["mean"] > self.threshold:
+            if self.thresholdFunc(score["mean"]):
                 logger.sample(
                     "[{0}/{1}] Accepted {2} mean score: {3}".format(
                         count + 1, self.n, xp, score["mean"]

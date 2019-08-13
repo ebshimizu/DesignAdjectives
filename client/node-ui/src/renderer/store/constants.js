@@ -20,6 +20,20 @@ export const THRESHOLD_TEXT = {
   CURRENT_ABS: '+x Current'
 };
 
+export const THRESHOLD_ACCEPT_MODE = {
+  GREATER: 'gt',
+  LESSER: 'lt',
+  DISTANCE: 'absRadius',
+  WITHIN_RADIUS: 'radius'
+};
+
+export const THRESHOLD_ACCEPT_TEXT = {
+  GREATER: 'Greater Than',
+  LESSER: 'Less Than',
+  DISTANCE: 'Within Radius of Score',
+  WITHIN_RADIUS: 'Better Within Radius of Score'
+};
+
 export const MUTATION = {
   SET_PORT: 'Set Snippet Port',
   CONNECT: 'Connect Snippet Server Driver',

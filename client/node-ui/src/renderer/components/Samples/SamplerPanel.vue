@@ -38,17 +38,6 @@
             />
           </div>
         </div>
-        <!-- <div class="border-b border-gray-200 px-2 py-1">
-          <div class="font-bold tracking-wide uppercase text-xs mb-1">Burn-in</div>
-          <input
-            class="w-full rounded-sm p-1 text-sm text-grey-light bg-gray-800 font-mono"
-            type="number"
-            v-model="burnin"
-            min="0"
-            max="10000"
-            step="1"
-          >
-        </div>-->
         <div class="border-b border-gray-200 px-2 py-1">
           <div class="font-bold tracking-wide uppercase text-xs mb-1">Free Params</div>
           <div class="flex">
@@ -94,6 +83,30 @@
             step="1"
           />
         </div>
+        <div class="border-b border-gray-200 px-2 py-1">
+          <div class="font-bold tracking-wide uppercase text-xs mb-1">Threshold Eval Mode</div>
+          <select
+            v-model="thresholdEvalMode"
+            class="w-full text-sm font-mono p-1 mr-2 bg-gray-800 text-gray-light"
+          >
+            <option
+              v-for="option in thresholdEvalModes"
+              v-bind:value="option.val"
+              :key="option.val"
+            >{{ option.text }}</option>
+          </select>
+        </div>
+        <div class="border-b border-gray-200 px-2 py-1">
+          <div class="font-bold tracking-wide uppercase text-xs mb-1">Threshold Target</div>
+          <input
+            class="w-full standard-text-field"
+            type="number"
+            v-model="thresholdTarget"
+            min="0"
+            max="1"
+            step="0.0001"
+          />
+        </div>
         <div class="px-2 py-2">
           <div
             class="btn btn-green"
@@ -115,7 +128,9 @@ import {
   ACTION,
   MUTATION,
   THRESHOLD_MODE,
-  THRESHOLD_TEXT
+  THRESHOLD_TEXT,
+  THRESHOLD_ACCEPT_MODE,
+  THRESHOLD_ACCEPT_TEXT
 } from '../../store/constants';
 
 export default {
@@ -190,6 +205,28 @@ export default {
         });
       }
     },
+    thresholdEvalMode: {
+      get() {
+        return this.$store.state.snippets.samplerSettings['thresholdEvalMode'];
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+          key: 'thresholdEvalMode',
+          val
+        });
+      }
+    },
+    thresholdTarget: {
+      get() {
+        return this.$store.state.snippets.samplerSettings['thresholdTarget'];
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+          key: 'thresholdTarget',
+          val: parseFloat(val)
+        });
+      }
+    },
     samples() {
       return this.$store.state.snippets.samples;
     },
@@ -221,6 +258,17 @@ export default {
         modes[key] = {
           val: key,
           text: THRESHOLD_TEXT[key]
+        };
+      }
+
+      return modes;
+    },
+    thresholdEvalModes() {
+      const modes = {};
+      for (const key in THRESHOLD_ACCEPT_MODE) {
+        modes[key] = {
+          val: THRESHOLD_ACCEPT_MODE[key],
+          text: THRESHOLD_ACCEPT_TEXT[key]
         };
       }
 

@@ -4,7 +4,8 @@ import {
   ACTION,
   PARAM_COLOR_MODE,
   SERVER_STATUS,
-  THRESHOLD_MODE
+  THRESHOLD_MODE,
+  THRESHOLD_ACCEPT_MODE
 } from '../constants';
 import Vue from 'Vue';
 import fs from 'fs-extra';
@@ -189,7 +190,9 @@ export default {
       freeParams: 3,
       paramFloor: 3,
       retries: 20,
-      thresholdMode: THRESHOLD_MODE.ABSOLUTE
+      thresholdMode: THRESHOLD_MODE.ABSOLUTE,
+      thresholdEvalMode: THRESHOLD_ACCEPT_MODE.GREATER,
+      thresholdTarget: 0
     }
   },
   getters: {
