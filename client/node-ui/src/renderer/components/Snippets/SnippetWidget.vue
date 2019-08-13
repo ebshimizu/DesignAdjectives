@@ -159,8 +159,8 @@ export default {
             });
             store.commit(MUTATION.SET_SAMPLER_OPTION, {
               key: 'threshold',
-              val: 0.1
-            }); // +0.1 of current at least
+              val: 0.05
+            }); // +0.05 of current at least
             store.dispatch(ACTION.START_SAMPLER, { name });
           }
         });

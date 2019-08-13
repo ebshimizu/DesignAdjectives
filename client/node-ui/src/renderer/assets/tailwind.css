@@ -181,3 +181,27 @@
   right: 15px;
   left: unset;
 }
+
+.popupMenu {
+  visibility: hidden;
+  position: absolute;
+  width: 150px;
+  max-height: 150px;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 100;
+  color: #fff;
+  border-radius: 6px;
+  @apply border-gray-200 border shadow-md;
+}
+
+.popupMenu .title {
+  @apply font-bold uppercase text-sm tracking-wide p-1 border-b border-gray-200;
+}
+
+.popupMenu div div {
+  @apply text-sm px-1 cursor-pointer;
+}
+
+.popupMenu div div:hover {
+  @apply bg-gray-700;
+}

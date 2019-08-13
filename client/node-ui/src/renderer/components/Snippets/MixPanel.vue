@@ -143,7 +143,7 @@ export default {
         this.$store.getters.renderer(this.$refs.mixACanvas, {
           size: 'thumb',
           state: newVal,
-          instanceID: `mixA`,
+          instanceID: 'mixA',
           once: true
         });
       }
@@ -153,7 +153,7 @@ export default {
         this.$store.getters.renderer(this.$refs.mixBCanvas, {
           size: 'thumb',
           state: newVal,
-          instanceID: `mixA`,
+          instanceID: 'mixB',
           once: true
         });
       }
