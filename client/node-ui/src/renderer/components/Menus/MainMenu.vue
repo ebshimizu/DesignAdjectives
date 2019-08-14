@@ -3,6 +3,11 @@
     <menu-group name="File">
       <menu-item @click.native="open()">Open</menu-item>
     </menu-group>
+    <menu-group name="Sample">
+      <menu-item>Random Sample...</menu-item>
+      <menu-item @click.native="jitter()">Jitter...</menu-item>
+      <menu-item>Reset Sampler</menu-item>
+    </menu-group>
     <menu-group name="Snippets">
       <menu-item @click.native="connect()">{{ connected }} Server</menu-item>
       <menu-item @click.native="exportSnippets()">Export Snippets...</menu-item>
@@ -100,6 +105,24 @@ export default {
     },
     clearCache() {
       this.$store.commit(MUTATION.CLEAR_CACHE);
+    },
+    jitter() {
+      const opt = {
+        n: 20
+      };
+
+      if (this.$store.getters.activeParamIDs.length > 0)
+        opt.affectedParams = this.$store.getters.activeParamIDs;
+
+      this.$store.dispatch(ACTION.JITTER_SAMPLE, {
+        x0: this.$store.getters.paramsAsArray,
+        delta: 0.1,
+        snippet:
+          this.$store.getters.primarySnippet === ''
+            ? null
+            : this.$store.getters.primarySnippet,
+        opt
+      });
     }
   }
 };

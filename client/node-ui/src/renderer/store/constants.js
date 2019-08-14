@@ -122,7 +122,8 @@ export const ACTION = {
   LOAD_PARAM_SET: 'Load Parameter Group',
   MIX_AXES: 'Run Axis Mixer',
   SET_PRIMARY_SNIPPET: 'Set Primary Snippet',
-  EVAL_THEN_EXECUTE: 'Evaluate Target Snippet then Execute Callback'
+  EVAL_THEN_EXECUTE: 'Evaluate Target Snippet then Execute Callback',
+  JITTER_SAMPLE: 'Run Jitter Sampler'
 };
 
 export const SERVER_STATUS = {

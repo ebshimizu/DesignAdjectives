@@ -55,7 +55,7 @@ def jitter(x0, delta, affectedParams=None, n=20, scoreFunc=None):
             )
 
         # optional eval
-        retObj = {"x": xp, "score": 0}
+        retObj = {"x": xp, "score": 0, "idx": i}
         if scoreFunc is not None:
             retObj["score"] = scoreFunc(xp)
 

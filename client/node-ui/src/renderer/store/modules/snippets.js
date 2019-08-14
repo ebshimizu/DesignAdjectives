@@ -831,6 +831,25 @@ export default {
     [ACTION.SET_PRIMARY_SNIPPET](context, name) {
       context.commit(MUTATION.SET_PRIMARY_SNIPPET, name);
       context.dispatch(ACTION.LOAD_PARAM_COLOR_DATA, name);
+    },
+    async [ACTION.JITTER_SAMPLE](context, args) {
+      context.commit(MUTATION.CLEAR_SAMPLES);
+
+      const samples = await driver.jitter(
+        normalizeVector(args.x0, context.getters.params),
+        args.delta,
+        args.snippet,
+        args.opt
+      );
+
+      for (let i = 0; i < samples.length; i++) {
+        context.commit(MUTATION.ADD_SAMPLE, {
+          x: unnormalizeVector(samples[i].x, context.getters.params),
+          mean: samples[i].score,
+          cov: 0,
+          idx: samples[i].idx + randIDStart
+        });
+      }
     }
   }
 };

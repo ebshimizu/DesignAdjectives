@@ -319,8 +319,8 @@ def mixSnippet(args):
 def jitterSample(args):
     logger.info("Starting jitter sampler")
     scoreFunc = None
-    if "snippet" in args["opt"]:
-        snippet = snippetServer.getSnippet(args["opt"]["snippet"])
+    if "snippet" in args:
+        snippet = snippetServer.getSnippet(args["snippet"])
         scoreFunc = lambda x: snippet.predictOne(x)["mean"]
 
     samples = jitter(args["x0"], args["delta"], scoreFunc=scoreFunc, **args["opt"])

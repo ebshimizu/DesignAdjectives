@@ -404,6 +404,21 @@ export class DsDriver {
     return res;
   }
 
+  async jitter(x0, delta, snippet = null, opt = {}) {
+    const args = {
+      x0,
+      delta,
+      opt
+    };
+
+    if (snippet) {
+      args.snippet = snippet;
+    }
+
+    const res = await this.exec('jitter', args);
+    return res;
+  }
+
   /**
    * Stop the sampler
    */
