@@ -215,10 +215,16 @@ export class DsDriver {
    * @param {string} name Snippet name
    * @return {Object} Contains information about the learned GPR values. Client applications should save.
    */
-  async train(name) {
+  async train(name, customFilter = null) {
     if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
-    const res = await this.exec('snippet train', { name });
+    const args = {
+      name
+    };
+
+    if (customFilter) args.customFilter = customFilter;
+
+    const res = await this.exec('snippet train', args);
     return res;
   }
 

@@ -137,7 +137,11 @@ def removeData(args):
 def trainSnippet(args):
     s = snippetServer.getSnippet(args["name"])
     if s:
-        ret = s.train()
+        customFilter = None
+        if "customFilter" in args:
+            customFilter = args["customFilter"]
+
+        ret = s.train(customFilter=customFilter)
         return None, ret
     else:
         return None, False
