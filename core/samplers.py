@@ -7,6 +7,7 @@ import random
 import torch
 import pyro
 import pyro.distributions as dist
+from functools import reduce
 from threading import Thread, Event
 
 # logging setup
@@ -255,6 +256,7 @@ class Rejection(SamplerThread):
         customEval=None,
         thresholdEvalMode="gt",
         thresholdTarget=None,
+        scoreDelta=0,
     ):
         super().__init__()
         self.snippet = snippet
@@ -285,6 +287,10 @@ class Rejection(SamplerThread):
         self.thresholdTarget = thresholdTarget
         self.setThresholdFunc()
 
+        # the score delta is the minimum score difference between accepted samples
+        # if it's 0, the check is skipped
+        self.scoreDelta = scoreDelta
+
     def setThresholdFunc(self):
         # standard greater than
         if self.thresholdEvalMode == "gt":
@@ -302,6 +308,17 @@ class Rejection(SamplerThread):
             self.thresholdFunc = (
                 lambda x: x > self.thresholdTarget and x < self.threshold
             )
+
+    # returns true if the given score is different enough from all other elements
+    # in the list
+    def scoreDiff(self, score, accepted):
+        if self.scoreDelta == 0 or len(accepted) == 0:
+            return True
+
+        scoreAboveThresh = list(
+            map(lambda x: abs(score - x["mean"]) > self.scoreDelta, accepted)
+        )
+        return reduce(lambda x, y: x and y, scoreAboveThresh)
 
     def run(self):
         logger.sample("[{0}] Rejection sampler initializing".format(self.name))
@@ -376,7 +393,9 @@ class Rejection(SamplerThread):
             )
 
             # check score
-            if self.thresholdFunc(score["mean"]):
+            if self.thresholdFunc(score["mean"]) and self.scoreDiff(
+                score["mean"], accept
+            ):
                 logger.sample(
                     "[{0}/{1}] Accepted {2} mean score: {3}".format(
                         count + 1, self.n, xp, score["mean"]

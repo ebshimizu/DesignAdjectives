@@ -18,7 +18,7 @@
           <menu-item menuStyle="compact" @click.native="sampleTowards()">Towards</menu-item>
           <menu-item menuStyle="compact" @click.native="sampleAway()">Away</menu-item>
           <menu-item menuStyle="compact" @click.native="sampleNearby()">Nearby</menu-item>
-          <menu-item menuStyle="compact">Axis</menu-item>
+          <menu-item menuStyle="compact" @click.native="sampleAxis()">Axis</menu-item>
         </menu-group>
         <menu-group name="Params" menuStyle="compact">
           <menu-item menuStyle="compact">Select Used</menu-item>
@@ -158,17 +158,11 @@ export default {
           name,
           callback: () => {
             // initialize settings
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'thresholdMode',
-              val: THRESHOLD_MODE.CURRENT_ABS
-            });
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'threshold',
-              val: 0.05
-            }); // +0.05 of current at least
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'thresholdEvalMode',
-              val: THRESHOLD_ACCEPT_MODE.GREATER
+            store.commit(MUTATION.SET_ALL_SAMPLER_OPTIONS, {
+              thresholdMode: THRESHOLD_MODE.CURRENT_ABS,
+              threshold: 0.05,
+              thresholdEvalMode: THRESHOLD_ACCEPT_MODE.GREATER,
+              scoreDelta: 0
             });
             store.dispatch(ACTION.START_SAMPLER, { name });
           }
@@ -185,17 +179,11 @@ export default {
           name,
           callback: () => {
             // initialize settings
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'thresholdMode',
-              val: THRESHOLD_MODE.CURRENT_ABS
-            });
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'threshold',
-              val: 0
-            }); // +0 of current
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'thresholdEvalMode',
-              val: THRESHOLD_ACCEPT_MODE.LESSER
+            store.commit(MUTATION.SET_ALL_SAMPLER_OPTIONS, {
+              thresholdMode: THRESHOLD_MODE.CURRENT_ABS,
+              threshold: 0,
+              thresholdEvalMode: THRESHOLD_ACCEPT_MODE.LESSER,
+              scoreDelta: 0
             });
             store.dispatch(ACTION.START_SAMPLER, { name });
           }
@@ -212,21 +200,37 @@ export default {
           name,
           callback: () => {
             // initialize settings
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'thresholdMode',
-              val: THRESHOLD_MODE.ABSOLUTE
+            store.commit(MUTATION.SET_ALL_SAMPLER_OPTIONS, {
+              thresholdMode: THRESHOLD_MODE.ABSOLUTE,
+              threshold: 0.1,
+              thresholdEvalMode: THRESHOLD_ACCEPT_MODE.DISTANCE,
+              thresholdTarget: store.getters.currentSnippetScore,
+              scoreDelta: 0
             });
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'threshold',
-              val: 0.1
-            }); // +0 of current
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'thresholdEvalMode',
-              val: THRESHOLD_ACCEPT_MODE.DISTANCE
-            });
-            store.commit(MUTATION.SET_SAMPLER_OPTION, {
-              key: 'thresholdTarget',
-              val: store.getters.currentSnippetScore
+            store.dispatch(ACTION.START_SAMPLER, { name });
+          }
+        });
+      }
+    },
+    sampleAxis() {
+      if (this.$store.getters.canSample(this.name)) {
+        const store = this.$store;
+        const name = this.name;
+
+        this.$store.dispatch(ACTION.SET_PRIMARY_SNIPPET, name);
+        this.$store.dispatch(ACTION.EVAL_THEN_EXECUTE, {
+          name,
+          callback: () => {
+            // initialize settings
+            store.commit(MUTATION.SET_ALL_SAMPLER_OPTIONS, {
+              thresholdMode: THRESHOLD_MODE.ABSOLUTE,
+              threshold: 0,
+              thresholdEvalMode: THRESHOLD_ACCEPT_MODE.GREATER,
+              scoreDelta: 0.025,
+              n:
+                this.$store.state.snippets.samplerSettings['n'] > 20
+                  ? this.$store.state.snippets.samplerSettings['n']
+                  : 20
             });
             store.dispatch(ACTION.START_SAMPLER, { name });
           }

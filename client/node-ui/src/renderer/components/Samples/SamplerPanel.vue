@@ -107,6 +107,17 @@
             step="0.0001"
           />
         </div>
+        <div class="border-b border-gray-200 px-2 py-1">
+          <div class="font-bold tracking-wide uppercase text-xs mb-1">Score Delta</div>
+          <input
+            class="w-full standard-text-field"
+            type="number"
+            v-model="scoreDelta"
+            min="0"
+            max="1"
+            step="0.0001"
+          />
+        </div>
         <div class="px-2 py-2">
           <div
             class="btn btn-green"
@@ -223,6 +234,17 @@ export default {
       set(val) {
         this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
           key: 'thresholdTarget',
+          val: parseFloat(val)
+        });
+      }
+    },
+    scoreDelta: {
+      get() {
+        return this.$store.state.snippets.samplerSettings['scoreDelta'];
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_SAMPLER_OPTION, {
+          key: 'scoreDelta',
           val: parseFloat(val)
         });
       }

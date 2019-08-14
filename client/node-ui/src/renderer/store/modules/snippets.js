@@ -192,7 +192,8 @@ export default {
       retries: 20,
       thresholdMode: THRESHOLD_MODE.ABSOLUTE,
       thresholdEvalMode: THRESHOLD_ACCEPT_MODE.GREATER,
-      thresholdTarget: 0
+      thresholdTarget: 0,
+      scoreDelta: 0
     }
   },
   getters: {
@@ -528,7 +529,9 @@ export default {
     [MUTATION.SET_ALL_SAMPLER_OPTIONS](state, data) {
       // only iterate through existing keys
       for (const id in state.samplerSettings) {
-        state.samplerSettings[id] = data[id];
+        if (id in data) {
+          state.samplerSettings[id] = data[id];
+        }
       }
     }
   },
