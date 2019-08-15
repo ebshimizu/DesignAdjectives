@@ -21,9 +21,9 @@
           <menu-item menuStyle="compact" @click.native="sampleAxis()">Axis</menu-item>
         </menu-group>
         <menu-group name="Params" menuStyle="compact">
-          <menu-item menuStyle="compact">Select Affected</menu-item>
+          <menu-item menuStyle="compact" @click.native="selectAffected()">Select Affected</menu-item>
           <menu-item menuStyle="compact" @click.native="selectDefaultFilter()">Auto-Detect Used</menu-item>
-          <menu-item menuStyle="compact">Set Affected from Selected</menu-item>
+          <menu-item menuStyle="compact" @click.native="setSelectedAsFilter()">Use Selected</menu-item>
           <menu-item menuStyle="compact">Filter by Impact</menu-item>
           <menu-item menuStyle="compact">Filter by Best</menu-item>
         </menu-group>
@@ -240,6 +240,21 @@ export default {
     },
     selectDefaultFilter() {
       this.$store.dispatch(ACTION.SELECT_DEFAULT_FILTER, this.name);
+    },
+    setSelectedAsFilter() {
+      this.$store.dispatch(ACTION.SET_SELECTED_AS_FILTER, this.name);
+    },
+    selectAffected() {
+      const filter = this.$store.state.snippets.snippets[this.name].filter;
+      if (filter.length > 0) {
+        this.$store.commit(MUTATION.SET_NONE_ACTIVE);
+        this.$store.commit(MUTATION.CHANGE_PARAMS_ACTIVE, {
+          ids: filter,
+          active: true
+        });
+      } else {
+        this.selectDefaultFilter();
+      }
     }
   }
 };

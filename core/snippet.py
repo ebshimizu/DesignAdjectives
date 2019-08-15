@@ -112,6 +112,7 @@ class Snippet:
         self.setData(trainData)
 
         # construct GPR
+        # note: user should re-set filter manually after this completes (for now)
         self.setDefaultFilter()
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
         self.gpr = ExactGPModel(

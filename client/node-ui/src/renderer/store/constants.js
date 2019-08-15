@@ -92,7 +92,8 @@ export const MUTATION = {
   ACTIVATE_SNIPPET: 'Activate Snippet',
   DEACTIVATE_SNIPPET: 'Deactivate Snippet',
   SET_SAMPLER_OPTION: 'Set Sampler Option',
-  SET_ALL_SAMPLER_OPTIONS: 'Set All Sampler Options'
+  SET_ALL_SAMPLER_OPTIONS: 'Set All Sampler Options',
+  SET_PARAMS_AS_FILTER: 'Set Params As Filter'
 };
 
 export const ACTION = {
@@ -125,7 +126,8 @@ export const ACTION = {
   SET_PRIMARY_SNIPPET: 'Set Primary Snippet',
   EVAL_THEN_EXECUTE: 'Evaluate Target Snippet then Execute Callback',
   JITTER_SAMPLE: 'Run Jitter Sampler',
-  SELECT_DEFAULT_FILTER: 'Select Default Filter'
+  SELECT_DEFAULT_FILTER: 'Select Default Filter',
+  SET_SELECTED_AS_FILTER: 'Set Selected Parameters as Filter'
 };
 
 export const SERVER_STATUS = {

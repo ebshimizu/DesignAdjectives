@@ -89,6 +89,10 @@ async function loadSnippet(driver, context, name) {
       normalizeData(context.state.snippets[name].data, context.getters.params),
       context.state.snippets[name].trainData.state
     );
+
+    // load filter, if it exists
+    if (context.state.snippets[name].filter.length > 0)
+      await driver.setProp(name, 'filter', context.state.snippets[name].filter);
   } catch (e) {
     console.log(e);
   }
@@ -112,7 +116,12 @@ async function trainSnippet(driver, context, name) {
     );
 
     // train
-    const trainData = await driver.train(name);
+    const filter =
+      context.state.snippets[name].filter.length > 0
+        ? context.state.snippets[name].filter
+        : null;
+
+    const trainData = await driver.train(name, filter);
     context.commit(MUTATION.ADD_TRAINED_DATA, {
       name,
       trainData
@@ -333,6 +342,7 @@ export default {
         Vue.set(state.snippets[name], 'data', []);
         Vue.set(state.snippets[name], 'trainData', {});
         Vue.set(state.snippets[name], 'trained', false);
+        Vue.set(state.snippets[name], 'filter', []);
       }
     },
     [MUTATION.COPY_SNIPPET](state, data) {
@@ -418,8 +428,18 @@ export default {
     [MUTATION.LOAD_SNIPPETS](state, key) {
       state.cacheKey = key;
 
-      if (settings.has(key)) state.snippets = settings.get(key);
-      else state.snippets = {};
+      if (settings.has(key)) {
+        const snippets = settings.get(key);
+
+        // some older snapshots might be missing some keys
+        for (const id in snippets) {
+          if (!('filter' in snippets[id])) snippets[id].filter = [];
+        }
+
+        state.snippets = snippets;
+      } else {
+        state.snippets = {};
+      }
     },
     [MUTATION.IMPORT_SNIPPETS](state, file) {
       try {
@@ -532,6 +552,11 @@ export default {
         if (id in data) {
           state.samplerSettings[id] = data[id];
         }
+      }
+    },
+    [MUTATION.SET_PARAMS_AS_FILTER](state, data) {
+      if (data.name in state.snippets) {
+        Vue.set(state.snippets[data.name], 'filter', data.params);
       }
     }
   },
@@ -868,6 +893,16 @@ export default {
         ids: filter,
         active: true
       });
+    },
+    async [ACTION.SET_SELECTED_AS_FILTER](context, name) {
+      // set the filter
+      context.commit(MUTATION.SET_PARAMS_AS_FILTER, {
+        name,
+        params: context.getters.activeParamIDs
+      });
+
+      // retrain
+      context.dispatch(ACTION.TRAIN, name);
     }
   }
 };
