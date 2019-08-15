@@ -290,3 +290,51 @@ class Snippet:
 
     def setDefaultFilter(self):
         self.setParamFilter(self.getDefaultFilter())
+
+    # returns a set of parameters that meet an impact threshold
+    # Impact here is going to be defined as parameters that cause
+    # large changes in the score value, relative to the variation across
+    # the 1D parameter sweeps at the given point
+    def identifyHighImpactParams(self, x0, magnitudeThreshold=0.75):
+        # coarse sweep, n = 10
+        paramScores = self.predictAll1D(x0, n=10)
+        paramMag = {}
+        maxMag = 0
+
+        # determine max magnitude changes
+        for id in paramScores:
+            paramMag[id] = max(paramScores[id]["mean"]) - min(paramScores[id]["mean"])
+            if paramMag[id] > maxMag:
+                maxMag = paramMag[id]
+
+        # determine if a param meets the threshold
+        params = []
+        threshold = maxMag * magnitudeThreshold
+        for id in paramMag:
+            if paramMag[id] > threshold:
+                params.append(int(id))
+
+        return params
+
+    # similar to high impact params, best params are those that can achieve close to maximal
+    # values along their 1D sweep range relative to the given x0
+    def identifyBestParams(self, x0, bestThreshold=0.75):
+        # coarse sweep
+        paramScores = self.predictAll1D(x0, n=10)
+        paramMax = {}
+        scoreMax = 0
+
+        # determine max magnitude changes
+        for id in paramScores:
+            paramMax[id] = max(paramScores[id]["mean"])
+            if paramMax[id] > scoreMax:
+                scoreMax = paramMax[id]
+
+        # determine if a param meets the threshold
+        params = []
+        threshold = scoreMax * bestThreshold
+        for id in paramMax:
+            if paramMax[id] > threshold:
+                params.append(int(id))
+
+        return params

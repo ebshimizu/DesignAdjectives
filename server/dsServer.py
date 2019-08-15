@@ -305,6 +305,28 @@ def snippet1DPredictAll(args):
         return None, False
 
 
+@sio.on("snippet identifyHighImpact")
+def snippetIdentifyHighImpact(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        # 1d predict, assumes normalized range 0-1
+        res = s.identifyHighImpactParams(args["x0"], **args["args"])
+        return None, res
+    else:
+        return None, False
+
+
+@sio.on("snippet identifyBest")
+def snippetIdentifyBest(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        # 1d predict, assumes normalized range 0-1
+        res = s.identifyBestParams(args["x0"], **args["args"])
+        return None, res
+    else:
+        return None, False
+
+
 @sio.on("mix")
 def mixS(args):
     # no fancy stuff for now, eventually expect more complex arguments

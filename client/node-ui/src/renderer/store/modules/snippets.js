@@ -5,7 +5,8 @@ import {
   PARAM_COLOR_MODE,
   SERVER_STATUS,
   THRESHOLD_MODE,
-  THRESHOLD_ACCEPT_MODE
+  THRESHOLD_ACCEPT_MODE,
+  AUTO_FILTER_MODE
 } from '../constants';
 import Vue from 'Vue';
 import fs from 'fs-extra';
@@ -203,7 +204,8 @@ export default {
       thresholdEvalMode: THRESHOLD_ACCEPT_MODE.GREATER,
       thresholdTarget: 0,
       scoreDelta: 0
-    }
+    },
+    autoFilterMode: AUTO_FILTER_MODE.NO_FILTER
   },
   getters: {
     ready: state => {
@@ -738,6 +740,10 @@ export default {
             normalizeVector(vec, context.getters.params)
           );
           context.commit(MUTATION.SET_ACTIVE_SNIPPET_SCORE, score);
+
+          // check filtered param mode
+          if (context.state.autoFilterMode !== AUTO_FILTER_MODE.NO_FILTER)
+            context.dispatch(ACTION.UPDATE_AUTO_FILTER_PARAMS);
         } catch (e) {
           console.log(e);
         }
@@ -855,6 +861,7 @@ export default {
     },
     [ACTION.SET_PRIMARY_SNIPPET](context, name) {
       context.commit(MUTATION.SET_PRIMARY_SNIPPET, name);
+      context.dispatch(ACTION.EVAL_CURRENT);
       context.dispatch(ACTION.LOAD_PARAM_COLOR_DATA, name);
     },
     async [ACTION.JITTER_SAMPLE](context, args) {
@@ -903,6 +910,11 @@ export default {
 
       // retrain
       context.dispatch(ACTION.TRAIN, name);
+    },
+    async [ACTION.UPDATE_AUTO_FILTER_PARAMS](context) {
+      // updates the selected parameters based on the current auto-filter mode
+      // these are all based on the current primary snippet (doesn't make much sense to
+      // allow multiple filters at the same time at the moment).)
     }
   }
 };

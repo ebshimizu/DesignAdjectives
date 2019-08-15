@@ -357,6 +357,42 @@ export class DsDriver {
   }
 
   /**
+   * Returns parameter indices for the highest impact params
+   * @param {string} name Snippet name
+   * @param {number[]} x0 Initial parameter vector state
+   * @param {Object} args Additional arguments to send to the server
+   * @param {?number} args.magnitudeThreshold Minimum proportion of max magnitude to count as impactful
+   */
+  async identifyHighImpactParams(name, x0, args) {
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
+
+    const res = await this.exec('snippet identifyHighImpact', {
+      name,
+      x0,
+      args
+    });
+    return res;
+  }
+
+  /**
+   * Returns parameter indices for the highest scoring params
+   * @param {string} name Snippet name
+   * @param {number[]} x0 Initial parameter vector state
+   * @param {Object} args Additional arguments to send to the server
+   * @param {?number} args.bestThreshold Minimum proportion of maximal score to be considered "best"
+   */
+  async identifyBestParams(name, x0, args) {
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
+
+    const res = await this.exec('snippet identifyBest', {
+      name,
+      x0,
+      args
+    });
+    return res;
+  }
+
+  /**
    * Generic property setter for snippets
    * @param {string} name Snippet name
    * @param {string} propName property name

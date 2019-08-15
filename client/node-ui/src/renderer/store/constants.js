@@ -34,6 +34,18 @@ export const THRESHOLD_ACCEPT_TEXT = {
   WITHIN_RADIUS: 'Better Within Radius of Score'
 };
 
+export const SERVER_STATUS = {
+  TRAIN: 'Training',
+  SAMPLE: 'Sampling',
+  IDLE: 'Idle'
+};
+
+export const AUTO_FILTER_MODE = {
+  NO_FILTER: 'No Filter',
+  IMPACT: 'Impact',
+  BEST: 'Best'
+};
+
 export const MUTATION = {
   SET_PORT: 'Set Snippet Port',
   CONNECT: 'Connect Snippet Server Driver',
@@ -93,7 +105,8 @@ export const MUTATION = {
   DEACTIVATE_SNIPPET: 'Deactivate Snippet',
   SET_SAMPLER_OPTION: 'Set Sampler Option',
   SET_ALL_SAMPLER_OPTIONS: 'Set All Sampler Options',
-  SET_PARAMS_AS_FILTER: 'Set Params As Filter'
+  SET_PARAMS_AS_FILTER: 'Set Params As Filter',
+  SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode'
 };
 
 export const ACTION = {
@@ -127,11 +140,7 @@ export const ACTION = {
   EVAL_THEN_EXECUTE: 'Evaluate Target Snippet then Execute Callback',
   JITTER_SAMPLE: 'Run Jitter Sampler',
   SELECT_DEFAULT_FILTER: 'Select Default Filter',
-  SET_SELECTED_AS_FILTER: 'Set Selected Parameters as Filter'
-};
-
-export const SERVER_STATUS = {
-  TRAIN: 'Training',
-  SAMPLE: 'Sampling',
-  IDLE: 'Idle'
+  SET_SELECTED_AS_FILTER: 'Set Selected Parameters as Filter',
+  UPDATE_AUTO_FILTER_PARAMS: 'Update Auto-Filtered Params',
+  SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode'
 };
