@@ -172,6 +172,12 @@ export function createStore(backend, type) {
         // expects data to contain an id/index and an active flag
         Vue.set(state.parameters[data.id], 'active', data.active);
       },
+      [MUTATION.CHANGE_PARAMS_ACTIVE](state, data) {
+        // data.ids should be an array of parameter ids
+        for (const id of data.ids) {
+          Vue.set(state.parameters[id], 'active', data.active);
+        }
+      },
       [MUTATION.SET_ALL_ACTIVE](state) {
         for (const param in state.parameters) {
           state.parameters[param].active = true;

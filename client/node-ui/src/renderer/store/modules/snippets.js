@@ -850,6 +850,24 @@ export default {
           idx: samples[i].idx + randIDStart
         });
       }
+    },
+    async [ACTION.SELECT_DEFAULT_FILTER](context, name) {
+      // ensure exists
+      await driver.addSnippet(name);
+
+      // sync data
+      await driver.setData(
+        name,
+        normalizeData(context.state.snippets[name].data, context.getters.params)
+      );
+
+      // get default filter
+      const filter = await driver.getDefaultFilter(name);
+      context.commit(MUTATION.SET_NONE_ACTIVE);
+      context.commit(MUTATION.CHANGE_PARAMS_ACTIVE, {
+        ids: filter,
+        active: true
+      });
     }
   }
 };

@@ -345,6 +345,18 @@ export class DsDriver {
   }
 
   /**
+   * Retrieves the computed default filter for the given snippet.
+   * This might not match the currently set filter.
+   * @param {string} name Snippet Name
+   */
+  async getDefaultFilter(name) {
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
+
+    const res = await this.exec('snippet get defaultFilter', { name });
+    return res;
+  }
+
+  /**
    * Generic property setter for snippets
    * @param {string} name Snippet name
    * @param {string} propName property name

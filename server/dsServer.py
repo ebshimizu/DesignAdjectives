@@ -93,6 +93,15 @@ def listSnippets(args):
     return None, res
 
 
+@sio.on("snippet get defaultFilter")
+def snippetGetDefaultFilter(args):
+    s = snippetServer.getSnippet(args["name"])
+    if s:
+        return None, s.getDefaultFilter()
+    else:
+        return None, False
+
+
 @sio.on("snippet set filter")
 def snippetSetFilter(args):
     s = snippetServer.getSnippet(args["name"])

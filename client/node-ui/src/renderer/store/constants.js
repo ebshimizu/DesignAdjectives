@@ -76,6 +76,7 @@ export const MUTATION = {
   SET_MIX_B: 'Set Mix B Element',
   SET_MIX_RESULTS: 'Set Mix Results',
   CHANGE_PARAM_ACTIVE: 'Add/Remove Parameter from Active Set',
+  CHANGE_PARAMS_ACTIVE: 'Add/Remove Parameters from Active Set',
   SET_ALL_ACTIVE: 'Add All Parameters to Active Set',
   SET_NONE_ACTIVE: 'Remove All Parameters from Active Set',
   SET_INACTIVE_VISIBILITY: 'Change Visibility of Inactive Parameters',
@@ -123,7 +124,8 @@ export const ACTION = {
   MIX_AXES: 'Run Axis Mixer',
   SET_PRIMARY_SNIPPET: 'Set Primary Snippet',
   EVAL_THEN_EXECUTE: 'Evaluate Target Snippet then Execute Callback',
-  JITTER_SAMPLE: 'Run Jitter Sampler'
+  JITTER_SAMPLE: 'Run Jitter Sampler',
+  SELECT_DEFAULT_FILTER: 'Select Default Filter'
 };
 
 export const SERVER_STATUS = {

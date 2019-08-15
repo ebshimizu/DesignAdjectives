@@ -266,9 +266,9 @@ class Snippet:
 
         return pos
 
-    def setDefaultFilter(self):
+    def getDefaultFilter(self):
         # assumption: all data is the same vector length
-        self.filter = []
+        filter = []
 
         # for each parameter
         for i in range(0, len(self.data[0].data)):
@@ -283,4 +283,9 @@ class Snippet:
             allEq = reduce(lambda x, y: x and y, isEq)
 
             if not allEq:
-                self.filter.append(i)
+                filter.append(i)
+
+        return filter
+
+    def setDefaultFilter(self):
+        self.setParamFilter(self.getDefaultFilter())
