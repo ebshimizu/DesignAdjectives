@@ -560,6 +560,9 @@ export default {
       if (data.name in state.snippets) {
         Vue.set(state.snippets[data.name], 'filter', data.params);
       }
+    },
+    [MUTATION.SET_AUTO_FILTER_MODE](state, mode) {
+      state.autoFilterMode = mode;
     }
   },
   actions: {
@@ -915,6 +918,41 @@ export default {
       // updates the selected parameters based on the current auto-filter mode
       // these are all based on the current primary snippet (doesn't make much sense to
       // allow multiple filters at the same time at the moment).)
+      if (context.state.autoFilterMode === AUTO_FILTER_MODE.IMPACT) {
+        const params = await driver.identifyHighImpactParams(
+          context.getters.primarySnippet,
+          normalizeVector(
+            context.getters.paramsAsArray,
+            context.getters.params
+          ),
+          { magnitudeThreshold: 0.75 }
+        );
+
+        context.commit(MUTATION.SET_NONE_ACTIVE);
+        context.commit(MUTATION.CHANGE_PARAMS_ACTIVE, {
+          ids: params,
+          active: true
+        });
+      } else if (context.state.autoFilterMode === AUTO_FILTER_MODE.BEST) {
+        const params = await driver.identifyBestParams(
+          context.getters.primarySnippet,
+          normalizeVector(
+            context.getters.paramsAsArray,
+            context.getters.params
+          ),
+          { bestThreshold: 0.75 }
+        );
+
+        context.commit(MUTATION.SET_NONE_ACTIVE);
+        context.commit(MUTATION.CHANGE_PARAMS_ACTIVE, {
+          ids: params,
+          active: true
+        });
+      }
+    },
+    [ACTION.SET_AUTO_FILTER_MODE](context, mode) {
+      context.commit(MUTATION.SET_AUTO_FILTER_MODE, mode);
+      context.dispatch(ACTION.UPDATE_AUTO_FILTER_PARAMS);
     }
   }
 };

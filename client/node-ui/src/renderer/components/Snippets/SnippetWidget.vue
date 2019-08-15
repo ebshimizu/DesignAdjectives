@@ -24,8 +24,8 @@
           <menu-item menuStyle="compact" @click.native="selectAffected()">Select Affected</menu-item>
           <menu-item menuStyle="compact" @click.native="selectDefaultFilter()">Auto-Detect Used</menu-item>
           <menu-item menuStyle="compact" @click.native="setSelectedAsFilter()">Use Selected</menu-item>
-          <menu-item menuStyle="compact">Filter by Impact</menu-item>
-          <menu-item menuStyle="compact">Filter by Best</menu-item>
+          <menu-item menuStyle="compact" @click.native="filterByImpact()">Filter by Impact</menu-item>
+          <menu-item menuStyle="compact" @click.native="filterByBest()">Filter by Best</menu-item>
         </menu-group>
         <menu-group name="Debug" menuStyle="compact">
           <menu-item menuStyle="compact" @click.native="train()">Retrain</menu-item>
@@ -76,7 +76,8 @@ import {
   ACTION,
   MUTATION,
   THRESHOLD_MODE,
-  THRESHOLD_ACCEPT_MODE
+  THRESHOLD_ACCEPT_MODE,
+  AUTO_FILTER_MODE
 } from '../../store/constants';
 
 export default {
@@ -255,6 +256,17 @@ export default {
       } else {
         this.selectDefaultFilter();
       }
+    },
+    filterByImpact() {
+      this.$store.commit(MUTATION.SET_PRIMARY_SNIPPET, this.name);
+      this.$store.dispatch(
+        ACTION.SET_AUTO_FILTER_MODE,
+        AUTO_FILTER_MODE.IMPACT
+      );
+    },
+    filterByBest() {
+      this.$store.commit(MUTATION.SET_PRIMARY_SNIPPET, this.name);
+      this.$store.dispatch(ACTION.SET_AUTO_FILTER_MODE, AUTO_FILTER_MODE.BEST);
     }
   }
 };
