@@ -277,7 +277,12 @@ def reset(args):
 def snippetLoadKernel(args):
     s = snippetServer.getSnippet(args["name"])
     if s:
-        s.loadGPR(dsTypes.objToTraining(args["trainData"]), args["state"])
+        if "filter" in args:
+            s.loadGPR(
+                dsTypes.objToTraining(args["trainData"]), args["state"], args["filter"]
+            )
+        else:
+            s.loadGPR(dsTypes.objToTraining(args["trainData"]), args["state"])
         return None, True
     else:
         return None, False

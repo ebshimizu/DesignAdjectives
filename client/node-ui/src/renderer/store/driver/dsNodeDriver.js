@@ -424,10 +424,13 @@ export class DsDriver {
    * @param {Object} state Should have the same contents as the state field returned from the GPR training process
    * @see train
    */
-  async loadGPR(name, trainData, state) {
+  async loadGPR(name, trainData, state, filter = null) {
     if (typeof name !== 'string') throw new Error('Missing Snippet Name');
 
-    const res = await this.exec('snippet load gpr', { name, trainData, state });
+    const args = { name, trainData, state };
+    if (filter) args.filter = filter;
+
+    const res = await this.exec('snippet load gpr', args);
     return res;
   }
 

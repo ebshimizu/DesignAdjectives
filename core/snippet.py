@@ -107,13 +107,17 @@ class Snippet:
         return state
 
     # load data
-    def loadGPR(self, trainData, state):
+    def loadGPR(self, trainData, state, filter=None):
         # set the X and Y examples
         self.setData(trainData)
 
         # construct GPR
         # note: user should re-set filter manually after this completes (for now)
-        self.setDefaultFilter()
+        if filter is None:
+            self.setDefaultFilter()
+        else:
+            self.setParamFilter(filter)
+
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
         self.gpr = ExactGPModel(
             self.getXTrain(), self.getYTrain(), self.likelihood, len(self.filter)

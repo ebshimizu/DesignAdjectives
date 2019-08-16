@@ -84,16 +84,18 @@ async function loadSnippet(driver, context, name) {
     // ensure exists
     await driver.addSnippet(name);
 
+    let filter = null;
+    // load filter, if it exists
+    if (context.state.snippets[name].filter.length > 0)
+      filter = context.state.snippets[name].filter;
+
     // load gpr data
     await driver.loadGPR(
       name,
       normalizeData(context.state.snippets[name].data, context.getters.params),
-      context.state.snippets[name].trainData.state
+      context.state.snippets[name].trainData.state,
+      filter
     );
-
-    // load filter, if it exists
-    if (context.state.snippets[name].filter.length > 0)
-      await driver.setProp(name, 'filter', context.state.snippets[name].filter);
   } catch (e) {
     console.log(e);
   }
@@ -864,7 +866,7 @@ export default {
     },
     [ACTION.SET_PRIMARY_SNIPPET](context, name) {
       context.commit(MUTATION.SET_PRIMARY_SNIPPET, name);
-      context.dispatch(ACTION.EVAL_CURRENT);
+      context.dispatch(ACTION.EVAL_CURRENT, context.getters.paramsAsArray);
       context.dispatch(ACTION.LOAD_PARAM_COLOR_DATA, name);
     },
     async [ACTION.JITTER_SAMPLE](context, args) {
