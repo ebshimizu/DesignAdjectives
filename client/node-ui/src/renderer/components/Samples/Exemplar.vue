@@ -34,11 +34,20 @@
         <canvas ref="canvas" class="exemplarCanvas" />
       </div>
       <div
-        class="flex flex-row text-gray-200 font-mono text-sm px-2 py-1 border-t border-gray-200 justify-between"
+        class="flex flex-row text-gray-200 font-mono text-sm px-2 py-1 border-t border-gray-200 justify-beteween content-center items-center"
         :class="[scoreClass]"
       >
-        <div class="flex-auto">ID: {{ id }}</div>
-        <div class="flex-no-grow">{{ score }}</div>
+        <div class="flex-shrink text-xs">ID: {{ id }}</div>
+        <div class="w-1/2 pl-2 flex-grow text-xs">
+          <input
+            v-model="localScore"
+            type="number"
+            min="0"
+            max="1"
+            step="0.01"
+            class="scoreInput w-full text-right rounded shadow"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -46,16 +55,27 @@
 
 <script>
 import { ACTION, MUTATION } from '../../store/constants';
+const _ = require('lodash');
 
 export default {
   name: 'exemplar',
   data() {
     return {
       retrievalError: false,
-      showActions: false
+      showActions: false,
+      localScore: 0
     };
   },
+  created: function() {
+    this.localScore = this.data.y;
+    this.debounceSetScore = _.debounce(this.setScore, 800);
+  },
   props: ['snippetName', 'id'],
+  watch: {
+    localScore: function(newVal, oldVal) {
+      this.debounceSetScore();
+    }
+  },
   computed: {
     data() {
       if (
@@ -71,14 +91,18 @@ export default {
         return { x: [], y: NaN };
       }
     },
-    score() {
-      return this.data.y;
-    },
     scoreClass() {
-      return this.score > 0 ? 'bg-green-900' : 'bg-red-900';
+      return parseFloat(this.localScore) > 0.5 ? 'bg-green-900' : 'bg-red-900';
     }
   },
   methods: {
+    setScore() {
+      this.$store.dispatch(ACTION.SET_EXEMPLAR_SCORE, {
+        name: this.snippetName,
+        id: this.id,
+        score: parseFloat(this.localScore)
+      });
+    },
     removeExample() {
       this.$store.dispatch(ACTION.DELETE_EXAMPLE, {
         name: this.snippetName,
@@ -126,5 +150,9 @@ export default {
 
 .overlay {
   background-color: rgba(0, 0, 0, 0.8);
+}
+
+.scoreInput {
+  background-color: rgba(0, 0, 0, 0.3);
 }
 </style>

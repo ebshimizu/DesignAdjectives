@@ -111,12 +111,14 @@ export default {
       }
 
       // currently sorts by score
-      const self = this;
-      return dup.sort(function(a, b) {
-        if (self.exemplars[a].y < self.exemplars[b].y) return 1;
-        if (self.exemplars[a].y > self.exemplars[b].y) return -1;
-        return 0;
-      });
+      // const self = this;
+      return dup;
+      // temporary disable sort
+      // return dup.sort(function(a, b) {
+      //   if (self.exemplars[a].y < self.exemplars[b].y) return 1;
+      //   if (self.exemplars[a].y > self.exemplars[b].y) return -1;
+      //   return 0;
+      // });
     },
     isTraining() {
       return this.$store.getters.training;

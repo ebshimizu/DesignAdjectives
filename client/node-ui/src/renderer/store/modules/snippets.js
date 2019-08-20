@@ -565,6 +565,10 @@ export default {
     },
     [MUTATION.SET_AUTO_FILTER_MODE](state, mode) {
       state.autoFilterMode = mode;
+    },
+    [MUTATION.SET_EXEMPLAR_SCORE](state, data) {
+      state.snippets[data.name].data[data.id].y = data.score;
+      state.snippets[data.name].trained = false;
     }
   },
   actions: {
@@ -955,6 +959,11 @@ export default {
     [ACTION.SET_AUTO_FILTER_MODE](context, mode) {
       context.commit(MUTATION.SET_AUTO_FILTER_MODE, mode);
       context.dispatch(ACTION.UPDATE_AUTO_FILTER_PARAMS);
+    },
+    [ACTION.SET_EXEMPLAR_SCORE](context, data) {
+      context.commit(MUTATION.SET_EXEMPLAR_SCORE, data);
+      context.commit(MUTATION.CACHE_SNIPPETS, context.state.cacheKey);
+      context.dispatch(ACTION.TRAIN, data.name);
     }
   }
 };

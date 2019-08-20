@@ -106,7 +106,8 @@ export const MUTATION = {
   SET_SAMPLER_OPTION: 'Set Sampler Option',
   SET_ALL_SAMPLER_OPTIONS: 'Set All Sampler Options',
   SET_PARAMS_AS_FILTER: 'Set Params As Filter',
-  SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode'
+  SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode',
+  SET_EXEMPLAR_SCORE: 'Set Exemplar Score'
 };
 
 export const ACTION = {
@@ -142,5 +143,6 @@ export const ACTION = {
   SELECT_DEFAULT_FILTER: 'Select Default Filter',
   SET_SELECTED_AS_FILTER: 'Set Selected Parameters as Filter',
   UPDATE_AUTO_FILTER_PARAMS: 'Update Auto-Filtered Params',
-  SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode'
+  SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode',
+  SET_EXEMPLAR_SCORE: 'Set Exemplar Score'
 };

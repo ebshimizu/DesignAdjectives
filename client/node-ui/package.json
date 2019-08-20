@@ -61,6 +61,7 @@
     "chart.js": "^2.8.0",
     "electron-settings": "^3.2.0",
     "fs-extra": "^7.0.1",
+    "lodash": "^4.17.15",
     "socket.io-client": "^2.2.0",
     "three": "^0.103.0",
     "v-click-outside": "^2.1.3",
