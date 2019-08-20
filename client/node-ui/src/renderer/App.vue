@@ -26,7 +26,8 @@
         </div>
       </div>
       <div class="h-full w-1/5 flex-none overflow-hidden">
-        <snippet-widget-panel />
+        <snippet-widget-panel v-show="!this.$store.getters.extentsVisible" />
+        <parameter-extents v-show="this.$store.getters.extentsVisible" />
       </div>
       <div class="h-full w-1/5 flex-none overflow-hidden">
         <parameter-panel></parameter-panel>
@@ -34,12 +35,6 @@
     </div>
     <div class="flex-none w-full h-6 border-t border-gray-200 bg-gray-900">
       <status-bar></status-bar>
-    </div>
-    <div
-      class="param-extents-modal overflow-auto h-full absolute z-10"
-      v-show="this.$store.getters.extentsVisible"
-    >
-      <parameter-extents></parameter-extents>
     </div>
   </div>
 </template>
