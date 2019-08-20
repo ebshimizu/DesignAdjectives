@@ -2,6 +2,13 @@
   <div
     class="h-full w-full flex flex-col border-l border-gray-200 text-gray-200 overflow-hidden relative"
   >
+    <div
+      class="w-full text-center text-xs font-mono border-b flex flex-row"
+      v-show="showRemoveButton"
+    >
+      <div class="w-full p-1">{{ filterModeText }}</div>
+      <div class="bg-red-800 p-1 cursor-pointer hover:bg-red-700" @click="removeFilterMode">Stop</div>
+    </div>
     <div class="param-controls overflow-auto overflow-x-hidden flex flex-col-reverse">
       <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
     </div>
@@ -81,7 +88,7 @@ import SnippetsPanel from '../Snippets/SnippetsPanel';
 import Tabs from '../Tabs/Tabs';
 import Tab from '../Tabs/Tab';
 
-import { MUTATION, ACTION } from '../../store/constants';
+import { MUTATION, ACTION, AUTO_FILTER_MODE } from '../../store/constants';
 
 export default {
   name: 'parameter-controls',
@@ -120,6 +127,20 @@ export default {
       set(val) {
         this.$store.dispatch(ACTION.SET_PRIMARY_SNIPPET, val);
       }
+    },
+    filterModeText() {
+      if (this.$store.state.snippets.autoFilterMode === AUTO_FILTER_MODE.IMPACT)
+        return `Selecting Impactful Parames for ${this.primarySnippet}`;
+      else if (
+        this.$store.state.snippets.autoFilterMode === AUTO_FILTER_MODE.BEST
+      )
+        return `Selecting High Scoring Params for ${this.primarySnippet}`;
+      else return 'Showing All Params';
+    },
+    showRemoveButton() {
+      return (
+        this.$store.state.snippets.autoFilterMode !== AUTO_FILTER_MODE.NO_FILTER
+      );
     }
   },
   methods: {
@@ -169,6 +190,12 @@ export default {
           params: this.$store.getters.activeParamIDs
         });
       }
+    },
+    removeFilterMode() {
+      this.$store.dispatch(
+        ACTION.SET_AUTO_FILTER_MODE,
+        AUTO_FILTER_MODE.NO_FILTER
+      );
     }
   }
 };
