@@ -128,7 +128,7 @@
       </div>
     </div>
     <div class="flex flex-row w-full h-full flex-wrap overflow-auto items-start">
-      <sample v-for="sample in samples" :key="sample.idx" v-bind:sample="sample"></sample>
+      <sample v-for="sample in samples" :key="sample.idx" v-bind:sample="sample" :width="'w-1/5'"></sample>
     </div>
   </div>
 </template>
