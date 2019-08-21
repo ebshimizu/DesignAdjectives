@@ -38,6 +38,7 @@ class ExactGPModel(gpytorch.models.ExactGP):
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
+        covar_x = covar_x + torch.eye(covar_x.size(0), covar_x.size(1)) * 1e-4
         return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
@@ -66,7 +67,8 @@ class Snippet:
     def applyFilter(self, data):
         # return new set of vectors with filtered out values
         return [
-            list(map(lambda x: data[i][x], self.filter)) for i in range(0, len(data))
+            list(map(lambda x: float(data[i][x]), self.filter))
+            for i in range(0, len(data))
         ]
 
     def setData(self, items):
