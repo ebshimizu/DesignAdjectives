@@ -14,7 +14,7 @@ from threading import Thread, Event
 import logging
 
 # additional levels
-SAMPLE_INFO_LEVEL = 32
+SAMPLE_INFO_LEVEL = 33
 logging.addLevelName(SAMPLE_INFO_LEVEL, "SAMPLE")
 
 
@@ -25,7 +25,7 @@ def sample(self, message, *args, **kws):
 
 logging.Logger.sample = sample
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,
     format="[%(levelname)-5.5s] %(asctime)s [%(threadName)-12.12s]  %(message)s",
     handlers=[logging.FileHandler("server.log"), logging.StreamHandler()],
 )

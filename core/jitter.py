@@ -21,7 +21,7 @@ def jitterLog(self, message, *args, **kws):
 
 logging.Logger.jitter = jitterLog
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,
     format="[%(levelname)-5.5s] %(asctime)s [%(threadName)-12.12s]  %(message)s",
     handlers=[logging.FileHandler("server.log"), logging.StreamHandler()],
 )
