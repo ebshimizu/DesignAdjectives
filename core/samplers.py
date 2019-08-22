@@ -3,12 +3,18 @@
 # (GPR estimates f | X and f* | f, X, X* and i want to sample X | f)
 
 from dsTypes import *
-import random
+
 import torch
 import pyro
 import pyro.distributions as dist
+
+import numpy as np
+from scipy.stats import norm
+from scipy.optimize import minimize
+
 from functools import reduce
 from threading import Thread, Event
+import random
 
 # logging setup
 import logging
@@ -607,3 +613,79 @@ class Metropolis(SamplerThread):
             self.final(accept, self.name)
 
         return accept
+
+
+# the bootstrapper sampler attempts to determine which points should
+# be sampled next in order to gain maximal info about the expressed preferences
+# It requires some extra annotations on the samples to be most effective, may need to
+# go back and re-write them
+# Borrowed primarily from: http://krasserm.github.io/2018/03/21/bayesian-optimization/
+class Bootstrapper(SamplerThread):
+    def __init__(self, f, x0, name="", n=10, cb=None, final=None):
+        super().__init__()
+        self.f = f
+        self.x0 = x0
+        self.n = n
+        self.cb = cb
+        self.name = name
+        self.final = final
+
+    def expectedImprovement(self, X, gpr, xi=0.01):
+        # untested, need to check types, original written assuming numpy
+        XSample = gpr.getXTrain()
+
+        pred = gpr.predict(X)
+        mean = pred["mean"]
+        sigma = pred["cov"]
+        sampleMean = gpr.predict(XSample)["mean"]
+
+        meanSampleOpt = torch.max(sampleMean)
+
+        with np.errstate(divide="warn"):
+            imp = mean - meanSampleOpt - xi
+            Z = imp / sigma
+            ei = imp * norm.cdf(Z) + sigma * norm.pdf(Z)
+            ei[sigma == 0.0] = 0.0
+
+        return ei
+
+    def proposeLocation(self, acquisition, gpr, bounds, restarts=5):
+        # again, needs tests for types, may need torch -> numpy conversion
+        XSample = gpr.getXTrain().numpy()
+        dim = XSample.shape[1]
+        minVal = 1
+        minX = None
+
+        def minObj(X):
+            return -acquisition(X.reshape(-1, dim), gpr)
+
+        for x0 in np.random.uniform(bounds[:, 0], bounds[:, 1], size=(n_restarts, dim)):
+            res = minimize(minObj, x0=x0, bounds=bounds, method="L-BFGS-B")
+            if res.fun < minVal:
+                minVal = res.fun[0]
+                minX = res.x
+
+        return minX.reshape(-1, 1)
+
+    def selectParams(self, gpr):
+        # returns a set of parameter indices, weighted by how often they appeared in the
+        # training data
+        dim = len(gpr.x0)
+        frequencies = [1] * dim
+
+        for pt in gpr.data:
+            for idx in pt.affected:
+                frequencies[idx] = frequencies[idx] + 1
+
+        # select dimensions relative to frequency max + 1
+        maxFreq = max(frequencies) + 1
+        selected = []
+        for i in range(0, dim):
+            if random.random() < frequencies[i] / maxFreq:
+                selected.append(i)
+
+        return selected
+
+    def run(self):
+        # initialize
+        return 0

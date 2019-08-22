@@ -6,12 +6,15 @@ class AnnotatedParam:
 
 
 class Training:
-    def __init__(self, data, score):
+    def __init__(self, data, score, affected=[]):
         self.data = data
         self.score = score
+        self.affected = affected
 
     def __str__(self):
-        return "X: {0}, y: {1}".format(self.data, self.score)
+        return "X: {0}, y: {1}, affected: {2}".format(
+            self.data, self.score, self.affected
+        )
 
 
 class DSStatus:
