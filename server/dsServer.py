@@ -248,6 +248,27 @@ def snippetSample(args):
         return "sampler is already running", False
 
 
+@sio.on("snippet refine")
+def snippetRefine(args):
+    global currentSampler
+    if currentSampler is None or (not currentSampler.is_alive()):
+        s = snippetServer.getSnippet(args["name"])
+        if s:
+            currentSampler = samplers.Bootstrapper(
+                s,
+                args["x0"],
+                cb=lambda data: sampleSingleResult(data, args["name"]),
+                final=sampleFinal,
+                **args["data"]
+            )
+            currentSampler.start()
+            return None, True
+        else:
+            return None, False
+    else:
+        return "sampler is already running", False
+
+
 @sio.on("stop sampler")
 def stopSampler(args):
     global currentSampler

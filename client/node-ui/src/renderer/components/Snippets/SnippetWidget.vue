@@ -19,6 +19,7 @@
           <menu-item menuStyle="compact" @click.native="sampleAway()">Away</menu-item>
           <menu-item menuStyle="compact" @click.native="sampleNearby()">Nearby</menu-item>
           <menu-item menuStyle="compact" @click.native="sampleAxis()">Axis</menu-item>
+          <menu-item menuStyle="compact" @click.native="refine()">Refine</menu-item>
         </menu-group>
         <menu-group name="Params" menuStyle="compact">
           <menu-item menuStyle="compact" @click.native="selectAffected()">Select Affected</menu-item>
@@ -139,7 +140,7 @@ export default {
 
       this.$store.dispatch(ACTION.ADD_EXAMPLE, {
         name: this.name,
-        point: { x, y }
+        point: { x, y, affected: [] }
       });
     },
     train() {
@@ -231,14 +232,19 @@ export default {
               threshold: 0,
               thresholdEvalMode: THRESHOLD_ACCEPT_MODE.GREATER,
               scoreDelta: 0.025,
-              n:
-                this.$store.state.snippets.samplerSettings['n'] > 20
-                  ? this.$store.state.snippets.samplerSettings['n']
-                  : 20
+              n: Math.max(this.$store.state.snippets.samplerSettings.n, 20)
             });
             store.dispatch(ACTION.START_SAMPLER, { name });
           }
         });
+      }
+    },
+    refine() {
+      if (this.$store.getters.canSample(this.name)) {
+        this.$store.commit(MUTATION.SET_ALL_SAMPLER_OPTIONS, {
+          n: Math.max(this.$store.state.snippets.samplerSettings.n, 20)
+        });
+        this.$store.dispatch(ACTION.REFINE_SNIPPET, name);
       }
     },
     selectDefaultFilter() {

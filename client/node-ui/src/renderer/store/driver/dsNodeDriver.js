@@ -345,6 +345,20 @@ export class DsDriver {
   }
 
   /**
+   * Starts a refinement sampler process. Uses the Bootstrapper sampler on the server.
+   * @param {string} name Snippet name
+   * @param {number[]} x0 Starting parameter vector
+   * @param {Object} params Bootstrap sampler parameters
+   * @param {?number} params.n Number of samples to return
+   */
+  async refine(name, x0, params) {
+    if (typeof name !== 'string') throw new Error('Missing Snippet Name');
+
+    const res = await this.exec('snippet refine', { name, x0, data: params });
+    return res;
+  }
+
+  /**
    * Retrieves the computed default filter for the given snippet.
    * This might not match the currently set filter.
    * @param {string} name Snippet Name

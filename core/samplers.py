@@ -659,7 +659,7 @@ class Bootstrapper(SamplerThread):
         def minObj(X):
             return -acquisition(X.reshape(-1, dim), gpr)
 
-        for x0 in np.random.uniform(bounds[:, 0], bounds[:, 1], size=(n_restarts, dim)):
+        for x0 in np.random.uniform(bounds[:, 0], bounds[:, 1], size=(restarts, dim)):
             res = minimize(minObj, x0=x0, bounds=bounds, method="L-BFGS-B")
             if res.fun < minVal:
                 minVal = res.fun[0]
@@ -667,13 +667,13 @@ class Bootstrapper(SamplerThread):
 
         return minX.reshape(-1, 1)
 
-    def selectParams(self, gpr):
+    def selectParams(self):
         # returns a set of parameter indices, weighted by how often they appeared in the
         # training data
-        dim = len(gpr.x0)
+        dim = len(self.f.x0)
         frequencies = [1] * dim
 
-        for pt in gpr.data:
+        for pt in self.f.data:
             for idx in pt.affected:
                 frequencies[idx] = frequencies[idx] + 1
 
@@ -687,5 +687,19 @@ class Bootstrapper(SamplerThread):
         return selected
 
     def run(self):
-        # initialize
+        # the ideal cycle for this is as follows:
+        # - Pick a random subset of parameters
+        # - Within that subset, pick the location that should give maximal information
+        # - Return that sample, repeat
+        #
+        # Samples returned from this function must include information about which
+        # parameters were included in a subset.
+        for i in range(0, self.n):
+            # pick subset
+            subset = self.selectParams()
+
+            # propose a location
+            proposed = self.proposeLocation(self.expectedImprovement, self.f, [0, 1])
+
+            # return proposed, repeat till done
         return 0

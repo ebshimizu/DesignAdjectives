@@ -28,5 +28,8 @@ class DSStatus:
 
 # assumes items have an x (vector) and y value
 def objToTraining(items):
-    xs = [Training(i["x"], i["y"]) for i in items]
+    xs = [
+        Training(i["x"], i["y"], i["affected"] if "affected" in i else [])
+        for i in items
+    ]
     return xs

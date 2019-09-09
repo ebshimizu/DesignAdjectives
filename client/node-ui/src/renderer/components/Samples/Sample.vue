@@ -135,6 +135,9 @@ export default {
     x() {
       return this.sample.x;
     },
+    affected() {
+      return this.sample.affected || [];
+    },
     widthClass() {
       if (this.width) return this.width;
 
@@ -167,14 +170,14 @@ export default {
     addPositive(snippet) {
       this.$store.dispatch(ACTION.ADD_EXAMPLE, {
         name: snippet,
-        point: { x: this.x, y: 1 }
+        point: { x: this.x, y: 1, affected: this.affected }
       });
       this.hideMenus();
     },
     addNegative(snippet) {
       this.$store.dispatch(ACTION.ADD_EXAMPLE, {
         name: snippet,
-        point: { x: this.x, y: 0 }
+        point: { x: this.x, y: 0, affected: this.affected }
       });
       this.hideMenus();
     },

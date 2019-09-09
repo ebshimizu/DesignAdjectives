@@ -710,6 +710,21 @@ export default {
         console.log(e);
       }
     },
+    async [ACTION.REFINE_SNIPPET](context, name) {
+      context.commit(MUTATION.SET_SERVER_STATUS_SAMPLE);
+      context.commit(MUTATION.CLEAR_SAMPLES);
+
+      // current normalized vector start state
+      const current = context.getters.paramsAsArray;
+      const x0 = normalizeVector(current, context.getters.params);
+
+      // only send relevant params
+      const params = {
+        n: context.state.samplerSettings.n
+      };
+
+      await driver.refine(name, x0, params);
+    },
     async [ACTION.STOP_SAMPLER](context) {
       try {
         await driver.stopSampler();
