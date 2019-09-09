@@ -670,7 +670,7 @@ class Bootstrapper(SamplerThread):
     def selectParams(self):
         # returns a set of parameter indices, weighted by how often they appeared in the
         # training data
-        dim = len(self.f.x0)
+        dim = len(self.x0)
         frequencies = [1] * dim
 
         for pt in self.f.data:
@@ -699,6 +699,8 @@ class Bootstrapper(SamplerThread):
             subset = self.selectParams()
 
             # propose a location
+            # note: if this is a snippet with nothing currently in it, we should jitter
+            # the param vector around x0 to give a starting point
             proposed = self.proposeLocation(self.expectedImprovement, self.f, [0, 1])
 
             # return proposed, repeat till done

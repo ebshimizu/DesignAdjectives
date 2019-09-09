@@ -711,6 +711,9 @@ export default {
       }
     },
     async [ACTION.REFINE_SNIPPET](context, name) {
+      // if i implemented this right, the snippet data is sync'd to the server
+      // and re-trained every time the exemplar list changes,
+      // so a sync step shouldn't be strictly necessary here
       context.commit(MUTATION.SET_SERVER_STATUS_SAMPLE);
       context.commit(MUTATION.CLEAR_SAMPLES);
 
@@ -724,6 +727,8 @@ export default {
       };
 
       await driver.refine(name, x0, params);
+
+      context.commit(MUTATION.SET_SERVER_STATUS_IDLE);
     },
     async [ACTION.STOP_SAMPLER](context) {
       try {
@@ -746,10 +751,14 @@ export default {
       driver.setParamInfo(context.getters.params);
 
       // call load snippet on all trained snippets, assumes connected
+      // and for those untrained, create empty snippet objects
       if (context.state.serverOnline) {
         for (const s of Object.keys(context.state.snippets)) {
-          if (context.state.snippets[s].trained)
+          if (context.state.snippets[s].trained) {
             context.dispatch(ACTION.LOAD_SNIPPET, s);
+          } else {
+            driver.addSnippet(s);
+          }
         }
       }
     },

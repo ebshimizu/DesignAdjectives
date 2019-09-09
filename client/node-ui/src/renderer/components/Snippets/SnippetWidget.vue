@@ -240,11 +240,11 @@ export default {
       }
     },
     refine() {
-      if (this.$store.getters.canSample(this.name)) {
+      if (this.$store.getters.idle) {
         this.$store.commit(MUTATION.SET_ALL_SAMPLER_OPTIONS, {
           n: Math.max(this.$store.state.snippets.samplerSettings.n, 20)
         });
-        this.$store.dispatch(ACTION.REFINE_SNIPPET, name);
+        this.$store.dispatch(ACTION.REFINE_SNIPPET, this.name);
       }
     },
     selectDefaultFilter() {
