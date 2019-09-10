@@ -630,34 +630,43 @@ class Bootstrapper(SamplerThread):
         self.name = name
         self.final = final
 
-    def expectedImprovement(self, X, gpr, xi=0.01):
+    def expectedImprovement(self, X, xi=0.01):
         # untested, need to check types, original written assuming numpy
-        XSample = gpr.getXTrain()
-
-        pred = gpr.predict(X)
+        # in this function, called from minObj in proposeLocation, it is assumed
+        # that the vectors are the proper length (all params)
+        pred = self.f.predict(X)
         mean = pred["mean"]
         sigma = pred["cov"]
-        sampleMean = gpr.predict(XSample)["mean"]
-
-        meanSampleOpt = torch.max(sampleMean)
 
         with np.errstate(divide="warn"):
-            imp = mean - meanSampleOpt - xi
+            # meanSampleOpt is cached at start of sampler (invariant during run, gpr does not change)
+            imp = mean - self.meanSampleOpt - xi
             Z = imp / sigma
             ei = imp * norm.cdf(Z) + sigma * norm.pdf(Z)
             ei[sigma == 0.0] = 0.0
 
         return ei
 
-    def proposeLocation(self, acquisition, gpr, bounds, restarts=5):
+    def proposeLocation(self, subset, bounds=[0, 1], restarts=5):
         # again, needs tests for types, may need torch -> numpy conversion
-        XSample = gpr.getXTrain().numpy()
-        dim = XSample.shape[1]
+        # the gpr has been re-trained to include all parameters in this search
+        # in this case, I want to limit which parameters get used in the optimization,
+        # so we'll retrieve the data and use our own subset thing to re-filter
+        # the data
+        acquisition = self.expectedImprovement
+        dim = len(subset)
         minVal = 1
         minX = None
 
+        # assumes X is a subset limited vector
         def minObj(X):
-            return -acquisition(X.reshape(-1, dim), gpr)
+            # replace x0 subset indices with values from x
+            # duplicate
+            xp = list(self.x0)
+            for i in range(0, dim):
+                xp[subset[i]] = X[i]
+
+            return -acquisition(xp)
 
         for x0 in np.random.uniform(bounds[:, 0], bounds[:, 1], size=(restarts, dim)):
             res = minimize(minObj, x0=x0, bounds=bounds, method="L-BFGS-B")
@@ -687,21 +696,87 @@ class Bootstrapper(SamplerThread):
         return selected
 
     def run(self):
+        # problem: the gpr may be trained only on a subset of params, which might not
+        # be the right subset to train on. the gpr should maybe be retrained against
+        # all parameters, and then optimizations should proceed based on that
+        # there could maybe be a mode that just uses the existing parameter set, but for
+        # now I'll assume this is also about parameter exploration
+        logger.sample(
+            "[Bootstrap] Re-training snippet {0} on all parameters".format(self.name)
+        )
+        self.f.train(customFilter=list(range(0, len(self.x0))))
+        logger.sample("[Bootstrap] Re-training complete. Sampler starting.")
+
+        # precompute some things
+        logger.sample("[Bootstrap] Computing current max training data value")
+
+        XSample = self.f.getXTrain()
+        sampleMean = self.f.predict(XSample)["mean"]
+        self.meanSampleOpt = torch.max(sampleMean)
+
+        logger.sample(
+            "[Bootstrap] Maximum sample mean found: {0}".format(self.meanSampleOpt)
+        )
+
         # the ideal cycle for this is as follows:
+        # - if a preset filter exists, get the best sample from that config of params
+        # first subset, the default filter (still recoverable from the sampler)
+        i = 0
+        logger.sample("[Bootstrap] Finding maximal info point for default subset")
+        firstSubset = self.f.getDefaultFilter()
+        p1 = self.proposeLocation(firstSubset)
+        fp1 = self.f.predict(p1)
+        if self.cb:
+            self.cb(
+                {
+                    "x": p1.tolist(),
+                    "mean": fp1["mean"],
+                    "cov": fp1["cov"],
+                    "idx": i,
+                    "affected": firstSubset,
+                }
+            )
+        logger.sample(
+            "[Bootstrap] {0}/{1}\tFound mean {2}, cov: {3}, affected: {4}".format(
+                i, self.n, fp1["mean"], fp1["cov"], subset
+            )
+        )
+
+        # With the remaining required samples:
         # - Pick a random subset of parameters
         # - Within that subset, pick the location that should give maximal information
         # - Return that sample, repeat
         #
         # Samples returned from this function must include information about which
         # parameters were included in a subset.
-        for i in range(0, self.n):
+        while i < self.n:
             # pick subset
             subset = self.selectParams()
 
             # propose a location
             # note: if this is a snippet with nothing currently in it, we should jitter
             # the param vector around x0 to give a starting point
-            proposed = self.proposeLocation(self.expectedImprovement, self.f, [0, 1])
+            # for now: assume this is an initialized snippet
+            proposed = self.proposeLocation(subset)
+
+            fp = self.f.predict(proposed)
+            if self.cb:
+                self.cb(
+                    {
+                        "x": proposed.tolist(),
+                        "mean": fp["mean"],
+                        "cov": fp["cov"],
+                        "idx": i,
+                        "affected": subset,
+                    }
+                )
+
+            logger.sample(
+                "[Bootstrap] {0}/{1}\tFound sample mean {2}, cov: {3}, affected: {4}".format(
+                    i, self.n, fp["mean"], fp["cov"], subset
+                )
+            )
 
             # return proposed, repeat till done
+            i = i + 1
         return 0
