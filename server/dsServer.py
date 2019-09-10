@@ -257,6 +257,7 @@ def snippetRefine(args):
             currentSampler = samplers.Bootstrapper(
                 s,
                 args["x0"],
+                name=args["name"],
                 cb=lambda data: sampleSingleResult(data, args["name"]),
                 final=sampleFinal,
                 **args["data"]

@@ -630,11 +630,18 @@ class Bootstrapper(SamplerThread):
         self.name = name
         self.final = final
 
+    def unfilter(self, subset, x):
+        xp = list(self.x0)
+        for i in range(0, len(subset)):
+            xp[subset[i]] = x[i]
+
+        return xp
+
     def expectedImprovement(self, X, xi=0.01):
         # untested, need to check types, original written assuming numpy
         # in this function, called from minObj in proposeLocation, it is assumed
         # that the vectors are the proper length (all params)
-        pred = self.f.predict(X)
+        pred = self.f.predictOne(X)
         mean = pred["mean"]
         sigma = pred["cov"]
 
@@ -643,7 +650,9 @@ class Bootstrapper(SamplerThread):
             imp = mean - self.meanSampleOpt - xi
             Z = imp / sigma
             ei = imp * norm.cdf(Z) + sigma * norm.pdf(Z)
-            ei[sigma == 0.0] = 0.0
+
+            if sigma == 0.0:
+                ei = 0.0
 
         return ei
 
@@ -655,6 +664,7 @@ class Bootstrapper(SamplerThread):
         # the data
         acquisition = self.expectedImprovement
         dim = len(subset)
+        bounds = np.array([[0, 1]] * dim)
         minVal = 1
         minX = None
 
@@ -662,35 +672,47 @@ class Bootstrapper(SamplerThread):
         def minObj(X):
             # replace x0 subset indices with values from x
             # duplicate
-            xp = list(self.x0)
-            for i in range(0, dim):
-                xp[subset[i]] = X[i]
-
+            xp = self.unfilter(subset, X)
             return -acquisition(xp)
 
         for x0 in np.random.uniform(bounds[:, 0], bounds[:, 1], size=(restarts, dim)):
             res = minimize(minObj, x0=x0, bounds=bounds, method="L-BFGS-B")
             if res.fun < minVal:
-                minVal = res.fun[0]
+                minVal = res.fun
                 minX = res.x
 
-        return minX.reshape(-1, 1)
+        return minX.reshape(-1).tolist()
+
+    def initFrequencyTable(self):
+        logger.sample("[Bootstrap] Initializing parameter frequency table")
+
+        dim = len(self.x0)
+        defaultFilter = self.f.getDefaultFilter()
+        self.frequencies = [1] * dim
+
+        for pt in self.f.data:
+            if len(pt.affected) > 0:
+                for idx in pt.affected:
+                    self.frequencies[idx] = self.frequencies[idx] + 1
+            else:
+                for idx in defaultFilter:
+                    self.frequencies[idx] = self.frequencies[idx] + 1
+
+        # select dimensions relative to frequency max + 1
+        self.maxFreq = max(self.frequencies) + 1
+
+        logger.sample(
+            "[Bootstrap] Sampler frequency table initialized, max {0}: {1}".format(
+                self.maxFreq - 1, self.frequencies
+            )
+        )
 
     def selectParams(self):
         # returns a set of parameter indices, weighted by how often they appeared in the
         # training data
-        dim = len(self.x0)
-        frequencies = [1] * dim
-
-        for pt in self.f.data:
-            for idx in pt.affected:
-                frequencies[idx] = frequencies[idx] + 1
-
-        # select dimensions relative to frequency max + 1
-        maxFreq = max(frequencies) + 1
         selected = []
-        for i in range(0, dim):
-            if random.random() < frequencies[i] / maxFreq:
+        for i in range(0, len(self.x0)):
+            if random.random() < self.frequencies[i] / self.maxFreq:
                 selected.append(i)
 
         return selected
@@ -712,11 +734,13 @@ class Bootstrapper(SamplerThread):
 
         XSample = self.f.getXTrain()
         sampleMean = self.f.predict(XSample)["mean"]
-        self.meanSampleOpt = torch.max(sampleMean)
+        self.meanSampleOpt = torch.max(sampleMean).item()
 
         logger.sample(
             "[Bootstrap] Maximum sample mean found: {0}".format(self.meanSampleOpt)
         )
+
+        self.initFrequencyTable()
 
         # the ideal cycle for this is as follows:
         # - if a preset filter exists, get the best sample from that config of params
@@ -725,11 +749,11 @@ class Bootstrapper(SamplerThread):
         logger.sample("[Bootstrap] Finding maximal info point for default subset")
         firstSubset = self.f.getDefaultFilter()
         p1 = self.proposeLocation(firstSubset)
-        fp1 = self.f.predict(p1)
+        fp1 = self.f.predictOne(self.unfilter(firstSubset, p1))
         if self.cb:
             self.cb(
                 {
-                    "x": p1.tolist(),
+                    "x": self.unfilter(firstSubset, p1),
                     "mean": fp1["mean"],
                     "cov": fp1["cov"],
                     "idx": i,
@@ -738,9 +762,11 @@ class Bootstrapper(SamplerThread):
             )
         logger.sample(
             "[Bootstrap] {0}/{1}\tFound mean {2}, cov: {3}, affected: {4}".format(
-                i, self.n, fp1["mean"], fp1["cov"], subset
+                i, self.n, fp1["mean"], fp1["cov"], firstSubset
             )
         )
+
+        i = i + 1
 
         # With the remaining required samples:
         # - Pick a random subset of parameters
@@ -759,11 +785,11 @@ class Bootstrapper(SamplerThread):
             # for now: assume this is an initialized snippet
             proposed = self.proposeLocation(subset)
 
-            fp = self.f.predict(proposed)
+            fp = self.f.predictOne(self.unfilter(subset, proposed))
             if self.cb:
                 self.cb(
                     {
-                        "x": proposed.tolist(),
+                        "x": self.unfilter(subset, proposed).tolist(),
                         "mean": fp["mean"],
                         "cov": fp["cov"],
                         "idx": i,

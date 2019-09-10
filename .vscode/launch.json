@@ -26,6 +26,14 @@
       "cwd": "${workspaceFolder}/core"
     },
     {
+      "name": "Python: server",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/dsServer.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/server"
+    },
+    {
       "name": "Python: Remote Attach",
       "type": "python",
       "request": "attach",
