@@ -681,6 +681,7 @@ class Bootstrapper(SamplerThread):
                 minVal = res.fun
                 minX = res.x
 
+        logger.sample("[Bootstrap] impovement {0}".format(-minVal))
         return minX.reshape(-1).tolist()
 
     def initFrequencyTable(self):
@@ -789,7 +790,7 @@ class Bootstrapper(SamplerThread):
             if self.cb:
                 self.cb(
                     {
-                        "x": self.unfilter(subset, proposed).tolist(),
+                        "x": self.unfilter(subset, proposed),
                         "mean": fp["mean"],
                         "cov": fp["cov"],
                         "idx": i,
