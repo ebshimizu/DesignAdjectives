@@ -6,6 +6,7 @@ import torch
 import math
 import random
 import gpytorch
+import sys
 
 import graphUtils
 
@@ -182,26 +183,32 @@ class Snippet:
         mll = gpytorch.mlls.ExactMarginalLogLikelihood(self.likelihood, self.gpr)
         self.losses = []
         for i in range(self.optSteps):
-            optimizer.zero_grad()
-            output = self.gpr(X)
-            loss = -mll(output, y)
-            loss.backward()
-            # print(
-            #     "Iter %d/%d - Loss: %.3f   lengthscale: %.3f   noise: %.3f"
-            #     % (
-            #         i + 1,
-            #         self.optSteps,
-            #         loss.item(),
-            #         self.gpr.covar_module.base_kernel.lengthscale.item(),
-            #         self.gpr.likelihood.noise.item(),
-            #     )
-            # )
+            try:
+                optimizer.zero_grad()
+                output = self.gpr(X)
+                loss = -mll(output, y)
+                loss.backward()
+                # print(
+                #     "Iter %d/%d - Loss: %.3f   lengthscale: %.3f   noise: %.3f"
+                #     % (
+                #         i + 1,
+                #         self.optSteps,
+                #         loss.item(),
+                #         self.gpr.covar_module.base_kernel.lengthscale.item(),
+                #         self.gpr.likelihood.noise.item(),
+                #     )
+                # )
 
-            if optCB:
-                optCB(loss.item())
+                if optCB:
+                    optCB(loss.item())
 
-            self.losses.append(loss.item())
-            optimizer.step()
+                self.losses.append(loss.item())
+                optimizer.step()
+            except:
+                # early abort, likely a cholesky problem
+                # todo: ask matt why cholesky might fail in the above mll function
+                logger.warning("Early abort: {0}".format(sys.exc_info()[0]))
+                break
 
         # debug
         # plt.plot(losses)

@@ -727,6 +727,7 @@ class Bootstrapper(SamplerThread):
         logger.sample(
             "[Bootstrap] Re-training snippet {0} on all parameters".format(self.name)
         )
+        self.f.optSteps = 200   # quick opt
         self.f.train(customFilter=list(range(0, len(self.x0))))
         logger.sample("[Bootstrap] Re-training complete. Sampler starting.")
 
@@ -806,4 +807,7 @@ class Bootstrapper(SamplerThread):
 
             # return proposed, repeat till done
             i = i + 1
+        
+        # todo: stop returning 0
+        # todo: reload initial training settings after running this sampler
         return 0

@@ -48,7 +48,7 @@ function normalizeVector(x, key) {
 // objects are { x, y } format
 function normalizeData(data, key) {
   return data.map(d => {
-    return { x: normalizeVector(d.x, key), y: d.y };
+    return { x: normalizeVector(d.x, key), y: d.y, affected: d.affected || [] };
   });
 }
 
