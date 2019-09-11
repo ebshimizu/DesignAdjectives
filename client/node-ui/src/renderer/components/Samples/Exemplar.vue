@@ -63,11 +63,12 @@ export default {
     return {
       retrievalError: false,
       showActions: false,
-      localScore: 0
+      localScore: this.$store.state.snippets.snippets[this.snippetName].data[
+        this.id
+      ].y
     };
   },
   created: function() {
-    this.localScore = this.data.y;
     this.debounceSetScore = _.debounce(this.setScore, 800);
   },
   props: ['snippetName', 'id'],

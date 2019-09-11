@@ -625,8 +625,10 @@ export default {
 
       await trainSnippet(driver, context, name);
 
-      // load parameter color data
-      await context.dispatch(ACTION.LOAD_PARAM_COLOR_DATA, name);
+      // load parameter color data if this is the active snippet
+      if (name === context.state.primarySnippet) {
+        await context.dispatch(ACTION.LOAD_PARAM_COLOR_DATA, name);
+      }
 
       context.commit(MUTATION.SET_SERVER_STATUS_IDLE, name);
     },
