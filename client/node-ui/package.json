@@ -5,12 +5,17 @@
   "description": "A frontend for design snippets",
   "license": null,
   "main": "./dist/electron/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ebshimizu/DesignSnippets.git"
+  },
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
     "dev": "node .electron-vue/dev-runner.js",
+    "dist": "node .electron-vue/build.js && electron-builder --publish always",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
     "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",
     "pack": "npm run pack:main && npm run pack:renderer",
@@ -19,8 +24,8 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "snippets-ui",
-    "appId": "edu.cmu.snippets-ui",
+    "productName": "parameter-toolbox",
+    "appId": "edu.cmu.parameter-toolbox",
     "directories": {
       "output": "build"
     },
@@ -46,7 +51,10 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon.ico",
+      "publish": [
+        "github"
+      ]
     },
     "linux": {
       "icon": "build/icons"
