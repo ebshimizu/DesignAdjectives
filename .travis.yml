@@ -5,8 +5,7 @@ node_js:
 git:
   submodules: false
 before_install:
-  - ls
-  - cd client/node_ui
+  - cd client/node-ui
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
 install:
