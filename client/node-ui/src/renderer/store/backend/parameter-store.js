@@ -7,7 +7,7 @@ import path from 'path';
 import Vue from 'Vue';
 
 import SbsBackend from '../backend/substance';
-import CmpBackend from '../backend/compositor';
+// import CmpBackend from '../backend/compositor';
 
 import { ACTION, MUTATION } from '../constants';
 import settings from 'electron-settings';
@@ -102,17 +102,18 @@ export function createStore(backend, type) {
         state.lastCommittedVector = state.parameters.map(p => p.value);
       },
       [MUTATION.DETECT_BACKEND](state, filename) {
-        // valid extensions: .dark (compositor), .sbsar (substance)
+        // valid extensions: .dark (compositor, excluded for now due to native build dep), .sbsar (substance)
 
         const ext = path.extname(filename);
-        if (ext === '.dark') {
-          if (state.type === 'substance') {
-            state.backend.stopUpdateLoop();
-          }
+        // if (ext === '.dark') {
+        //  if (state.type === 'substance') {
+        //    state.backend.stopUpdateLoop();
+        //  }
 
-          state.backend = CmpBackend;
-          state.type = 'compositor';
-        } else if (ext === '.sbsar') {
+        //  state.backend = CmpBackend;
+        //  state.type = 'compositor';
+        // }
+        if (ext === '.sbsar') {
           state.backend = SbsBackend;
           state.type = 'substance';
         }
