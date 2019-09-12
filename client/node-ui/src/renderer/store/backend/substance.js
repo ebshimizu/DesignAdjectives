@@ -45,6 +45,28 @@ const substanceSettings = {
   }
 };
 
+/**
+ * Adds link ids to parameters that share parents.
+ * Specific to substance. This automatically links vector3 and 4 parameters together.
+ * This modification occurs in place.
+ * @param {Object[]} data
+ */
+function linkParams(data) {
+  for (let id = 0; id < data.length; id++) {
+    // for each parameter
+    const param = data[id];
+    data[id].links = [];
+
+    // that has a parent
+    if (param.parent) {
+      // find all other params that have the same parent and snapshot the ids
+      data[id].links = data
+        .filter(p => p.parent === param.parent)
+        .map(p => p.id);
+    }
+  }
+}
+
 function loadParams(file) {
   // text parsing fun!
   try {
@@ -156,6 +178,9 @@ function loadParams(file) {
         }
       }
     }
+
+    // gather info about linked params
+    linkParams(params);
 
     console.log(params);
   } catch (e) {

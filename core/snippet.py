@@ -47,7 +47,7 @@ class ExactGPModel(gpytorch.models.ExactGP):
 # - Input vectors are assumed to already be normalized. They don't technically have to be for training,
 #   but the samplers will fail because they have a hard [0,1] clamp constraint.
 class Snippet:
-    def __init__(self, name):
+    def __init__(self, name, paramInfo=None):
         self.name = name
         self.data = []
         self.filter = []
@@ -59,11 +59,14 @@ class Snippet:
         self.kernel = {"variance": 1.0, "lengthscale": 1.0}
         self.dirtyKernel = False
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        self.paramInfo = paramInfo
 
     # param filter is a list of which parameter vector indices are to be used
     # for sampling and training
     def setParamFilter(self, filter):
         self.filter = filter
+        # sort
+        self.filter.sort()
 
     def applyFilter(self, data):
         # return new set of vectors with filtered out values
@@ -282,7 +285,7 @@ class Snippet:
 
     def getDefaultFilter(self):
         # assumption: all data is the same vector length
-        filter = []
+        filter = set()
 
         # for each parameter
         for i in range(0, len(self.data[0].data)):
@@ -291,15 +294,26 @@ class Snippet:
 
             # map again, test == to first val
             p0 = p[0]
-            isEq = list(map(lambda x: math.isclose(x, p0, rel_tol=1e-5), p))
+            isEq = list(map(lambda x: math.isclose(x, p0, rel_tol=1e-3), p))
 
             # reduce with &
             allEq = reduce(lambda x, y: x and y, isEq)
 
             if not allEq:
-                filter.append(i)
+                filter.add(i)
 
-        return filter
+        # Check for linked params
+        if self.paramInfo:
+            for id in list(filter):
+                # if there's something in the linked field
+                links = self.paramInfo[id]["links"]
+                if len(links) > 0:
+                    # append them to the filter without duplication
+                    for linkID in links:
+                        filter.add(linkID)
+
+        # convert to list on return
+        return list(filter)
 
     def setDefaultFilter(self):
         self.setParamFilter(self.getDefaultFilter())

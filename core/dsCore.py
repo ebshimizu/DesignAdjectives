@@ -6,9 +6,9 @@ class SnippetServer:
     def __init__(self):
         self.snippets = {}
 
-    def addSnippet(self, name):
+    def addSnippet(self, name, paramInfo=None):
         if name not in self.snippets:
-            self.snippets[name] = Snippet(name)
+            self.snippets[name] = Snippet(name, paramInfo)
             return DSStatus(code=0, message="Added Snippet: {0}".format(name))
         else:
             return DSStatus(
