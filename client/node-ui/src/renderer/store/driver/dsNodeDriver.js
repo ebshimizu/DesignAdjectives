@@ -8,8 +8,8 @@ export function Training(x, y) {
 }
 
 export class DsDriver {
-  constructor(port = 5234) {
-    this.addr = `http://localhost:${port}`;
+  constructor(host = 'localhost', port = 5234) {
+    this.addr = `http://${host}:${port}`;
     socket = sio(this.addr);
     socket.emitAsync = Promise.promisify(socket.emit);
     this.sampleCallback = null;
@@ -19,6 +19,14 @@ export class DsDriver {
     this.connected = false;
     this.snippetServerOnline = false;
 
+    this.bind();
+  }
+
+  setAddr(host, port) {
+    this.disconnect();
+    this.addr = `http://${host}:${port}`;
+    socket = sio(this.addr);
+    socket.emitAsync = Promise.promisify(socket.emit);
     this.bind();
   }
 

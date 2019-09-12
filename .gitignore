@@ -114,3 +114,4 @@ client/node-ui/sbsRender/*
 *.ipch
 *.bin
 *.csv
+client/node-ui/build/*

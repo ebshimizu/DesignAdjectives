@@ -154,8 +154,20 @@ function computeThreshold(t, mode, max, current) {
 // vectors are saved locally in unnormalized formats, sent to server normalized to [0,1]
 export default {
   state: {
-    port: 5234,
     settings: {
+      host: {
+        value: 'localhost',
+        type: 'string',
+        name: 'Server Host/IP'
+      },
+      port: {
+        value: 5234,
+        type: 'number',
+        name: 'Server Port',
+        min: 0,
+        max: 1e6,
+        step: 1
+      },
       paramColor: {
         value: PARAM_COLOR_MODE.REDGREEN,
         type: 'enum',
@@ -311,7 +323,7 @@ export default {
   },
   mutations: {
     [MUTATION.SET_PORT](state, port) {
-      state.port = port;
+      state.settings.port.value = port;
     },
     [MUTATION.CONNECT](state) {
       if (driver) {
@@ -321,7 +333,10 @@ export default {
         state.serverOnline = false;
       }
 
-      driver = new DsDriver(state.port);
+      driver = new DsDriver(
+        state.settings.host.value,
+        state.settings.port.value
+      );
 
       // register callbacks here? unsure where async things happen
       // async stuff might happen in an action? like call a sampling function
@@ -484,6 +499,7 @@ export default {
     },
     [MUTATION.SET_SNIPPET_SETTING](state, data) {
       state.settings[data.key].value = data.value;
+
       settings.set('snippetSettings', state.settings);
     },
     [MUTATION.LOAD_SNIPPET_SETTINGS](state) {

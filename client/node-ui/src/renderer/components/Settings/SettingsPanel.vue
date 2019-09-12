@@ -2,7 +2,7 @@
   <div class="w-full h-full overflow-auto border-l">
     <div
       class="w-full bg-gray-800 border-b border-gray-200 py-2 font-bold text-gray-200 tracking-wide uppercase text-center"
-    >Global Snippet Options</div>
+    >Global Options</div>
     <setting-control
       v-for="(setting, key) in snippetSettings"
       :key="key"
@@ -12,7 +12,7 @@
     ></setting-control>
     <div
       class="w-full border-b bg-gray-800 border-gray-200 py-2 font-bold text-gray-200 tracking-wide uppercase text-center"
-    >Backend: {{ type }}</div>
+    >Backend Options: {{ type }}</div>
     <setting-control
       v-for="(setting, key) in settings"
       :key="key"
