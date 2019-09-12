@@ -5,13 +5,27 @@ import cp, { exec } from 'child_process';
 import fs from 'fs-extra';
 import * as THREE from 'three';
 import Settings from 'electron-settings';
-// import fs from 'fs-extra';
+import process from 'process';
 
 // Fill in path with your toolkit dir
-const tkDir = 'C:/Program Files/Allegorithmic/Substance Automation Toolkit';
-const renderDir = './sbsRender';
-const sbsmutator = path.join(tkDir, 'sbsmutator');
-const sbsrender = path.join(tkDir, 'sbsrender');
+let tkDir = 'C:/Program Files/Allegorithmic/Substance Automation Toolkit';
+const userFolder =
+  process.env.APPDATA ||
+  (process.platform === 'darwin'
+    ? process.env.HOME + 'Library/Preferences'
+    : process.env.HOME + '/.local/share');
+const renderDir = path.join(userFolder, 'parameter-toolbox', 'sbsRender');
+
+// initialize render directory
+try {
+  console.log(`Initializing render cache folder at ${renderDir}`);
+  fs.ensureDirSync(renderDir);
+} catch (e) {
+  console.log(`Error: Unable to create render cache folder. ${e}`);
+}
+
+let sbsmutator = path.join(tkDir, 'sbsmutator');
+let sbsrender = path.join(tkDir, 'sbsrender');
 
 let currentFile = '';
 let params = [];
@@ -42,8 +56,31 @@ const substanceSettings = {
     value: 'sphere',
     values: ['sphere', 'box', 'torus', 'knot'],
     name: 'Model'
+  },
+  toolkitDir: {
+    type: 'string',
+    value: tkDir,
+    readOnly: true,
+    folderBrowser: true,
+    name: 'Substance Automation Toolkit Location'
+  },
+  renderDir: {
+    type: 'string',
+    value: renderDir,
+    readOnly: true,
+    name: 'Texture Cache Folder (Read Only)'
   }
 };
+
+// load backend settings on script load
+const loadedInitSettings = Settings.get('substanceBackendSettings');
+if (loadedInitSettings) {
+  for (const key in loadedInitSettings) {
+    if (key in substanceSettings) {
+      setSettingGlobal(key, loadedInitSettings[key].value);
+    }
+  }
+}
 
 /**
  * Adds link ids to parameters that share parents.
@@ -461,6 +498,10 @@ export default {
 
   setSetting(key, value) {
     setSettingGlobal(key, value);
+
+    if (key === 'toolkitDir') {
+      this.updateSATLocation(value);
+    }
   },
 
   loadNew(config) {
@@ -525,5 +566,11 @@ export default {
 
   getSettings() {
     return substanceSettings;
+  },
+
+  updateSATLocation(newPath) {
+    tkDir = newPath;
+    sbsmutator = path.join(tkDir, 'sbsmutator');
+    sbsrender = path.join(tkDir, 'sbsrender');
   }
 };

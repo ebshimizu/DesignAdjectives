@@ -1,8 +1,8 @@
 import { createStore } from '../backend/parameter-store';
-import Backend from '../backend/compositor';
+import Backend from '../backend/substance';
 
-// the default parameter store is the compositor backend
+// the default parameter store is the substance backend
 // the actual backend is detected when a compatible file gets loaded
-const paramStore = createStore(Backend, 'compositor');
+const paramStore = createStore(Backend, 'substance');
 
 export default paramStore;

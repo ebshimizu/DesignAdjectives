@@ -26,7 +26,8 @@ function createWindow() {
     useContentSize: true,
     width: 1920,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      webSecurity: false // research project wants all the things
     }
   });
 

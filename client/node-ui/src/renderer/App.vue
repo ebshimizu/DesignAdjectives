@@ -75,6 +75,7 @@ export default {
     AxisMixer
   },
   mounted() {
+    document.title = `Parameter Exploration Toolkit - v${this.$electron.remote.app.getVersion()}`;
     this.$store.commit(MUTATION.LOAD_SNIPPET_SETTINGS);
     this.$store.dispatch(ACTION.CONNECT);
   }

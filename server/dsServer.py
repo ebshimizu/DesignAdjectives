@@ -200,7 +200,7 @@ def snippetGetProp(args):
 def snippetPredict(args):
     s = snippetServer.getSnippet(args["name"])
     if s:
-        print(args["data"])
+        # print(args["data"])
         val = s.predict(args["data"])
         val["mean"] = val["mean"].numpy().tolist()
         val["cov"] = val["cov"].numpy().toList()
@@ -213,7 +213,7 @@ def snippetPredict(args):
 def snippetPredictOne(args):
     s = snippetServer.getSnippet(args["name"])
     if s:
-        print(args["data"])
+        # print(args["data"])
         val = s.predictOne(args["data"])
         return None, val
     else:
