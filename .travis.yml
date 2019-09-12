@@ -6,7 +6,8 @@ git:
   submodules: false
 before_install:
   - cd client/node-ui
-  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' node-compositor/.gitmodules
   - git submodule update --init --recursive
 install:
   - yarn install
