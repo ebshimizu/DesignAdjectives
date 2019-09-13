@@ -2,12 +2,15 @@ os: windows
 language: node_js
 node_js:
   - 10
+env:
+  - YARN_GPG=no
 git:
   submodules: false
 before_install:
   - cd client/node-ui
   - choco install python3
   - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+  - pip3 install getopt
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.17.3
   - export PATH="$HOME/.yarn/bin:$PATH"
   - git submodule update --init
