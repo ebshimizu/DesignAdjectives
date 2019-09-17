@@ -539,6 +539,11 @@ export default {
       state.mixResults = {};
       state.activeMixAxes = {};
       state.axisMixResults = {};
+      state.activatedSnippets = [];
+      state.paramData = {
+        meanMax: 1,
+        meanMin: -1
+      };
     },
     [MUTATION.SET_MIX_RESULTS](state, results) {
       state.mixResults = results;
