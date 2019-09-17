@@ -356,12 +356,15 @@ export default {
     },
     [MUTATION.NEW_SNIPPET](state, name) {
       if (!(name in state.snippets)) {
-        Vue.set(state.snippets, name, {});
-        Vue.set(state.snippets[name], 'name', name);
-        Vue.set(state.snippets[name], 'data', []);
-        Vue.set(state.snippets[name], 'trainData', {});
-        Vue.set(state.snippets[name], 'trained', false);
-        Vue.set(state.snippets[name], 'filter', []);
+        const newSnippets = Object.assign({}, state.snippets);
+        newSnippets[name] = {
+          name: name,
+          data: [],
+          trainData: {},
+          trained: false,
+          filter: []
+        };
+        state.snippets = newSnippets;
       }
     },
     [MUTATION.COPY_SNIPPET](state, data) {
@@ -598,7 +601,7 @@ export default {
         context.commit(MUTATION.NEW_SNIPPET, data.name);
         // await driver.addSnippet(data.name);
         // context.commit(MUTATION.SET_ACTIVE_SNIPPET, data.name);
-        context.commit(MUTATION.ACTIVATE_SNIPPET, data.name);
+        // context.commit(MUTATION.ACTIVATE_SNIPPET, data.name);
         context.commit(MUTATION.CACHE_SNIPPETS, context.state.cacheKey);
       } catch (e) {
         console.log(e);

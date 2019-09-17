@@ -66,6 +66,7 @@ export default {
   methods: {
     activate(name) {
       this.$store.commit(MUTATION.ACTIVATE_SNIPPET, name);
+      this.selectedSnippet = '';
     },
     deactivate(name) {
       this.$store.commit(MUTATION.DEACTIVATE_SNIPPET, name);
