@@ -3,7 +3,10 @@
 Prereqs:
 
 - Python 3
-- PyTorch 1.1.0
-- Pyro 0.3.3
+- PyTorch 1.1.0+
+- gpytorch current
+- Pyro current
 - matplotlib current
-- node.js >= 11.2.0
+- node.js 10
+- express
+- python-socketio

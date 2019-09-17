@@ -366,8 +366,9 @@ function deleteMaterialMaps(material) {
   material.metalnessMap.dispose();
   material.normalMap.dispose();
   material.roughnessMap.dispose();
-  material.aoMap.dispose();
   material.displacementMap.dispose();
+
+  if (material.aoMap) material.aoMap.dispose();
 }
 
 function deleteRenderer(renderer) {
@@ -382,8 +383,8 @@ function deleteRenderer(renderer) {
 }
 
 function promiseLoadTexture(url) {
-  return new Promise(resolve => {
-    threeLoader.load(url, resolve);
+  return new Promise((resolve, reject) => {
+    threeLoader.load(url, resolve, reject);
   });
 }
 
@@ -400,20 +401,28 @@ function loadThenDelete(renderer, material, id, destCanvas) {
       renderDir,
       `${id}_roughness.png?${new Date().getTime()}`
     ),
-    aoMap: path.join(
-      renderDir,
-      `${id}_ambientocclusion.png?${new Date().getTime()}`
-    ),
     displacementMap: path.join(
       renderDir,
       `${id}_height.png?${new Date().getTime()}`
     )
   };
 
+  if (fs.existsSync(path.join(renderDir, `${id}_ambientocclusion.png`))) {
+    textures.aoMap = path.join(
+      renderDir,
+      `${id}_ambientocclusion.png?${new Date().getTime()}`
+    );
+  }
+
   const promises = Object.keys(textures).map(key => {
-    return promiseLoadTexture(textures[key]).then(texture => {
-      material[key] = texture;
-    });
+    return promiseLoadTexture(textures[key])
+      .then(texture => {
+        material[key] = texture;
+      })
+      .catch(function(error) {
+        console.log(`Failed to load texture for ${key}`);
+        console.error(error);
+      });
   });
 
   Promise.all(promises)

@@ -375,6 +375,11 @@ export default {
         // copied snippets will need to re-train (it's assumed you will modify the copy)
         Vue.set(state.snippets[data.copyTo], 'trainData', {});
         Vue.set(state.snippets[data.copyTo], 'trained', false);
+        Vue.set(
+          state.snippets[data.copyTo],
+          'filter',
+          state.snippets[data.active].filter
+        );
       }
     },
     [MUTATION.RENAME_SNIPPET](state, data) {
