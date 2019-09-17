@@ -6,7 +6,7 @@
     <menu-group name="Sample">
       <menu-item>Random Sample...</menu-item>
       <menu-item @click.native="jitter()">Jitter...</menu-item>
-      <menu-item>Reset Sampler</menu-item>
+      <menu-item @click.native="stopSampler()">Reset Sampler</menu-item>
     </menu-group>
     <menu-group name="Snippets">
       <menu-item @click.native="connect()">{{ connected }} Server</menu-item>
@@ -123,6 +123,9 @@ export default {
             : this.$store.getters.primarySnippet,
         opt
       });
+    },
+    stopSampler() {
+      this.$store.dispatch(ACTION.STOP_SAMPLER);
     }
   }
 };
