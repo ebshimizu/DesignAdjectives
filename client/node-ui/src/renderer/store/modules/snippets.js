@@ -6,7 +6,8 @@ import {
   SERVER_STATUS,
   THRESHOLD_MODE,
   THRESHOLD_ACCEPT_MODE,
-  AUTO_FILTER_MODE
+  AUTO_FILTER_MODE,
+  PARAM_COLOR_RANGE
 } from '../constants';
 import Vue from 'Vue';
 import fs from 'fs-extra';
@@ -179,6 +180,12 @@ export default {
           PARAM_COLOR_MODE.REDBLUE,
           PARAM_COLOR_MODE.GREYSCALE
         ]
+      },
+      paramColorRange: {
+        value: PARAM_COLOR_RANGE.ABSOLUTE,
+        type: 'enum',
+        name: 'Preference Function Color Range',
+        values: [PARAM_COLOR_RANGE.ABSOLUTE, PARAM_COLOR_RANGE.RELATIVE]
       },
       optSteps: {
         value: 200,

@@ -6,6 +6,11 @@ export const PARAM_COLOR_MODE = {
   BLUEYELLOW: 'blue-yellow'
 };
 
+export const PARAM_COLOR_RANGE = {
+  ABSOLUTE: 'Absolute 0-1',
+  RELATIVE: 'Relative to current Min/Max'
+};
+
 export const THRESHOLD_MODE = {
   ABSOLUTE: 'ABSOLUTE',
   MAX_REL: 'MAX_REL',

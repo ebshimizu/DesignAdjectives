@@ -42,7 +42,7 @@
 
 <script>
 // input styles from http://danielstern.ca/range.css/#/
-import { MUTATION, ACTION } from '../../store/constants';
+import { MUTATION, ACTION, PARAM_COLOR_RANGE } from '../../store/constants';
 
 export default {
   name: 'parameter-control',
@@ -72,9 +72,12 @@ export default {
     sliderGoodnessStyle() {
       // if an entry exists in the param data
       if (this.param.id in this.$store.getters.paramData) {
+        const abs =
+          this.$store.getters.snippetSettings.paramColorRange.value ===
+          PARAM_COLOR_RANGE.ABSOLUTE;
         const vals = this.$store.getters.paramData[this.param.id].mean;
-        const min = this.$store.getters.paramData.meanMin;
-        const max = this.$store.getters.paramData.meanMax;
+        const min = abs ? 0 : this.$store.getters.paramData.meanMin;
+        const max = abs ? 1 : this.$store.getters.paramData.meanMax;
         const minHue = this.$store.getters.hueMin;
         const maxHue = this.$store.getters.hueMax;
         let grad = 'linear-gradient(to right';
