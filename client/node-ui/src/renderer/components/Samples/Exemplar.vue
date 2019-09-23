@@ -1,10 +1,10 @@
 <template>
-  <div class="w-1/3 p-2">
+  <div class="w-1/3 p-2" v-click-outside="hideMenus">
     <div
       class="exemplar overflow-hidden flex flex-col w-full border border-gray-200 hover:border-yellow-500 rounded"
     >
       <div
-        class="w-full h-auto relative"
+        class="w-full relative h-auto"
         v-on:mouseenter="onHover()"
         v-on:mouseleave="onHoverStop()"
         tabindex="0"
@@ -12,24 +12,27 @@
       >
         <div
           v-show="showActions"
-          class="absolute bottom-0 left-0 w-full flex flex-row flex-wrap bg-gray-800 border-t border-gray-200 text-sm font-mono text-center"
+          class="absolute bottom-0 left-0 w-full flex flex-row font-mono text-center border-t border-gray-200"
         >
           <div
+            @click="showOptMenu"
+            class="cursor-pointer bg-blue-900 hover:bg-blue-600 px-2 py-1 flex-grow text-gray-200 border-r border-gray-200"
+          >
+            <font-awesome-icon icon="bars"></font-awesome-icon>
+          </div>
+          <div
             @click="lockExample()"
-            class="cursor-pointer border-b bg-blue-900 hover:bg-blue-700 py-1 px-2 border-r text-gray-200 flex-grow"
-          >Lock</div>
+            class="cursor-pointer bg-blue-900 hover:bg-blue-600 px-2 py-1 flex-grow text-gray-200 border-r border-gray-200"
+          >
+            <font-awesome-icon icon="clone"></font-awesome-icon>
+          </div>
           <div
-            @click="setA()"
-            class="cursor-pointer border-b bg-blue-900 hover:bg-blue-700 py-1 px-2 text-gray-200 border-r"
-          >+A</div>
-          <div
-            @click="setB()"
-            class="cursor-pointer bg-blue-900 hover:bg-blue-700 py-1 px-2 text-gray-200 border-r"
-          >+B</div>
-          <div
+            @contextmenu.prevent="showNegSnippetMenu"
             @click="removeExample()"
-            class="cursor-pointer bg-red-900 hover:bg-red-700 py-1 px-2 text-gray-200 flex-grow"
-          >X</div>
+            class="cursor-pointer font-bold flex-grow bg-red-900 hover:bg-red-700 px-2 py-1 text-gray-200"
+          >
+            <font-awesome-icon icon="times"></font-awesome-icon>
+          </div>
         </div>
         <canvas ref="canvas" class="exemplarCanvas" />
       </div>
@@ -50,15 +53,52 @@
         </div>
       </div>
     </div>
+    <div class="popupMenu flex flex-col overflow-hidden" ref="otherOptionsMenu">
+      <div class="title">Operations</div>
+      <div class="h-full overflow-auto">
+        <div @click="mixWithCurrent">Mix With Current</div>
+        <div @click="setA">Set Mix Element A</div>
+        <div @click="setB">Set Mix Element B</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ACTION, MUTATION } from '../../store/constants';
+import vClickOutside from 'v-click-outside';
 const _ = require('lodash');
+
+// todo: don't duplicate this code
+function placeMenu(
+  event,
+  elem,
+  xOffset = 0,
+  yOffset = 0,
+  xWindowPad = 20,
+  yWindowPad = 70
+) {
+  // determine x/y placement
+  let xTarget = event.x + xOffset;
+  let yTarget = event.y + yOffset;
+
+  // check that can fit in window
+  if (xTarget + elem.offsetWidth + xWindowPad > window.innerWidth) {
+    xTarget = window.innerWidth - elem.offsetWidth - xWindowPad;
+  }
+  if (yTarget + elem.offsetHeight + yWindowPad > window.innerHeight) {
+    yTarget = window.innerHeight - elem.offsetHeight - yWindowPad;
+  }
+
+  elem.style.left = `${xTarget}px`;
+  elem.style.top = `${yTarget}px`;
+}
 
 export default {
   name: 'exemplar',
+  directives: {
+    clickOutside: vClickOutside.directive
+  },
   data() {
     return {
       retrievalError: false,
@@ -124,9 +164,25 @@ export default {
     },
     setA() {
       this.$store.commit(MUTATION.SET_MIX_A, this.data.x);
+      this.hideMenus();
     },
     setB() {
       this.$store.commit(MUTATION.SET_MIX_B, this.data.x);
+      this.hideMenus();
+    },
+    mixWithCurrent() {
+      this.$store.commit(MUTATION.SET_MIX_A, this.$store.getters.paramsAsArray);
+      this.$store.commit(MUTATION.SET_MIX_B, this.data.x);
+      this.hideMenus();
+    },
+    hideMenus(event) {
+      if (this.$refs.otherOptionsMenu.style.visibility === 'visible')
+        this.$refs.otherOptionsMenu.style.visibility = 'hidden';
+    },
+    showOptMenu(event) {
+      this.hideMenus();
+      placeMenu(event, this.$refs.otherOptionsMenu, 5, -30);
+      this.$refs.otherOptionsMenu.style.visibility = 'visible';
     }
   },
   mounted: function() {

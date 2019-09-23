@@ -109,7 +109,7 @@
 }
 
 .square-button div {
-  @apply text-xs tracking-wide uppercase;
+  @apply text-sm tracking-wide uppercase;
 }
 
 .blue.square-button {
