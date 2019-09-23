@@ -35,12 +35,15 @@
           </div>
         </div>
         <canvas ref="canvas" class="exemplarCanvas" />
+        <div
+          class="absolute left-0 top-0 p-1 text-center font-mono text-xs z-10 text-gray-200 id-label rounded border-gray-200 border-r border-b"
+        >{{ id }}</div>
       </div>
       <div
         class="flex flex-row text-gray-200 font-mono text-sm px-2 py-1 border-t border-gray-200 justify-beteween content-center items-center"
-        :class="[scoreClass]"
+        :style="scoreBG"
       >
-        <div class="flex-shrink text-xs">ID: {{ id }}</div>
+        <div class="flex-shrink text-xs">Score</div>
         <div class="w-1/2 pl-2 flex-grow text-xs">
           <input
             v-model="localScore"
@@ -134,6 +137,29 @@ export default {
     },
     scoreClass() {
       return parseFloat(this.localScore) > 0.5 ? 'bg-green-900' : 'bg-red-900';
+    },
+    scoreBG() {
+      const minHue = this.$store.getters.hueMin;
+      const maxHue = this.$store.getters.hueMax;
+      const isGreyscale = minHue - maxHue === 0;
+      const isRGB = typeof minHue !== 'number';
+      let color = '#000000';
+
+      // scale based on max/min and also on color range
+      const normVal = Math.min(1, Math.max(0, this.data.y));
+
+      if (isGreyscale) {
+        color = `hsl(0, 0%, ${normVal * 50}%)`;
+      } else if (isRGB) {
+        color = `rgb(${(normVal * maxHue.r + (1 - normVal) * minHue.r) *
+          0.5}, ${(normVal * maxHue.g + (1 - normVal) * minHue.g) *
+          0.5}, ${(normVal * maxHue.b + (1 - normVal) * minHue.b) * 0.5})`;
+      } else {
+        const hueVal = normVal * (maxHue - minHue) + minHue;
+        color = `hsl(${hueVal}, 100%, 25%)`;
+      }
+
+      return { background: color };
     }
   },
   methods: {
@@ -211,5 +237,9 @@ export default {
 
 .scoreInput {
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.id-label {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
