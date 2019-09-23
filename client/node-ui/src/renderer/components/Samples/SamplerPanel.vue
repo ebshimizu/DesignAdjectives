@@ -121,9 +121,9 @@
         <div class="px-2 py-2">
           <div
             class="btn btn-green"
-            @click="randomSample()"
+            @click="start"
             :class="{ 'disabled': !this.$store.getters.idle }"
-          >Random Sample</div>
+          >Run Sampler</div>
         </div>
       </div>
     </div>
@@ -258,8 +258,9 @@ export default {
     canSample() {
       return (
         this.$store.getters.ready &&
-        this.activeSnippetName &&
-        this.$store.state.snippets.snippets[this.activeSnippetName].trained
+        this.$store.getters.primarySnippet !== '' &&
+        this.$store.state.snippets.snippets[this.$store.getters.primarySnippet]
+          .trained
       );
     },
     sampleStatus() {
