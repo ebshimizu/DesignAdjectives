@@ -29,13 +29,15 @@
             <font-awesome-icon icon="clone"></font-awesome-icon>
           </div>
           <div
-            @click="showPosSnippetMenu"
+            @contextmenu.prevent="showPosSnippetMenu"
+            @click="addPositive(primarySnippet)"
             class="cursor-pointer font-bold flex-grow bg-green-900 hover:bg-green-700 px-2 py-1 border-r text-gray-200"
           >
             <font-awesome-icon icon="plus-square"></font-awesome-icon>
           </div>
           <div
-            @click="showNegSnippetMenu"
+            @contextmenu.prevent="showNegSnippetMenu"
+            @click="addNegative(primarySnippet)"
             class="cursor-pointer font-bold flex-grow bg-red-900 hover:bg-red-700 px-2 py-1 text-gray-200"
           >
             <font-awesome-icon icon="minus-square"></font-awesome-icon>
@@ -56,8 +58,9 @@
     <div class="popupMenu flex flex-col overflow-hidden" ref="otherOptionsMenu">
       <div class="title">Operations</div>
       <div class="h-full overflow-auto">
-        <div @click="select">Set As Current</div>
         <div @click="mixWithCurrent">Mix With Current</div>
+        <div @click="setMixA">Set Mix Element A</div>
+        <div @click="setMixB">Set Mix Element B</div>
       </div>
     </div>
     <div class="popupMenu flex flex-col overflow-hidden" ref="posSnippetMenu">
@@ -161,7 +164,7 @@ export default {
     },
     confBGGradient() {
       return {
-        background: `linear-gradient(to right, #6b46c1 ${this.confidence *
+        background: `linear-gradient(to right, #553c9a ${this.confidence *
           100}%, rgba(0,0,0,1) ${this.confidence * 100}%)`
       };
     },
@@ -186,6 +189,9 @@ export default {
     },
     snippetOptions() {
       return Object.keys(this.$store.state.snippets.snippets);
+    },
+    primarySnippet() {
+      return this.$store.getters.primarySnippet;
     }
   },
   methods: {
@@ -219,6 +225,14 @@ export default {
     },
     mixWithCurrent() {
       this.$store.commit(MUTATION.SET_MIX_A, this.$store.getters.paramsAsArray);
+      this.$store.commit(MUTATION.SET_MIX_B, this.x);
+      this.hideMenus();
+    },
+    setMixA() {
+      this.$store.commit(MUTATION.SET_MIX_A, this.x);
+      this.hideMenus();
+    },
+    setMixB() {
       this.$store.commit(MUTATION.SET_MIX_B, this.x);
       this.hideMenus();
     },
