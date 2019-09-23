@@ -42,12 +42,15 @@
           </div>
         </div>
         <canvas ref="canvas" class="sampleCanvas" />
+        <div
+          class="absolute left-0 top-0 p-1 text-center font-mono text-xs z-10 text-gray-200 id-label rounded border-gray-200 border-r border-b"
+        >{{ id }}</div>
       </div>
       <div
-        class="flex flex-row text-gray-200 font-mono text-sm px-2 py-1 border-t border-gray-200 justify-between bg-blue-darkest"
+        class="flex flex-col text-gray-200 font-mono text-xs border-t border-gray-200 justify-between bg-blue-darkest"
       >
-        <div class="flex-auto">ID: {{ id }}</div>
-        <div class="flex-no-grow">{{ score.toFixed(3) }}</div>
+        <div class="w-full border-b px-1" :style="scoreBGGradient">Score: {{ score.toFixed(3) }}</div>
+        <div class="w-full px-1" :style="confBGGradient">Conf: {{ confidence.toFixed(3) }}</div>
       </div>
     </div>
     <div class="popupMenu flex flex-col overflow-hidden" ref="otherOptionsMenu">
@@ -128,6 +131,39 @@ export default {
     },
     covariance() {
       return this.sample.cov;
+    },
+    confidence() {
+      return Math.max(0, 1 - this.sample.cov);
+    },
+    scoreBGGradient() {
+      const minHue = this.$store.getters.hueMin;
+      const maxHue = this.$store.getters.hueMax;
+      let grad = 'linear-gradient(to right';
+      const isGreyscale = minHue - maxHue === 0;
+      const isRGB = typeof minHue !== 'number';
+
+      // scale based on max/min and also on color range
+      const normVal = Math.min(1, Math.max(0, this.score));
+
+      if (isGreyscale) {
+        grad = `${grad}, hsl(0, 0%, ${normVal * 50}%)`;
+      } else if (isRGB) {
+        grad = `${grad}, rgb(${(normVal * maxHue.r + (1 - normVal) * minHue.r) *
+          0.5}, ${(normVal * maxHue.g + (1 - normVal) * minHue.g) *
+          0.5}, ${(normVal * maxHue.b + (1 - normVal) * minHue.b) * 0.5})`;
+      } else {
+        const hueVal = normVal * (maxHue - minHue) + minHue;
+        grad = `${grad}, hsl(${hueVal}, 100%, 25%)`;
+      }
+
+      grad = `${grad} ${normVal * 100}%, rgba(0,0,0,1) ${normVal * 100}%)`;
+      return { background: grad };
+    },
+    confBGGradient() {
+      return {
+        background: `linear-gradient(to right, #6b46c1 ${this.confidence *
+          100}%, rgba(0,0,0,1) ${this.confidence * 100}%)`
+      };
     },
     id() {
       return this.sample.idx;
@@ -230,5 +266,9 @@ export default {
 
 .overlay {
   background-color: rgba(0, 0, 0, 0.8);
+}
+
+.id-label {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
