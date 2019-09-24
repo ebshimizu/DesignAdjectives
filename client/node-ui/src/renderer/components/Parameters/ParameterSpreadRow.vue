@@ -1,11 +1,13 @@
 <template>
-  <div class="w-full flex flex-row">
+  <div class="w-full flex flex-row items-center">
+    <div class="w-1/5 px-2 text-gray-200 font-bold text-md font-mono tracking-wide">{{ name }}</div>
     <spread-sample
       v-for="item in spread"
       :key="item.label"
       :x="item.x"
       :id="id"
       :label="item.label"
+      class="w-1/5"
     ></spread-sample>
   </div>
 </template>

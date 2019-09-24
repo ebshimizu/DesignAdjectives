@@ -52,6 +52,7 @@
     <div class="popupMenu flex flex-col overflow-hidden" ref="otherOptionsMenu">
       <div class="title">Operations</div>
       <div class="h-full overflow-auto">
+        <div @click="rerender">Re-Render</div>
         <div @click="mixWithCurrent">Mix With Current</div>
         <div @click="setMixA">Set Mix Element A</div>
         <div @click="setMixB">Set Mix Element B</div>
@@ -196,13 +197,21 @@ export default {
         this.$refs.negSnippetMenu.style.visibility = 'hidden';
       if (this.$refs.otherOptionsMenu.style.visibility === 'visible')
         this.$refs.otherOptionsMenu.style.visibility = 'hidden';
+    },
+    rerender() {
+      this.$store.getters.renderer(this.$refs.canvas, {
+        size: 'thumb',
+        state: this.x,
+        instanceID: `extents-${this.id}-${this.label}`,
+        once: true
+      });
     }
   },
   mounted: function() {
     this.$store.getters.renderer(this.$refs.canvas, {
       size: 'thumb',
       state: this.x,
-      instanceID: `extents-${this.id}-label`,
+      instanceID: `extents-${this.id}-${this.label}`,
       once: true
     });
   }

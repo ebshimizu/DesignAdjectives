@@ -1,13 +1,13 @@
 <template>
   <div class="absolute left-0 top-0 w-full h-full param-spread">
-    <div class="flex flex-col">
+    <div class="h-full flex flex-col">
       <div class="flex flex-row items-center w-full text-gray-200 p-1 border-b">
         <div class="w-full text-md uppercase tracking-wide font-bold">Parameter Spread</div>
         <div @click="hide" class="btn btn-red">
           <div>Close</div>
         </div>
       </div>
-      <div class="h-full overflow-auto">
+      <div class="overflow-auto">
         <parameter-spread-row
           v-for="(param, id) in params"
           :key="id"

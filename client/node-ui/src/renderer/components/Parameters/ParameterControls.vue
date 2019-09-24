@@ -9,7 +9,7 @@
       <div class="w-full p-1">{{ filterModeText }}</div>
       <div class="bg-red-800 p-1 cursor-pointer hover:bg-red-700" @click="removeFilterMode">Stop</div>
     </div>
-    <div class="param-controls overflow-auto overflow-x-hidden flex flex-col-reverse">
+    <div class="param-controls overflow-auto overflow-x-hidden flex flex-col">
       <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
     </div>
     <div class="param-panel overflow-auto flex-no-shrink border-t border-gray-200">

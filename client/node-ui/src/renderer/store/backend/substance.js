@@ -37,6 +37,9 @@ const threeLoader = new THREE.TextureLoader();
 let renderer2D = null;
 let renderLoopActive = false;
 
+const renderQueue = [];
+let activeRenders = 0;
+
 const substanceSettings = {
   rotate: {
     type: 'boolean',
@@ -56,6 +59,14 @@ const substanceSettings = {
     value: 'sphere',
     values: ['sphere', 'box', 'torus', 'knot'],
     name: 'Model'
+  },
+  maxRenderThreads: {
+    name: 'Max Render Threads',
+    type: 'number',
+    value: 8,
+    min: 1,
+    max: 64,
+    step: 1
   },
   toolkitDir: {
     type: 'string',
@@ -79,6 +90,33 @@ if (loadedInitSettings) {
     if (key in substanceSettings) {
       setSettingGlobal(key, loadedInitSettings[key].value);
     }
+  }
+}
+
+function checkRenderQueue() {
+  console.log(`Queue Length: ${renderQueue.length}`);
+  // need to check for deadlock?
+  if (
+    activeRenders < substanceSettings.maxRenderThreads.value &&
+    renderQueue.length > 0
+  ) {
+    activeRenders += 1;
+    runJob(renderQueue.pop());
+  }
+}
+
+function runJob(job) {
+  // node threads are single threaded, so these should be atomic ops.
+  job();
+}
+
+function queueJob(job) {
+  console.log(`Queue length: ${renderQueue.length}`);
+  if (activeRenders < substanceSettings.maxRenderThreads.value) {
+    activeRenders += 1;
+    runJob(job);
+  } else {
+    renderQueue.push(job);
   }
 }
 
@@ -357,6 +395,10 @@ function render(canvasTarget, state, fileID, once) {
           loadContinuous(material, fileID);
         }
       }
+
+      // this is the async part, check for render queue progress
+      activeRenders -= 1;
+      checkRenderQueue();
     }
   );
 }
@@ -566,12 +608,16 @@ export default {
     const state =
       'state' in settings ? settings.state : params.map(p => p.value);
 
-    if (settings.once) {
+    if (!settings.once) {
+      // live updates always run immediately
       render(canvasTarget, state, settings.instanceID, settings.once);
     } else {
-      // need to stick it in a render queue in case I decide to throw 500 renders at the tool at once
+      // everything else gets stuck in a simple queue
+      // in case I decide to throw 500 renders at the tool at once
       // (purely theoretical)
-      render(canvasTarget, state, settings.instanceID, settings.once);
+      queueJob(() =>
+        render(canvasTarget, state, settings.instanceID, settings.once)
+      );
     }
   },
 
