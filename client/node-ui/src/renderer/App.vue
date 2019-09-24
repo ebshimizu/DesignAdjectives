@@ -89,6 +89,10 @@ export default {
   },
   methods: {
     showParamSpread() {
+      this.$store.commit(
+        MUTATION.SET_SPREAD_BASE,
+        this.$store.getters.paramsAsArray
+      );
       this.paramSpreadVisible = true;
     },
     hideParamSpread() {

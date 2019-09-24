@@ -609,6 +609,9 @@ export default {
     [MUTATION.SET_EXEMPLAR_SCORE](state, data) {
       state.snippets[data.name].data[data.id].y = data.score;
       state.snippets[data.name].trained = false;
+    },
+    [MUTATION.SET_SPREAD_BASE](state, x0) {
+      state.paramSpreadBase = x0;
     }
   },
   actions: {

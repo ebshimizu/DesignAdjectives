@@ -7,18 +7,31 @@
           <div>Close</div>
         </div>
       </div>
-      <div class="h-full overflow-auto"></div>
+      <div class="h-full overflow-auto">
+        <parameter-spread-row
+          v-for="(param, id) in params"
+          :key="id"
+          :x0="spreadBase"
+          :count="5"
+          :id="id"
+        ></parameter-spread-row>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import ParameterSpreadRow from './ParameterSpreadRow';
+
 export default {
   name: 'parameter-spread',
+  components: {
+    ParameterSpreadRow
+  },
   props: ['isVisible'],
   computed: {
     params() {
-      return this.$store.getters.paramInfo;
+      return this.$store.getters.params;
     },
     spreadBase() {
       return this.$store.getters.paramSpreadBase;

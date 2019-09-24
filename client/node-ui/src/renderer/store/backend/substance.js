@@ -566,7 +566,13 @@ export default {
     const state =
       'state' in settings ? settings.state : params.map(p => p.value);
 
-    render(canvasTarget, state, settings.instanceID, settings.once);
+    if (settings.once) {
+      render(canvasTarget, state, settings.instanceID, settings.once);
+    } else {
+      // need to stick it in a render queue in case I decide to throw 500 renders at the tool at once
+      // (purely theoretical)
+      render(canvasTarget, state, settings.instanceID, settings.once);
+    }
   },
 
   stopUpdateLoop() {
