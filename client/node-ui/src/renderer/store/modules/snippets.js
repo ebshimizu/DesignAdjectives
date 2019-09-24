@@ -226,7 +226,8 @@ export default {
       thresholdTarget: 0,
       scoreDelta: 0
     },
-    autoFilterMode: AUTO_FILTER_MODE.NO_FILTER
+    autoFilterMode: AUTO_FILTER_MODE.NO_FILTER,
+    paramSpreadBase: []
   },
   getters: {
     ready: state => {
@@ -326,6 +327,9 @@ export default {
         snippetId in state.snippets &&
         state.snippets[snippetId].trained
       );
+    },
+    paramSpreadBase: state => {
+      return state.paramSpreadBase;
     }
   },
   mutations: {

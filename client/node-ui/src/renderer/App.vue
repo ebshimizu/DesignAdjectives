@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="bg-gray-900 flex flex-col">
     <div class="flex-none w-full border-b border-gray-200 bg-gray-700 shadow">
-      <main-menu></main-menu>
+      <main-menu v-on:show-param-spread="showParamSpread"></main-menu>
     </div>
     <div class="relative h-full flex-shrink flex-no-grow main-content flex flex-row">
       <div class="h-full w-3/4 overflow-hidden flex flex-col">
@@ -32,6 +32,7 @@
       <div class="h-full w-1/5 flex-none overflow-hidden">
         <parameter-panel></parameter-panel>
       </div>
+      <parameter-spread v-if="paramSpreadVisible" v-on:hide-param-spread="hideParamSpread"></parameter-spread>
     </div>
     <div class="flex-none w-full h-6 border-t border-gray-200 bg-gray-900">
       <status-bar></status-bar>
@@ -53,6 +54,7 @@ import DebugPanel from '@/components/Snippets/DebugPanel';
 import ParameterExtents from '@/components/Parameters/ParameterExtents';
 import MixPanel from '@/components/Snippets/MixPanel';
 import AxisMixer from '@/components/Snippets/AxisMixer';
+import ParameterSpread from '@/components/Parameters/ParameterSpread';
 
 import '@/assets/tailwind.css';
 import { MUTATION, ACTION } from '@/store/constants';
@@ -72,12 +74,26 @@ export default {
     DebugPanel,
     ParameterExtents,
     MixPanel,
-    AxisMixer
+    AxisMixer,
+    ParameterSpread
+  },
+  data() {
+    return {
+      paramSpreadVisible: false
+    };
   },
   mounted() {
     document.title = `Parameter Exploration Toolkit - v${this.$electron.remote.app.getVersion()}`;
     this.$store.commit(MUTATION.LOAD_SNIPPET_SETTINGS);
     this.$store.dispatch(ACTION.CONNECT);
+  },
+  methods: {
+    showParamSpread() {
+      this.paramSpreadVisible = true;
+    },
+    hideParamSpread() {
+      this.paramSpreadVisible = false;
+    }
   }
 };
 </script>

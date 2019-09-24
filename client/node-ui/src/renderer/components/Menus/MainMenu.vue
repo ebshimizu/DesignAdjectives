@@ -3,8 +3,11 @@
     <menu-group name="File">
       <menu-item @click.native="open()">Open</menu-item>
     </menu-group>
+    <menu-group name="Params">
+      <menu-item @click.native="$emit('show-param-spread')">Display Spread</menu-item>
+    </menu-group>
     <menu-group name="Sample">
-      <menu-item>Random Sample...</menu-item>
+      <menu-item @click.native="randomSample()">Random Sample...</menu-item>
       <menu-item @click.native="jitter()">Jitter...</menu-item>
       <menu-item @click.native="stopSampler()">Reset Sampler</menu-item>
     </menu-group>
@@ -126,6 +129,14 @@ export default {
     },
     stopSampler() {
       this.$store.dispatch(ACTION.STOP_SAMPLER);
+    },
+    randomSample() {
+      if (this.$store.getters.idle) {
+        this.$store.dispatch(ACTION.GENERATE_RANDOM, {
+          count: 20,
+          freeParams: 10
+        });
+      }
     }
   }
 };
