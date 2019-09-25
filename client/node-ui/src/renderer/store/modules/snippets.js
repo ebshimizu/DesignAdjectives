@@ -330,6 +330,14 @@ export default {
     },
     paramSpreadBase: state => {
       return state.paramSpreadBase;
+    },
+    selectedSamples: state => {
+      return state.samples.filter(sample => sample.selected);
+    },
+    selectedSampleIDs: state => {
+      return state.samples
+        .filter(sample => sample.selected)
+        .map(sample => sample.idx);
     }
   },
   mutations: {
@@ -433,6 +441,7 @@ export default {
       state.samples = [];
     },
     [MUTATION.ADD_SAMPLE](state, sample) {
+      sample.selected = false;
       state.samples.push(sample);
       state.samples = state.samples.sort(function(a, b) {
         if (a.mean < b.mean) return 1;
@@ -612,6 +621,15 @@ export default {
     },
     [MUTATION.SET_SPREAD_BASE](state, x0) {
       state.paramSpreadBase = x0;
+    },
+    [MUTATION.SET_SAMPLE_SELECTED](state, data) {
+      Vue.set(
+        state.samples[
+          state.samples.findIndex(sample => sample.idx === data.id)
+        ],
+        'selected',
+        data.selected
+      );
     }
   },
   actions: {

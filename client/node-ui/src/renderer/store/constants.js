@@ -113,7 +113,8 @@ export const MUTATION = {
   SET_PARAMS_AS_FILTER: 'Set Params As Filter',
   SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode',
   SET_EXEMPLAR_SCORE: 'Set Exemplar Score',
-  SET_SPREAD_BASE: 'Set Parameter Spread Base'
+  SET_SPREAD_BASE: 'Set Parameter Spread Base',
+  SET_SAMPLE_SELECTED: 'Set Sample Selected'
 };
 
 export const ACTION = {

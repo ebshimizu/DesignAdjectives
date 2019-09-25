@@ -2,6 +2,7 @@
   <div v-bind:class="[widthClass, heightClass]" class="p-2" v-click-outside="hideMenus">
     <div
       class="sample overflow-hidden flex flex-col border border-gray-200 hover:border-yellow-500 rounded"
+      :class="[selectedClass]"
     >
       <div
         class="w-full h-auto relative"
@@ -23,7 +24,7 @@
             <font-awesome-icon icon="bars"></font-awesome-icon>
           </div>
           <div
-            @click="select()"
+            @click="lock"
             class="cursor-pointer bg-blue-900 hover:bg-blue-600 px-2 py-1 flex-grow text-gray-200 border-r border-gray-200"
           >
             <font-awesome-icon icon="clone"></font-awesome-icon>
@@ -43,9 +44,10 @@
             <font-awesome-icon icon="minus-square"></font-awesome-icon>
           </div>
         </div>
-        <canvas ref="canvas" class="sampleCanvas" />
+        <canvas ref="canvas" class="sampleCanvas" @click="select" />
         <div
           class="absolute left-0 top-0 p-1 text-center font-mono text-xs z-10 text-gray-200 id-label rounded border-gray-200 border-r border-b"
+          @click="select"
         >{{ id }}</div>
       </div>
       <div
@@ -169,13 +171,26 @@ export default {
     },
     primarySnippet() {
       return this.$store.getters.primarySnippet;
+    },
+    selected() {
+      return this.sample.selected;
+    },
+    selectedClass() {
+      return this.selected ? 'selected' : '';
     }
   },
   methods: {
-    select() {
+    lock() {
       // copy x to the current state
       this.$store.dispatch(ACTION.LOCK_TEMPORARY_STATE, this.x);
       this.hideMenus();
+    },
+    select() {
+      // changes sample status to selected
+      this.$store.commit(MUTATION.SET_SAMPLE_SELECTED, {
+        id: this.id,
+        selected: !this.selected
+      });
     },
     onHover() {
       this.showActions = true;
@@ -261,5 +276,13 @@ export default {
 
 .id-label {
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.selected {
+  border-color: #b83280 !important;
+}
+
+.selected .id-label {
+  background-color: #b83280 !important;
 }
 </style>
