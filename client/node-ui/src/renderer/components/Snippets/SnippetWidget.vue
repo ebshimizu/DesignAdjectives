@@ -1,5 +1,37 @@
 <template>
-  <div class="flex flex-col w-full border-gray-200 border-b snippet-widget">
+  <div class="flex flex-col w-full border-gray-200 border-b snippet-widget relative">
+    <div
+      class="absolute z-50 left-0 top-0 flex flex-col w-full h-full justify-top overflow-hidden overlay p-2"
+      v-if="addWithScoreVisible"
+    >
+      <div
+        class="text-md font-bold uppercase tracking-wide text-center text-gray-200"
+      >Add Selected Examples with Score</div>
+      <div class="w-full flex my-2">
+        <input class="w-2/3 mr-2" type="range" v-model="groupScore" min="0" max="1" step="0.01" />
+        <input
+          class="w-1/3 standard-text-field"
+          type="number"
+          v-model="groupScore"
+          min="0"
+          max="1"
+          step="0.01"
+        />
+      </div>
+      <div class="flex w-full">
+        <div class="text-gray-200 text-sm w-full">
+          <div
+            class="flex content-center justify-center items-center w-full h-full"
+          >{{ selectedCount }} selected</div>
+        </div>
+        <div class="w-1/5 pr-2">
+          <div class="btn btn-red" @click="addWithScoreVisible = false">Cancel</div>
+        </div>
+        <div class="w-1/5">
+          <div class="btn btn-green" @click="addSelectedSamplesWithScore">Add</div>
+        </div>
+      </div>
+    </div>
     <div class="w-full text-gray-200 border-b border-gray-200 flex flex-row" :class="titleBgColor">
       <div class="w-full p-1">
         <div class="font-bold tracking-wide">{{ name }}</div>
@@ -28,7 +60,8 @@
           <menu-item menuStyle="compact" @click.native="filterByImpact()">Filter by Impact</menu-item>
           <menu-item menuStyle="compact" @click.native="filterByBest()">Filter by Best</menu-item>
         </menu-group>
-        <menu-group name="Debug" menuStyle="compact">
+        <menu-group name="Axis" menuStyle="compact">
+          <menu-item menuStyle="compact" @click.native="addWithScoreVisible = true">Add Selected...</menu-item>
           <menu-item menuStyle="compact" @click.native="train()">Retrain</menu-item>
         </menu-group>
       </ul>
@@ -94,7 +127,9 @@ export default {
   },
   data() {
     return {
-      exemplarsVisible: true
+      exemplarsVisible: true,
+      addWithScoreVisible: false,
+      groupScore: 1
     };
   },
   computed: {
@@ -131,6 +166,9 @@ export default {
       return this.$store.getters.primarySnippet === this.name
         ? 'bg-yellow-800'
         : 'bg-gray-700';
+    },
+    selectedCount() {
+      return this.$store.getters.selectedSamples.length;
     }
   },
   methods: {
@@ -275,13 +313,61 @@ export default {
     filterByBest() {
       this.$store.commit(MUTATION.SET_PRIMARY_SNIPPET, this.name);
       this.$store.dispatch(ACTION.SET_AUTO_FILTER_MODE, AUTO_FILTER_MODE.BEST);
+    },
+    addSelectedSamplesWithScore() {
+      const selected = this.$store.selectedSamples;
+      for (const sample in selected) {
+        this.$store.dispatch(ACTION.ADD_EXAMPLE, {
+          name: this.name,
+          point: {
+            x: sample.x,
+            y: parseFloat(this.groupScore),
+            affected: sample.affected
+          }
+        });
+
+        this.addWithScoreVisible = false;
+      }
     }
   }
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .exemplar-area {
   height: 400px;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 3.55px 6px 3.55px 0;
+}
+input[type='range']:focus {
+  outline: none;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 20.9px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border-radius: 1.3px;
+  border: 0.2px solid #0b0101;
+  background: #2d3748;
+}
+input[type='range']::-webkit-slider-thumb {
+  box-shadow: 0.9px 0.9px 1px #ffffff, 0px 0px 0.9px #ffffff;
+  border: 1px solid #000000;
+  height: 28px;
+  width: 8px;
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -3.75px;
 }
 </style>
