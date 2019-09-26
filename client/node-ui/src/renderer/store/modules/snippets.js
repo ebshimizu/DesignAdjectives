@@ -1051,6 +1051,18 @@ export default {
       context.commit(MUTATION.SET_EXEMPLAR_SCORE, data);
       context.commit(MUTATION.CACHE_SNIPPETS, context.state.cacheKey);
       context.dispatch(ACTION.TRAIN, data.name);
+    },
+    [ACTION.SET_ALL_EXEMPLAR_SCORES](context, data) {
+      for (const id of data.ids) {
+        context.commit(MUTATION.SET_EXEMPLAR_SCORE, {
+          name: data.name,
+          id,
+          score: data.score
+        });
+      }
+
+      context.commit(MUTATION.CACHE_SNIPPETS, context.state.cacheKey);
+      context.dispatch(ACTION.TRAIN, data.name);
     }
   }
 };

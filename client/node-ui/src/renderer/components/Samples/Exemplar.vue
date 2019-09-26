@@ -2,6 +2,7 @@
   <div class="w-1/3 p-2" v-click-outside="hideMenus">
     <div
       class="exemplar overflow-hidden flex flex-col w-full border border-gray-200 hover:border-yellow-500 rounded"
+      :class="[selectedClass]"
     >
       <div
         class="w-full relative h-auto"
@@ -34,9 +35,10 @@
             <font-awesome-icon icon="times"></font-awesome-icon>
           </div>
         </div>
-        <canvas ref="canvas" class="exemplarCanvas" />
+        <canvas ref="canvas" class="exemplarCanvas" @click="toggleSelected" />
         <div
           class="absolute left-0 top-0 p-1 text-center font-mono text-xs z-10 text-gray-200 id-label rounded border-gray-200 border-r border-b"
+          @click="toggleSelected"
         >{{ id }}</div>
       </div>
       <div
@@ -90,10 +92,13 @@ export default {
   created: function() {
     this.debounceSetScore = _.debounce(this.setScore, 800);
   },
-  props: ['snippetName', 'id'],
+  props: ['snippetName', 'id', 'selected'],
   watch: {
     localScore: function(newVal, oldVal) {
-      this.debounceSetScore();
+      if (newVal !== this.data.y) this.debounceSetScore();
+    },
+    instanceScore: function(newVal, oldVal) {
+      if (newVal !== this.localScore) this.localScore = newVal;
     }
   },
   computed: {
@@ -110,6 +115,9 @@ export default {
         this.retrievalError = true;
         return { x: [], y: NaN };
       }
+    },
+    instanceScore() {
+      return this.data.y;
     },
     scoreClass() {
       return parseFloat(this.localScore) > 0.5 ? 'bg-green-900' : 'bg-red-900';
@@ -136,6 +144,9 @@ export default {
       }
 
       return { background: color };
+    },
+    selectedClass() {
+      return this.selected ? 'selected' : '';
     }
   },
   methods: {
@@ -185,6 +196,9 @@ export default {
       this.hideMenus();
       placeMenu(event, this.$refs.otherOptionsMenu, 5, -30);
       this.$refs.otherOptionsMenu.style.visibility = 'visible';
+    },
+    toggleSelected() {
+      this.$emit('toggle-selected', this.id);
     }
   },
   mounted: function() {
@@ -217,5 +231,13 @@ export default {
 
 .id-label {
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.selected {
+  border-color: #b83280 !important;
+}
+
+.selected .id-label {
+  background-color: #b83280 !important;
 }
 </style>

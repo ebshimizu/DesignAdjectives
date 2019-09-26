@@ -6,7 +6,7 @@
     >
       <div
         class="text-md font-bold uppercase tracking-wide text-center text-gray-200"
-      >Add Selected Examples with Score</div>
+      >Add Selected Samples with Score</div>
       <div class="w-full flex my-2">
         <input class="w-2/3 mr-2" type="range" v-model="groupScore" min="0" max="1" step="0.01" />
         <input
@@ -29,6 +29,38 @@
         </div>
         <div class="w-1/5">
           <div class="btn btn-green" @click="addSelectedSamplesWithScore">Add</div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="absolute z-50 left-0 top-0 flex flex-col w-full h-full justify-top overflow-hidden overlay p-2"
+      v-if="editGroupScoreVisible"
+    >
+      <div
+        class="text-md font-bold uppercase tracking-wide text-center text-gray-200"
+      >Edit Selected Examples with Score</div>
+      <div class="w-full flex my-2">
+        <input class="w-2/3 mr-2" type="range" v-model="groupScore" min="0" max="1" step="0.01" />
+        <input
+          class="w-1/3 standard-text-field"
+          type="number"
+          v-model="groupScore"
+          min="0"
+          max="1"
+          step="0.01"
+        />
+      </div>
+      <div class="flex w-full">
+        <div class="text-gray-200 text-sm w-full">
+          <div
+            class="flex content-center justify-center items-center w-full h-full"
+          >{{ selectedExemplars.length }} selected</div>
+        </div>
+        <div class="w-1/5 pr-2">
+          <div class="btn btn-red" @click="editGroupScoreVisible = false">Cancel</div>
+        </div>
+        <div class="w-1/5">
+          <div class="btn btn-green" @click="setSelectedExemplarScore">Set</div>
         </div>
       </div>
     </div>
@@ -62,6 +94,10 @@
         </menu-group>
         <menu-group name="Axis" menuStyle="compact">
           <menu-item menuStyle="compact" @click.native="addWithScoreVisible = true">Add Selected...</menu-item>
+          <menu-item
+            menuStyle="compact"
+            @click.native="editGroupScoreVisible = true"
+          >Set Score for Examples...</menu-item>
           <menu-item menuStyle="compact" @click.native="train()">Retrain</menu-item>
         </menu-group>
       </ul>
@@ -97,7 +133,14 @@
       class="w-full overflow-auto flex flex-row flex-wrap exemplar-area"
       v-show="exemplarsVisible"
     >
-      <exemplar v-for="id in sortedExemplars" :key="id + name" :snippet-name="name" :id="id" />
+      <exemplar
+        v-for="id in sortedExemplars"
+        :key="id + name"
+        :snippet-name="name"
+        :id="id"
+        v-on:toggle-selected="toggleSelected"
+        :selected="selectedExemplars.indexOf(id) >= 0"
+      />
     </div>
   </div>
 </template>
@@ -129,7 +172,9 @@ export default {
     return {
       exemplarsVisible: true,
       addWithScoreVisible: false,
-      groupScore: 1
+      editGroupScoreVisible: false,
+      groupScore: 1,
+      selectedExemplars: []
     };
   },
   computed: {
@@ -327,6 +372,27 @@ export default {
         });
       }
       this.addWithScoreVisible = false;
+    },
+    toggleSelected(id) {
+      if (this.selectedExemplars.indexOf(id) >= 0) {
+        // remove
+        this.selectedExemplars.splice(this.selectedExemplars.indexOf(id), 1);
+      } else {
+        // add
+        this.selectedExemplars.push(id);
+      }
+    },
+    deselectAll() {
+      this.selectedExemplars = [];
+    },
+    setSelectedExemplarScore() {
+      this.$store.dispatch(ACTION.SET_ALL_EXEMPLAR_SCORES, {
+        name: this.name,
+        ids: this.selectedExemplars,
+        score: this.groupScore
+      });
+
+      this.editGroupScoreVisible = false;
     }
   }
 };

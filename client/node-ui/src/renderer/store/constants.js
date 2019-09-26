@@ -152,5 +152,6 @@ export const ACTION = {
   UPDATE_AUTO_FILTER_PARAMS: 'Update Auto-Filtered Params',
   SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode',
   SET_EXEMPLAR_SCORE: 'Set Exemplar Score',
-  REFINE_SNIPPET: 'Start Refinement Sampler'
+  REFINE_SNIPPET: 'Start Refinement Sampler',
+  SET_ALL_EXEMPLAR_SCORES: 'Set Exemplar Scores [Batch]'
 };
