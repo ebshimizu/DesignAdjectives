@@ -315,8 +315,8 @@ export default {
       this.$store.dispatch(ACTION.SET_AUTO_FILTER_MODE, AUTO_FILTER_MODE.BEST);
     },
     addSelectedSamplesWithScore() {
-      const selected = this.$store.selectedSamples;
-      for (const sample in selected) {
+      const selected = this.$store.getters.selectedSamples;
+      for (const sample of selected) {
         this.$store.dispatch(ACTION.ADD_EXAMPLE, {
           name: this.name,
           point: {
@@ -325,9 +325,8 @@ export default {
             affected: sample.affected
           }
         });
-
-        this.addWithScoreVisible = false;
       }
+      this.addWithScoreVisible = false;
     }
   }
 };
@@ -339,7 +338,7 @@ export default {
 }
 
 .overlay {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 input[type='range'] {
