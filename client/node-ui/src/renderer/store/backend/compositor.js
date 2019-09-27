@@ -1,7 +1,7 @@
 // all functions here are required for compatibility with the parameter-store
 // file. This file should serve as the template for implementing additional backends.
 
-const compositor = require('../../../../node-compositor/build/Release/compositor');
+const compositor = require('compositor');
 
 compositor.setLogLevel(1);
 
