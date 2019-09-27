@@ -61,9 +61,12 @@ export default {
         type: p.type,
         min: p.min,
         max: p.max,
-        id: params.length
+        id: params.length,
+        links: []
       });
     }
+
+    // todo: get links (the adjustments are linked params)
 
     return params;
   },
