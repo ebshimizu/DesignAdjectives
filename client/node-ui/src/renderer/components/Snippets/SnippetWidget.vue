@@ -1,7 +1,69 @@
 <template>
-  <div class="flex flex-col w-full border-gray-200 border-b snippet-widget relative">
+  <div class="flex flex-col w-full border-gray-200 border-b snippet-widget">
+    <div class="w-full text-gray-200 border-b border-gray-200 flex flex-row" :class="titleBgColor">
+      <div class="w-full p-1">
+        <div class="font-bold tracking-wide">{{ name }}</div>
+        <div class="text-xs uppercase font-bold tracking-wide">{{ status }}</div>
+      </div>
+      <div
+        class="w-6 bg-red-800 hover:bg-red-700 cursor-pointer flex justify-center items-center"
+        @click="$emit('deactivate')"
+      >
+        <font-awesome-icon icon="times"></font-awesome-icon>
+      </div>
+    </div>
+    <div class="w-full flex flex-row flex-no-wrap border-b border-gray-200">
+      <ul class="list-reset flex font-sans">
+        <menu-group name="Sample" menuStyle="compact">
+          <menu-item menuStyle="compact" @click.native="sampleTowards()">Towards</menu-item>
+          <menu-item menuStyle="compact" @click.native="sampleAway()">Away</menu-item>
+          <menu-item menuStyle="compact" @click.native="sampleNearby()">Nearby</menu-item>
+          <menu-item menuStyle="compact" @click.native="sampleAxis()">Axis</menu-item>
+          <menu-item menuStyle="compact" @click.native="refine()">Refine</menu-item>
+        </menu-group>
+        <menu-group name="Params" menuStyle="compact">
+          <menu-item menuStyle="compact" @click.native="selectAffected()">Select Affected</menu-item>
+          <menu-item menuStyle="compact" @click.native="selectDefaultFilter()">Auto-Detect Used</menu-item>
+          <menu-item menuStyle="compact" @click.native="setSelectedAsFilter()">Use Selected</menu-item>
+          <menu-item menuStyle="compact" @click.native="filterByImpact()">Filter by Impact</menu-item>
+          <menu-item menuStyle="compact" @click.native="filterByBest()">Filter by Best</menu-item>
+        </menu-group>
+        <menu-group name="Axis" menuStyle="compact">
+          <menu-item menuStyle="compact" @click.native="addWithScoreVisible = true">Add Samples...</menu-item>
+          <menu-item menuStyle="compact" @click.native="editGroupScoreVisible = true">Edit Scores...</menu-item>
+          <menu-item menuStyle="compact" @click.native="train()">Retrain</menu-item>
+        </menu-group>
+      </ul>
+      <div class="flex-grow green square-button border-l border-r tooltip" @click="addExample(1)">
+        <div>
+          <font-awesome-icon icon="plus-square"></font-awesome-icon>
+        </div>
+        <span class="tt-text">Add Positive</span>
+      </div>
+      <div class="flex-grow red square-button border-r tooltip" @click="addExample(0)">
+        <div>
+          <font-awesome-icon icon="minus-square"></font-awesome-icon>
+        </div>
+        <span class="tt-text">Add Negative</span>
+      </div>
+      <div class="flex-grow blue square-button border-r left tooltip" @click="setPrimary()">
+        <div>
+          <font-awesome-icon icon="crosshairs"></font-awesome-icon>
+        </div>
+        <span class="tt-text">Set As Primary Snippet</span>
+      </div>
+      <div
+        class="flex-grow blue square-button left tooltip"
+        @click="exemplarsVisible = !exemplarsVisible"
+      >
+        <div>
+          <font-awesome-icon :icon="collapseIcon"></font-awesome-icon>
+        </div>
+        <span class="tt-text">Toggle Definition</span>
+      </div>
+    </div>
     <div
-      class="absolute z-50 left-0 top-0 flex flex-col w-full h-full justify-top overflow-hidden overlay p-2"
+      class="flex flex-col w-full h-full justify-top overflow-hidden overlay p-2 border-b border-gray-200"
       v-if="addWithScoreVisible"
     >
       <div
@@ -33,7 +95,7 @@
       </div>
     </div>
     <div
-      class="absolute z-50 left-0 top-0 flex flex-col w-full h-full justify-top overflow-hidden overlay p-2"
+      class="flex flex-col w-full h-full justify-top overflow-hidden overlay p-2 border-b border-gray-200"
       v-if="editGroupScoreVisible"
     >
       <div
@@ -62,71 +124,6 @@
         <div class="w-1/5">
           <div class="btn btn-green" @click="setSelectedExemplarScore">Set</div>
         </div>
-      </div>
-    </div>
-    <div class="w-full text-gray-200 border-b border-gray-200 flex flex-row" :class="titleBgColor">
-      <div class="w-full p-1">
-        <div class="font-bold tracking-wide">{{ name }}</div>
-        <div class="text-xs uppercase font-bold tracking-wide">{{ status }}</div>
-      </div>
-      <div
-        class="w-6 bg-red-800 hover:bg-red-700 cursor-pointer flex justify-center items-center"
-        @click="$emit('deactivate')"
-      >
-        <font-awesome-icon icon="times"></font-awesome-icon>
-      </div>
-    </div>
-    <div class="w-full flex flex-row flex-no-wrap border-b border-gray-200">
-      <ul class="list-reset flex font-sans">
-        <menu-group name="Sample" menuStyle="compact">
-          <menu-item menuStyle="compact" @click.native="sampleTowards()">Towards</menu-item>
-          <menu-item menuStyle="compact" @click.native="sampleAway()">Away</menu-item>
-          <menu-item menuStyle="compact" @click.native="sampleNearby()">Nearby</menu-item>
-          <menu-item menuStyle="compact" @click.native="sampleAxis()">Axis</menu-item>
-          <menu-item menuStyle="compact" @click.native="refine()">Refine</menu-item>
-        </menu-group>
-        <menu-group name="Params" menuStyle="compact">
-          <menu-item menuStyle="compact" @click.native="selectAffected()">Select Affected</menu-item>
-          <menu-item menuStyle="compact" @click.native="selectDefaultFilter()">Auto-Detect Used</menu-item>
-          <menu-item menuStyle="compact" @click.native="setSelectedAsFilter()">Use Selected</menu-item>
-          <menu-item menuStyle="compact" @click.native="filterByImpact()">Filter by Impact</menu-item>
-          <menu-item menuStyle="compact" @click.native="filterByBest()">Filter by Best</menu-item>
-        </menu-group>
-        <menu-group name="Axis" menuStyle="compact">
-          <menu-item menuStyle="compact" @click.native="addWithScoreVisible = true">Add Selected...</menu-item>
-          <menu-item
-            menuStyle="compact"
-            @click.native="editGroupScoreVisible = true"
-          >Set Score for Examples...</menu-item>
-          <menu-item menuStyle="compact" @click.native="train()">Retrain</menu-item>
-        </menu-group>
-      </ul>
-      <div class="flex-grow green square-button border-l border-r tooltip" @click="addExample(1)">
-        <div>
-          <font-awesome-icon icon="plus-square"></font-awesome-icon>
-        </div>
-        <span class="tt-text">Add Positive</span>
-      </div>
-      <div class="flex-grow red square-button border-r tooltip" @click="addExample(0)">
-        <div>
-          <font-awesome-icon icon="minus-square"></font-awesome-icon>
-        </div>
-        <span class="tt-text">Add Negative</span>
-      </div>
-      <div class="flex-grow blue square-button border-r left tooltip" @click="setPrimary()">
-        <div>
-          <font-awesome-icon icon="crosshairs"></font-awesome-icon>
-        </div>
-        <span class="tt-text">Set As Primary Snippet</span>
-      </div>
-      <div
-        class="flex-grow blue square-button left tooltip"
-        @click="exemplarsVisible = !exemplarsVisible"
-      >
-        <div>
-          <font-awesome-icon :icon="collapseIcon"></font-awesome-icon>
-        </div>
-        <span class="tt-text">Toggle Definition</span>
       </div>
     </div>
     <div
