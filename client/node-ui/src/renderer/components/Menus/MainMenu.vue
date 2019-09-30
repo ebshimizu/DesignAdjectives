@@ -42,7 +42,7 @@ export default {
       this.$electron.remote.dialog.showOpenDialog(
         {
           title: 'Open File',
-          properties: ['openFile']
+          properties: ['openFile', 'openDirectory']
         },
         paths => {
           // only want one path

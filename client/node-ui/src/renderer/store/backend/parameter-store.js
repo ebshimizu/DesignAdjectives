@@ -8,6 +8,7 @@ import Vue from 'Vue';
 
 import SbsBackend from '../backend/substance';
 import CmpBackend from '../backend/compositor';
+import RltBackend from '../backend/relighter';
 
 import { ACTION, MUTATION } from '../constants';
 import settings from 'electron-settings';
@@ -116,6 +117,14 @@ export function createStore(backend, type) {
         if (ext === '.sbsar') {
           state.backend = SbsBackend;
           state.type = 'substance';
+        }
+        if (ext === '.rlt') {
+          if (state.type === 'substance') {
+            state.backend.stopUpdateLoop();
+          }
+
+          state.backend = RltBackend;
+          state.type = 'relighter';
         }
       },
       [MUTATION.SET_PARAM](state, config) {
