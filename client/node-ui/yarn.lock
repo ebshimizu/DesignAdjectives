@@ -8659,7 +8659,7 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
 
 "simple-relighter@https://github.com/ebshimizu/simple-relighter.git":
   version "1.0.1"
-  resolved "https://github.com/ebshimizu/simple-relighter.git#e2d3867a523692948d2d3b37c5f7fc51f53573ff"
+  resolved "https://github.com/ebshimizu/simple-relighter.git#6a583959f9a030b35d081e26ac9d218596c0145e"
   dependencies:
     bindings "^1.3.0"
     nan "^2.14.0"
