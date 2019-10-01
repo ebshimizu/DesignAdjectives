@@ -2627,8 +2627,8 @@ component-inherit@0.0.3:
   integrity sha1-ZF/ErfWLcrZJ1crmUTVhnbJv8UM=
 
 "compositor@https://github.com/ebshimizu/node-compositor.git":
-  version "1.0.0"
-  resolved "https://github.com/ebshimizu/node-compositor.git#b1d61ea3706e64d2e05f5c0a5d050ddf95b08f23"
+  version "1.0.1"
+  resolved "https://github.com/ebshimizu/node-compositor.git#dfb8f322e57b2f82786325da54b27573ab5340e0"
   dependencies:
     bindings "^1.3.0"
     nan "^2.7.0"

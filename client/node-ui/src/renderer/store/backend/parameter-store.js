@@ -9,6 +9,7 @@ import Vue from 'Vue';
 import SbsBackend from '../backend/substance';
 import CmpBackend from '../backend/compositor';
 import RltBackend from '../backend/relighter';
+import PjsBackend from '../backend/particles';
 
 import { ACTION, MUTATION } from '../constants';
 import settings from 'electron-settings';
@@ -118,13 +119,21 @@ export function createStore(backend, type) {
           state.backend = SbsBackend;
           state.type = 'substance';
         }
-        if (ext === '.rlt') {
+        if (ext === '.png') {
           if (state.type === 'substance') {
             state.backend.stopUpdateLoop();
           }
 
           state.backend = RltBackend;
           state.type = 'relighter';
+        }
+        if (ext === '.pjs') {
+          if (state.type === 'substance') {
+            state.backend.stopUpdateLoop();
+          }
+
+          state.backend = PjsBackend;
+          state.type = 'particles';
         }
       },
       [MUTATION.SET_PARAM](state, config) {

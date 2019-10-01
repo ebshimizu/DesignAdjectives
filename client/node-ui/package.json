@@ -72,6 +72,7 @@
     "electron-settings": "^3.2.0",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.15",
+    "particles.js": "^2.0.0",
     "simple-relighter": "https://github.com/ebshimizu/simple-relighter.git",
     "socket.io-client": "^2.2.0",
     "three": "^0.103.0",

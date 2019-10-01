@@ -42,7 +42,7 @@ export default {
       this.$electron.remote.dialog.showOpenDialog(
         {
           title: 'Open File',
-          properties: ['openFile', 'openDirectory']
+          properties: ['openFile']
         },
         paths => {
           // only want one path
@@ -59,7 +59,8 @@ export default {
             this.$store.commit(MUTATION.DETECT_BACKEND, file);
             this.$store.commit(MUTATION.LOAD_NEW_FILE, {
               filename: file,
-              dir
+              dir,
+              window
             });
 
             this.$store.dispatch(

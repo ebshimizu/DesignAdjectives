@@ -29,7 +29,7 @@ export default {
     return 'Simple Relighter';
   },
   loadNew(config) {
-    rl.load(path.join(config.dir, config.filename));
+    rl.load(path.join(config.dir));
 
     // load backend settings
     const loadedSettings = Settings.get('relightBackendSettings');

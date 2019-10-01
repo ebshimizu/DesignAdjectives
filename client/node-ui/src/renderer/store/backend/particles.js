@@ -1,17 +1,33 @@
-const particles = require('particles.js');
-
+/* eslint-disable new-cap */
+// eslint-disable-next-line no-unused-vars
+var particles, window;
 let params = [];
-let canvasIndex = {};
+let particleIndex = [];
+
+function findSameCanvas(target) {
+  for (const pjs of particleIndex) {
+    if (pjs.canvas.el.isSameNode(target)) {
+      return pjs;
+    }
+  }
+
+  return null;
+}
 
 export default {
   type() {
     return 'Particles.js';
   },
   loadNew(config) {
+    if (!window) {
+      window = config.window;
+      particles = require('particles.js');
+    }
+
     // there isn't much to do here? we can have some particle presets
     // need to get the params, while working on rendering setup will be no params
     params = [];
-    canvasIndex = {};
+    particleIndex = [];
     // load/format
   },
   getParams() {
@@ -30,5 +46,25 @@ export default {
     // going to try to directly give particles.js a canvas element
     // don't want to double init so this backend will track which elements
     // have been seen before
+    const pjs = findSameCanvas(canvasTarget);
+    if (pjs) {
+      // modify settings
+    } else {
+      // create new, should render to specified target
+      const newPjs = new window.particlesJS2(canvasTarget, {
+        canvas: {
+          el: canvasTarget,
+          w: canvasTarget.offsetWidth,
+          h: canvasTarget.offsetHeight
+        }
+      });
+      particleIndex.push(newPjs);
+    }
+  },
+  getSettings() {
+    return {};
+  },
+  setSetting(key, value) {
+    // noop
   }
 };
