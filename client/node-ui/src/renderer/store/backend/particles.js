@@ -2,11 +2,10 @@
 // eslint-disable-next-line no-unused-vars
 var particles, window;
 let params = [];
-let particleIndex = [];
 
 function findSameCanvas(target) {
-  for (const pjs of particleIndex) {
-    if (pjs.canvas.el.isSameNode(target)) {
+  for (const pjs of window.pJSDom) {
+    if (pjs.pJS.canvas.el.isSameNode(target)) {
       return pjs;
     }
   }
@@ -27,7 +26,6 @@ export default {
     // there isn't much to do here? we can have some particle presets
     // need to get the params, while working on rendering setup will be no params
     params = [];
-    particleIndex = [];
     // load/format
   },
   getParams() {
@@ -51,14 +49,7 @@ export default {
       // modify settings
     } else {
       // create new, should render to specified target
-      const newPjs = new window.particlesJS2(canvasTarget, {
-        canvas: {
-          el: canvasTarget,
-          w: canvasTarget.offsetWidth,
-          h: canvasTarget.offsetHeight
-        }
-      });
-      particleIndex.push(newPjs);
+      window.particlesJSWithCanvas(canvasTarget, {});
     }
   },
   getSettings() {
