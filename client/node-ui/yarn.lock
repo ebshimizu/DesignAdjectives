@@ -7211,6 +7211,11 @@ parseurl@~1.3.2, parseurl@~1.3.3:
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.3.tgz#9da19e7bee8d12dff0513ed5b76957793bc2e8d4"
   integrity sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==
 
+particles.js@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/particles.js/-/particles.js-2.0.0.tgz#21386c4328d6c7f96780a201e96eedfc09c736f6"
+  integrity sha1-IThsQyjWx/lngKIB6W7t/AnHNvY=
+
 pascal-case@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/pascal-case/-/pascal-case-2.0.1.tgz#2d578d3455f660da65eca18ef95b4e0de912761e"
@@ -8654,7 +8659,7 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
 
 "simple-relighter@https://github.com/ebshimizu/simple-relighter.git":
   version "1.0.1"
-  resolved "https://github.com/ebshimizu/simple-relighter.git#0e7fc5137b39606710dcebe6084a8f5d1bc456c2"
+  resolved "https://github.com/ebshimizu/simple-relighter.git#e2d3867a523692948d2d3b37c5f7fc51f53573ff"
   dependencies:
     bindings "^1.3.0"
     nan "^2.14.0"
