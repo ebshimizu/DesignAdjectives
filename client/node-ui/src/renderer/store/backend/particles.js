@@ -3,13 +3,7 @@
 var particles, window;
 let params = [];
 
-const shapes = [
-  'circle',
-  'edge',
-  'triangle',
-  'polygon',
-  'star'
-];
+const shapes = ['circle', 'edge', 'triangle', 'polygon', 'star'];
 
 // returns the default param set
 // at some point this might be transferred to an external json file
@@ -19,7 +13,7 @@ function getParamSet() {
     { name: 'color.r', value: 1, min: 0, max: 1, id: 1, links: [2, 3] },
     { name: 'color.g', value: 1, min: 0, max: 1, id: 2, links: [1, 3] },
     { name: 'color.b', value: 1, min: 0, max: 1, id: 3, links: [1, 2] },
-    { name: 'shape.type', value: 0, min: 0, max: 1, id: 4, links: []}
+    { name: 'shape.type', value: 0, min: 0, max: 1, id: 4, links: [] }
   ];
 }
 
@@ -52,6 +46,18 @@ function findSameCanvas(target) {
   }
 
   return null;
+}
+
+function prunePJSDom() {
+  const toRemove = [];
+  for (let i = 0; i < window.pJSDom.length; i++) {
+    if (!window.document.body.contains(window.pJSDom[i].pJS.canvas.el)) {
+      delete window.pJSDom[i];
+      toRemove.push(i);
+    }
+  }
+
+  window.pJSDom = window.pJSDom.filter((_, i) => !toRemove.includes(i));
 }
 
 export default {
@@ -101,6 +107,8 @@ export default {
       // create new, should render to specified target
       window.particlesJSWithCanvas(canvasTarget, particleParams);
     }
+
+    prunePJSDom();
   },
   getSettings() {
     return {};
