@@ -38,7 +38,8 @@ function getParamSet() {
       links: []
     },
     { name: 'opacity.value', value: 0.75, links: [] },
-    { name: 'opacity.random', value: 0, links: [] }
+    { name: 'opacity.random', value: 0, links: [] },
+    { name: 'number.density.value_area', value: 0.5, links: [] }
   ];
 
   // additional processing
@@ -60,7 +61,10 @@ function paramsToPjs(state) {
   return {
     particles: {
       number: {
-        value: state[0] * 500
+        value: state[0] * 500,
+        density: {
+          value_area: 100 + state[12] * 1400
+        }
       },
       color: {
         value: {
