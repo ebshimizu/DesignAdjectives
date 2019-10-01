@@ -1,4 +1,6 @@
 /* eslint-disable new-cap */
+const rgbHex = require('rgb-hex');
+
 // eslint-disable-next-line no-unused-vars
 var particles, window;
 let params = [];
@@ -8,13 +10,49 @@ const shapes = ['circle', 'edge', 'triangle', 'polygon', 'star'];
 // returns the default param set
 // at some point this might be transferred to an external json file
 function getParamSet() {
-  return [
-    { name: 'number.value', value: 0.2, min: 0, max: 1, id: 0, links: [] },
-    { name: 'color.r', value: 1, min: 0, max: 1, id: 1, links: [2, 3] },
-    { name: 'color.g', value: 1, min: 0, max: 1, id: 2, links: [1, 3] },
-    { name: 'color.b', value: 1, min: 0, max: 1, id: 3, links: [1, 2] },
-    { name: 'shape.type', value: 0, min: 0, max: 1, id: 4, links: [] }
+  const rawParams = [
+    { name: 'number.value', value: 0.2, links: [] },
+    { name: 'color.r', value: 1, links: [1, 2] },
+    { name: 'color.g', value: 1, links: [-1, 1] },
+    { name: 'color.b', value: 1, links: [-1, -2] },
+    { name: 'shape.type', value: 0, links: [] },
+    { name: 'shape.stroke.width', value: 0, links: [] },
+    {
+      name: 'shape.stroke.color.r',
+      value: 0,
+      links: [1, 2]
+    },
+    {
+      name: 'shape.stroke.color.g',
+      value: 0,
+      links: [-1, 1]
+    },
+    {
+      name: 'shape.stroke.color.b',
+      value: 0,
+      links: [-1, -2]
+    },
+    {
+      name: 'shape.polygon.nb_sides',
+      value: 0.5,
+      links: []
+    },
+    { name: 'opacity.value', value: 0.75, links: [] },
+    { name: 'opacity.random', value: 0, links: [] }
   ];
+
+  // additional processing
+  for (let i = 0; i < rawParams.length; i++) {
+    rawParams[i].id = i;
+    rawParams[i].min = 0;
+    rawParams[i].max = 1;
+
+    for (let l = 0; l < rawParams[i].links.length; l++) {
+      rawParams[i].links[l] = i + rawParams[i].links[l];
+    }
+  }
+
+  return rawParams;
 }
 
 function paramsToPjs(state) {
@@ -32,7 +70,18 @@ function paramsToPjs(state) {
         }
       },
       shape: {
-        type: shapes[Math.max(0, Math.floor(state[4] * 5 - 1e-6))]
+        type: shapes[Math.max(0, Math.floor(state[4] * 5 - 1e-6))],
+        stroke: {
+          width: state[5] * 10,
+          color: `#${rgbHex(state[6] * 255, state[7] * 255, state[8] * 255)}`
+        },
+        polygon: {
+          nb_sides: Math.floor(state[9] * 10)
+        }
+      },
+      opacity: {
+        value: state[10],
+        random: state[11] >= 0.5
       }
     }
   };
