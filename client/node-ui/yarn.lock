@@ -7213,7 +7213,7 @@ parseurl@~1.3.2, parseurl@~1.3.3:
 
 "particles.js@https://github.com/ebshimizu/particles.js.git":
   version "2.0.1"
-  resolved "https://github.com/ebshimizu/particles.js.git#4616180018533e02842bdb96fd539bd7b083b014"
+  resolved "https://github.com/ebshimizu/particles.js.git#56801ee727104519e07943b52a15b61aebbad433"
 
 pascal-case@^2.0.0:
   version "2.0.1"
