@@ -5,7 +5,7 @@
       :class="[selectedClass]"
     >
       <div
-        class="w-full h-auto relative"
+        class="w-full h-auto relative sampleCanvas"
         v-on:mouseenter="onHover()"
         v-on:mouseleave="onHoverStop()"
         v-on:keyup.z="addPositive()"
@@ -284,5 +284,9 @@ export default {
 
 .selected .id-label {
   background-color: #b83280 !important;
+}
+
+.sampleCanvas {
+  min-height: 110px;
 }
 </style>
