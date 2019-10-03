@@ -8662,8 +8662,8 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   integrity sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
 
 "simple-relighter@https://github.com/ebshimizu/simple-relighter.git":
-  version "1.0.1"
-  resolved "https://github.com/ebshimizu/simple-relighter.git#6a583959f9a030b35d081e26ac9d218596c0145e"
+  version "1.0.2"
+  resolved "https://github.com/ebshimizu/simple-relighter.git#229d558ebccad82ff8000b03e6d292b40e94de0a"
   dependencies:
     bindings "^1.3.0"
     nan "^2.14.0"

@@ -24,6 +24,16 @@ const relightSettings = {
   }
 };
 
+function renderPromise(params, gamma, level) {
+  return new Promise((resolve, reject) => {
+    rl.renderAsync(params, gamma, level, function(err, buffer) {
+      if (err) reject(new Error('Render Failure'));
+
+      resolve(buffer);
+    });
+  });
+}
+
 export default {
   type() {
     return 'Simple Relighter';
@@ -77,18 +87,23 @@ export default {
 
     canvasTarget.width = rl.width;
     canvasTarget.height = rl.height;
-    var ctx = canvasTarget.getContext('2d');
 
-    ctx.clearRect(0, 0, canvasTarget.width, canvasTarget.height);
-
-    var imDat = ctx.getImageData(0, 0, canvasTarget.width, canvasTarget.height);
-
-    rl.renderToCanvas(
+    // rl.renderToCanvas(
+    //   state,
+    //   imDat,
+    //   relightSettings.gamma.value,
+    //   relightSettings.level.value
+    // );
+    const buffer = await renderPromise(
       state,
-      imDat,
       relightSettings.gamma.value,
       relightSettings.level.value
     );
+
+    var ctx = canvasTarget.getContext('2d');
+    ctx.clearRect(0, 0, canvasTarget.width, canvasTarget.height);
+    var imDat = ctx.getImageData(0, 0, canvasTarget.width, canvasTarget.height);
+    rl.transferToContext(buffer, imDat);
 
     createImageBitmap(imDat).then(function(imbit) {
       ctx.drawImage(imbit, 0, 0, canvasTarget.width, canvasTarget.height);
