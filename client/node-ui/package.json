@@ -68,7 +68,6 @@
     "axios": "^0.18.0",
     "bluebird": "^3.5.4",
     "chart.js": "^2.8.0",
-    "compositor": "https://github.com/ebshimizu/node-compositor.git",
     "electron-settings": "^3.2.0",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.15",

@@ -7,7 +7,7 @@ import path from 'path';
 import Vue from 'Vue';
 
 import SbsBackend from '../backend/substance';
-import CmpBackend from '../backend/compositor';
+// import CmpBackend from '../backend/compositor';
 import RltBackend from '../backend/relighter';
 import PjsBackend from '../backend/particles';
 
@@ -107,14 +107,14 @@ export function createStore(backend, type) {
         // valid extensions: .dark (compositor, excluded for now due to native build dep), .sbsar (substance)
 
         const ext = path.extname(filename);
-        if (ext === '.dark') {
-          if (state.type === 'substance') {
-            state.backend.stopUpdateLoop();
-          }
+        // if (ext === '.dark') {
+        //   if (state.type === 'substance') {
+        //     state.backend.stopUpdateLoop();
+        //   }
 
-          state.backend = CmpBackend;
-          state.type = 'compositor';
-        }
+        //   state.backend = CmpBackend;
+        //   state.type = 'compositor';
+        // }
         if (ext === '.sbsar') {
           state.backend = SbsBackend;
           state.type = 'substance';
