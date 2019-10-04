@@ -2628,7 +2628,7 @@ component-inherit@0.0.3:
 
 "compositor@https://github.com/ebshimizu/node-compositor.git":
   version "1.0.1"
-  resolved "https://github.com/ebshimizu/node-compositor.git#dfb8f322e57b2f82786325da54b27573ab5340e0"
+  resolved "https://github.com/ebshimizu/node-compositor.git#2a2e3159233d46b08a589f82db80ba3734809975"
   dependencies:
     bindings "^1.3.0"
     nan "^2.7.0"
