@@ -1,5 +1,9 @@
+matrix:
+  allow_failures:
+    - os: osx
 os:
   - windows
+  - osx
 language: node_js
 node_js:
   - 10
