@@ -79,7 +79,7 @@ export default {
       params[i].value = vec[i];
     }
   },
-  async renderer(canvasTarget, settings) {
+  async renderer(canvasTarget, textTarget, settings) {
     const state =
       'state' in settings && settings.state.length > 0
         ? settings.state

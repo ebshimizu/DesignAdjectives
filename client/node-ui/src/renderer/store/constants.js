@@ -51,6 +51,11 @@ export const AUTO_FILTER_MODE = {
   BEST: 'Best'
 };
 
+export const RENDER_MODE = {
+  CANVAS: 'canvas',
+  TEXT: 'text'
+};
+
 export const MUTATION = {
   SET_PORT: 'Set Snippet Port',
   CONNECT: 'Connect Snippet Server Driver',

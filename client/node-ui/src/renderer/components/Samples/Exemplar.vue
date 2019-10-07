@@ -35,7 +35,14 @@
             <font-awesome-icon icon="times"></font-awesome-icon>
           </div>
         </div>
-        <canvas ref="canvas" class="exemplarCanvas" @click="toggleSelected" />
+        <div class="w-full h-full" v-if="$store.getters.renderCanvas">
+          <canvas ref="canvas" class="exemplarCanvas" @click="toggleSelected" />
+        </div>
+        <div
+          class="text-container"
+          ref="textContainer"
+          v-if="$store.getters.renderText"
+        >{{ renderText }}</div>
         <div
           class="absolute left-0 top-0 p-1 text-center font-mono text-xs z-10 text-gray-200 id-label rounded border-gray-200 border-r border-b"
           @click="toggleSelected"
@@ -147,6 +154,13 @@ export default {
     },
     selectedClass() {
       return this.selected ? 'selected' : '';
+    },
+    renderText() {
+      // placeholder text
+      return 'Lorem Ipsum';
+    },
+    identifier() {
+      return `exemplar-${this.id}`;
     }
   },
   methods: {
@@ -203,12 +217,16 @@ export default {
   },
   mounted: function() {
     if (!this.retrievalError) {
-      this.$store.getters.renderer(this.$refs.canvas, {
-        size: 'thumb',
-        state: this.data.x,
-        instanceID: `exemplar-${this.id}`,
-        once: true
-      });
+      this.$store.getters.renderer(
+        this.$refs.canvas,
+        this.$refs.textContainer,
+        {
+          size: 'thumb',
+          state: this.data.x,
+          instanceID: this.identifier,
+          once: true
+        }
+      );
     }
   }
 };

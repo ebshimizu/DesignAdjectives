@@ -88,7 +88,7 @@ export default {
   // render settings should attempt to be mostly consistent, but i suspect this might cause some
   // problems eventually.
   // this is an async function
-  async renderer(canvasTarget, settings) {
+  async renderer(canvasTarget, textTarget, settings) {
     const size = 'size' in settings ? settings.size : 'full';
     const state =
       'state' in settings && settings.state.length > 0

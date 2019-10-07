@@ -10,8 +10,9 @@ import SbsBackend from '../backend/substance';
 // import CmpBackend from '../backend/compositor';
 import RltBackend from '../backend/relighter';
 import PjsBackend from '../backend/particles';
+import PtpBackend from '../backend/prototypo';
 
-import { ACTION, MUTATION } from '../constants';
+import { ACTION, MUTATION, RENDER_MODE } from '../constants';
 import settings from 'electron-settings';
 
 export function createStore(backend, type) {
@@ -28,7 +29,8 @@ export function createStore(backend, type) {
       extentsVisible: false,
       extentsVectors: [],
       paramSets: {},
-      hideNonActiveParams: false
+      hideNonActiveParams: false,
+      renderMode: RENDER_MODE.CANVAS
     },
     getters: {
       param: state => id => {
@@ -81,6 +83,15 @@ export function createStore(backend, type) {
       },
       paramSets: state => {
         return state.paramSets;
+      },
+      renderMode: state => {
+        return state.renderMode;
+      },
+      renderCanvas: state => {
+        return state.renderMode === RENDER_MODE.CANVAS;
+      },
+      renderText: state => {
+        return state.renderMode === RENDER_MODE.TEXT;
       }
     },
     mutations: {
@@ -118,6 +129,7 @@ export function createStore(backend, type) {
         if (ext === '.sbsar') {
           state.backend = SbsBackend;
           state.type = 'substance';
+          state.renderMode = RENDER_MODE.CANVAS;
         }
         if (ext === '.png') {
           if (state.type === 'substance') {
@@ -126,6 +138,7 @@ export function createStore(backend, type) {
 
           state.backend = RltBackend;
           state.type = 'relighter';
+          state.renderMode = RENDER_MODE.CANVAS;
         }
         if (ext === '.pjs') {
           if (state.type === 'substance') {
@@ -134,6 +147,16 @@ export function createStore(backend, type) {
 
           state.backend = PjsBackend;
           state.type = 'particles';
+          state.renderMode = RENDER_MODE.CANVAS;
+        }
+        if (ext === '.ptypo') {
+          if (state.type === 'substance') {
+            state.backend.stopUpdateLoop();
+          }
+
+          state.backend = PtpBackend;
+          state.type = 'prototypo';
+          state.renderMode = RENDER_MODE.TEXT;
         }
       },
       [MUTATION.SET_PARAM](state, config) {

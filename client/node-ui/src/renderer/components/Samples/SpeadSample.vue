@@ -43,7 +43,14 @@
             <font-awesome-icon icon="minus-square"></font-awesome-icon>
           </div>
         </div>
-        <canvas ref="canvas" class="sampleCanvas" />
+        <div class="w-full h-full" v-if="$store.getters.renderCanvas">
+          <canvas ref="canvas" class="sampleCanvas" />
+        </div>
+        <div
+          class="text-container"
+          ref="textContainer"
+          v-if="$store.getters.renderText"
+        >{{ renderText }}</div>
         <div
           class="absolute left-0 top-0 p-1 text-center font-mono text-xs z-10 text-gray-200 id-label rounded border-gray-200 border-r border-b"
         >{{ label }}</div>
@@ -106,6 +113,12 @@ export default {
     },
     primarySnippet() {
       return this.$store.getters.primarySnippet;
+    },
+    renderText() {
+      return 'Lorem Ipsum';
+    },
+    identifier() {
+      return `extents-${this.id}-${this.label}`;
     }
   },
   methods: {
@@ -176,19 +189,23 @@ export default {
         this.$refs.otherOptionsMenu.style.visibility = 'hidden';
     },
     rerender() {
-      this.$store.getters.renderer(this.$refs.canvas, {
-        size: 'thumb',
-        state: this.x,
-        instanceID: `extents-${this.id}-${this.label}`,
-        once: true
-      });
+      this.$store.getters.renderer(
+        this.$refs.canvas,
+        this.$refs.textContainer,
+        {
+          size: 'thumb',
+          state: this.x,
+          instanceID: this.identifier,
+          once: true
+        }
+      );
     }
   },
   mounted: function() {
-    this.$store.getters.renderer(this.$refs.canvas, {
+    this.$store.getters.renderer(this.$refs.canvas, this.$refs.textContainer, {
       size: 'thumb',
       state: this.x,
-      instanceID: `extents-${this.id}-${this.label}`,
+      instanceID: this.identifier,
       once: true
     });
   }

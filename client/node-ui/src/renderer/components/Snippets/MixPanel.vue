@@ -15,7 +15,14 @@
         >Clear</div>
       </div>
       <div v-show="showA" class="w-full h-full">
-        <canvas ref="mixACanvas" class="mixCanvas" />
+        <div class="w-full h-full" v-if="$store.getters.renderCanvas">
+          <canvas ref="mixACanvas" class="mixCanvas" />
+        </div>
+        <div
+          class="text-container"
+          ref="textContainerA"
+          v-if="$store.getters.renderText"
+        >{{ renderText }}</div>
       </div>
     </div>
     <div class="w-full flex-grow-1 flex flex-col">
@@ -58,7 +65,14 @@
         >Clear</div>
       </div>
       <div v-show="showB" class="w-full h-full">
-        <canvas ref="mixBCanvas" class="mixCanvas" />
+        <div class="w-full h-full" v-if="$store.getters.renderCanvas">
+          <canvas ref="mixBCanvas" class="mixCanvas" />
+        </div>
+        <div
+          class="text-container"
+          ref="textContainerB"
+          v-if="$store.getters.renderText"
+        >{{ renderText }}</div>
       </div>
     </div>
   </div>
@@ -107,6 +121,9 @@ export default {
       }
 
       return samples;
+    },
+    renderText() {
+      return 'Lorem Ipsum';
     }
   },
   methods: {
@@ -140,22 +157,30 @@ export default {
   watch: {
     mixA: function(newVal) {
       if (this.$store.getters.renderer) {
-        this.$store.getters.renderer(this.$refs.mixACanvas, {
-          size: 'thumb',
-          state: newVal,
-          instanceID: 'mixA',
-          once: true
-        });
+        this.$store.getters.renderer(
+          this.$refs.mixACanvas,
+          this.$refs.textContainerA,
+          {
+            size: 'thumb',
+            state: newVal,
+            instanceID: 'mixA',
+            once: true
+          }
+        );
       }
     },
     mixB: function(newVal) {
       if (this.$store.getters.renderer) {
-        this.$store.getters.renderer(this.$refs.mixBCanvas, {
-          size: 'thumb',
-          state: newVal,
-          instanceID: 'mixB',
-          once: true
-        });
+        this.$store.getters.renderer(
+          this.$refs.mixBCanvas,
+          this.$refs.textContainerB,
+          {
+            size: 'thumb',
+            state: newVal,
+            instanceID: 'mixB',
+            once: true
+          }
+        );
       }
     }
   }

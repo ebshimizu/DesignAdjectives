@@ -603,7 +603,7 @@ export default {
     }
   },
 
-  async renderer(canvasTarget, settings) {
+  async renderer(canvasTarget, textTarget, settings) {
     // this might... get complicated.
     const state =
       'state' in settings ? settings.state : params.map(p => p.value);

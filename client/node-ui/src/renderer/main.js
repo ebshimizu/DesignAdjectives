@@ -17,6 +17,11 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
 Vue.http = Vue.prototype.$http = axios;
 Vue.config.productionTip = false;
 
+// ptypo isn't loaded from a module and is instead floating around the
+// window context, bind it here for use later in the app
+// eslint-disable-next-line no-undef
+window.Ptypo = Ptypo;
+
 /* eslint-disable no-new */
 new Vue({
   components: { App },

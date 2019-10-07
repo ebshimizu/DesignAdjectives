@@ -284,10 +284,8 @@ export default {
       particles = require('particles.js');
     }
 
-    // there isn't much to do here? we can have some particle presets
-    // need to get the params, while working on rendering setup will be no params
+    // load the design space spec
     params = getParamSet();
-    // load/format
   },
   getParams() {
     return params;
@@ -300,7 +298,7 @@ export default {
       params[i].value = vec[i];
     }
   },
-  async renderer(canvasTarget, settings) {
+  async renderer(canvasTarget, textTarget, settings) {
     // grab state from settings when applicable
     const state =
       'state' in settings && settings.state.length > 0

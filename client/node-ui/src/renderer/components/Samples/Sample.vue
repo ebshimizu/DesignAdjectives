@@ -44,7 +44,14 @@
             <font-awesome-icon icon="minus-square"></font-awesome-icon>
           </div>
         </div>
-        <canvas ref="canvas" class="sampleCanvas" @click="select" />
+        <div class="w-full h-full" v-if="$store.getters.renderCanvas">
+          <canvas ref="canvas" class="sampleCanvas" @click="select" />
+        </div>
+        <div
+          class="text-container"
+          ref="textContainer"
+          v-if="$store.getters.renderText"
+        >{{ renderText }}</div>
         <div
           class="absolute left-0 top-0 p-1 text-center font-mono text-xs z-10 text-gray-200 id-label rounded border-gray-200 border-r border-b"
           @click="select"
@@ -177,6 +184,12 @@ export default {
     },
     selectedClass() {
       return this.selected ? 'selected' : '';
+    },
+    renderText() {
+      return 'Lorem Ipsum';
+    },
+    identifier() {
+      return `sample-${this.id}`;
     }
   },
   methods: {
@@ -253,10 +266,10 @@ export default {
     }
   },
   mounted: function() {
-    this.$store.getters.renderer(this.$refs.canvas, {
+    this.$store.getters.renderer(this.$refs.canvas, this.$refs.textContainer, {
       size: 'thumb',
       state: this.x,
-      instanceID: `sample-${this.id}`,
+      instanceID: this.identifier,
       once: true
     });
   }

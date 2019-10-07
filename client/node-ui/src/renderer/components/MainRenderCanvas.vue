@@ -1,6 +1,9 @@
 <template>
   <div class="main-canvas overflow-hidden">
-    <canvas id="mainRenderCanvas" class="renderCanvas"/>
+    <div v-show="renderCanvas" class="w-full h-full">
+      <canvas id="mainRenderCanvas" class="renderCanvas" />
+    </div>
+    <div class="text-container" ref="textContainer" v-show="!renderCanvas">{{ renderText }}</div>
   </div>
 </template>
 
@@ -16,6 +19,17 @@ export default {
   computed: {
     params() {
       return this.$store.state.paramStore.lastCommittedVector;
+    },
+    identifier() {
+      // read-only
+      return 'mainRenderCanvas';
+    },
+    renderText() {
+      // placeholder for now
+      return 'Lorem Ipsum';
+    },
+    renderCanvas() {
+      return this.$store.getters.renderCanvas;
     }
   },
   watch: {
@@ -23,6 +37,7 @@ export default {
       // todo: render settings from store
       this.$store.getters.renderer(
         document.getElementById('mainRenderCanvas'),
+        this.$refs.textContainer,
         {
           size: 'medium',
           instanceID: 'mainCanvas',
