@@ -39,9 +39,10 @@
           <canvas ref="canvas" class="exemplarCanvas" @click="toggleSelected" />
         </div>
         <div
-          class="text-container"
+          class="text-container flex content-center items-center justify-center"
           ref="textContainer"
           v-if="$store.getters.renderText"
+          :style="fontStyles"
         >{{ renderText }}</div>
         <div
           class="absolute left-0 top-0 p-1 text-center font-mono text-xs z-10 text-gray-200 id-label rounded border-gray-200 border-r border-b"
@@ -157,10 +158,18 @@ export default {
     },
     renderText() {
       // placeholder text
-      return 'Lorem Ipsum';
+      return this.$store.state.getters.snippetSettings.fontPreviewPhrase.value;
     },
     identifier() {
       return `exemplar-${this.id}`;
+    },
+    fontStyles() {
+      const settings = this.$store.getters.snippetSettings;
+
+      return {
+        fontFamily: this.identifier,
+        fontSize: settings.sampleFontSize.value
+      };
     }
   },
   methods: {

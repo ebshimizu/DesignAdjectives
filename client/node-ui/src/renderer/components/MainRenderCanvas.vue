@@ -3,7 +3,12 @@
     <div v-show="renderCanvas" class="w-full h-full">
       <canvas id="mainRenderCanvas" class="renderCanvas" />
     </div>
-    <div class="text-container" ref="textContainer" v-show="!renderCanvas">{{ renderText }}</div>
+    <div
+      class="text-container text-gray-200 flex content-center items-center justify-center"
+      ref="textContainer"
+      :style="fontStyles"
+      v-show="!renderCanvas"
+    >{{ renderText }}</div>
   </div>
 </template>
 
@@ -22,14 +27,22 @@ export default {
     },
     identifier() {
       // read-only
-      return 'mainRenderCanvas';
+      return 'mainCanvas';
     },
     renderText() {
       // placeholder for now
-      return 'Lorem Ipsum';
+      return this.$store.getters.snippetSettings.fontPreviewPhrase.value;
     },
     renderCanvas() {
       return this.$store.getters.renderCanvas;
+    },
+    fontStyles() {
+      const settings = this.$store.getters.snippetSettings;
+
+      return {
+        fontFamily: this.identifier,
+        fontSize: settings.mainFontSize.value
+      };
     }
   },
   watch: {
@@ -40,7 +53,7 @@ export default {
         this.$refs.textContainer,
         {
           size: 'medium',
-          instanceID: 'mainCanvas',
+          instanceID: this.identifier,
           once: false
         }
       );

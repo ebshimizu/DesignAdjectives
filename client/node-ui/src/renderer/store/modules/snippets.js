@@ -194,6 +194,21 @@ export default {
         min: 0,
         max: 2000,
         step: 1
+      },
+      mainFontSize: {
+        type: 'string',
+        value: '10vh',
+        name: 'Main Area Font Size (CSS Prop)'
+      },
+      sampleFontSize: {
+        type: 'string',
+        value: '5vh',
+        name: 'Sample/Exemplar Font Size (CSS Prop)'
+      },
+      fontPreviewPhrase: {
+        type: 'string',
+        value: 'HAMBURGEFONTSIV 123',
+        name: 'Font Preview String'
       }
     },
     snippets: {},

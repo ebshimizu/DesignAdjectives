@@ -48,8 +48,9 @@
           <canvas ref="canvas" class="sampleCanvas" @click="select" />
         </div>
         <div
-          class="text-container"
+          class="text-container w-full text-gray-200 flex content-center items-center justify-center"
           ref="textContainer"
+          :style="fontStyles"
           v-if="$store.getters.renderText"
         >{{ renderText }}</div>
         <div
@@ -186,10 +187,18 @@ export default {
       return this.selected ? 'selected' : '';
     },
     renderText() {
-      return 'Lorem Ipsum';
+      return this.$store.getters.snippetSettings.fontPreviewPhrase.value;
     },
     identifier() {
       return `sample-${this.id}`;
+    },
+    fontStyles() {
+      const settings = this.$store.getters.snippetSettings;
+
+      return {
+        fontFamily: this.identifier,
+        fontSize: settings.sampleFontSize.value
+      };
     }
   },
   methods: {
@@ -300,6 +309,10 @@ export default {
 }
 
 .sampleCanvas {
+  min-height: 110px;
+}
+
+.text-container {
   min-height: 110px;
 }
 </style>

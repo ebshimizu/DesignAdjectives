@@ -205,3 +205,10 @@
 .popupMenu div div:hover {
   @apply bg-gray-700;
 }
+
+.text-container {
+  text-align: center;
+  word-break: break-all;
+  user-select: none;
+  padding: 5px;
+}
