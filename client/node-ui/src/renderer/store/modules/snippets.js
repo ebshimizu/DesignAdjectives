@@ -65,14 +65,21 @@ function unnormalizeSample(sample, key) {
   sample.x = unnormalizeVector(sample.x, key);
 }
 
-function randomVector(length, x0, freeParams) {
+function randomVector(x0, freeParamMin, selected) {
+  // duplicate
   const x = x0.slice(0);
+  const paramCount = Math.max(
+    Math.floor(Math.random() * x0.length),
+    freeParamMin
+  );
 
-  // select free params
-  const keys = [...x.keys()];
+  // select free params from
+  const keys = selected.length === 0 ? [...x.keys()] : selected;
   shuffle(keys);
 
-  for (let i = 0; i < freeParams; i++) {
+  for (let i = 0; i < paramCount; i++) {
+    if (i >= keys.length) break;
+
     x[keys[i]] = Math.random();
   }
 
@@ -907,12 +914,12 @@ export default {
           context.commit(MUTATION.ADD_SAMPLE, {
             x: unnormalizeVector(
               randomVector(
-                context.getters.params.length,
                 normalizeVector(
                   context.getters.paramsAsArray,
                   context.getters.params
                 ),
-                params.freeParams
+                params.freeParams,
+                context.getters.activeParamIDs
               ),
               context.getters.params
             ),
