@@ -685,6 +685,9 @@ export default {
         'selected',
         data.selected
       );
+    },
+    [MUTATION.SET_RELEVANCE_THRESHOLD](state, val) {
+      state.relevanceThreshold = val;
     }
   },
   actions: {

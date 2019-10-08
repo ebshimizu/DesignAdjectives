@@ -3,11 +3,31 @@
     class="h-full w-full flex flex-col border-l border-gray-200 text-gray-200 overflow-hidden relative"
   >
     <div
-      class="w-full text-center text-xs font-mono border-b flex flex-row"
+      class="w-full text-center text-xs font-mono border-b flex flex-col"
       v-show="showRemoveButton"
     >
-      <div class="w-full p-1">{{ filterModeText }}</div>
-      <div class="bg-red-800 p-1 cursor-pointer hover:bg-red-700" @click="removeFilterMode">Stop</div>
+      <div class="w-full flex flex-row">
+        <div class="w-full p-1">{{ filterModeText }}</div>
+        <div class="bg-red-800 p-1 cursor-pointer hover:bg-red-700" @click="removeFilterMode">Stop</div>
+      </div>
+      <div class="w-full p-1 flex flex-row">
+        <input
+          class="w-2/3 mr-2"
+          type="range"
+          v-model="relevanceThreshold"
+          min="0"
+          max="2"
+          step="0.001"
+        />
+        <input
+          class="w-1/3 standard-text-field"
+          type="number"
+          v-model="relevanceThreshold"
+          min="0"
+          max="1"
+          step="0.001"
+        />
+      </div>
     </div>
     <div class="param-controls overflow-auto overflow-x-hidden flex flex-col">
       <parameter-control v-for="param in parameters" :key="param.id" v-bind:param="param"></parameter-control>
@@ -107,6 +127,15 @@ export default {
     };
   },
   computed: {
+    relevanceThreshold: {
+      get() {
+        return this.$store.getters.relevanceThreshold;
+      },
+      set(val) {
+        this.$store.commit(MUTATION.SET_RELEVANCE_THRESHOLD, parseFloat(val));
+        this.$store.dispatch(ACTION.UPDATE_AUTO_FILTER_PARAMS);
+      }
+    },
     parameters() {
       return this.$store.state.paramStore.parameters;
     },
@@ -208,6 +237,35 @@ export default {
 
 .param-controls {
   height: 70vh;
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 3.55px 6px 3.55px 0;
+}
+input[type='range']:focus {
+  outline: none;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 20.9px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border-radius: 1.3px;
+  border: 0.2px solid #0b0101;
+  background: #2d3748;
+}
+input[type='range']::-webkit-slider-thumb {
+  box-shadow: 0.9px 0.9px 1px #ffffff, 0px 0px 0.9px #ffffff;
+  border: 1px solid #000000;
+  height: 28px;
+  width: 8px;
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -3.75px;
 }
 </style>
 
