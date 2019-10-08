@@ -156,6 +156,29 @@ function computeThreshold(t, mode, max, current) {
   }
 }
 
+/**
+ * Returns a list of parameter ids that are below a lengthscale relevance threshold
+ * @param {Object} snippet Snippet object, must be trained and contain the raw lengthscale
+ * @param {Number} threshold Threshold above which the parameter is considered to be relevant
+ * @returns {Number[]} Array of parameter IDs that are considered relevant
+ */
+function filterByImpact(snippet, threshold) {
+  // ok first check that we have the right data
+  if (snippet && snippet.trained) {
+    const rawLs =
+      snippet.trainData.state['covar_module.base_kernel.raw_lengthscale'][0];
+    const ids = snippet.filter;
+
+    // convert to lengthscale (softmax)
+    const ls = rawLs.map(x => Math.log(1 + Math.exp(x)));
+
+    // return indices greater than threshold
+    return ids.filter((id, i) => ls[i] < threshold);
+  } else {
+    return [];
+  }
+}
+
 // this state maintains a list of snippet objects and sync's to the server as needed.
 // data format is same as server
 // snippet.data format: [{ x: vec, y: val }]
@@ -249,7 +272,8 @@ export default {
       scoreDelta: 0
     },
     autoFilterMode: AUTO_FILTER_MODE.NO_FILTER,
-    paramSpreadBase: []
+    paramSpreadBase: [],
+    relevanceThreshold: 0.62
   },
   getters: {
     ready: state => {
@@ -339,6 +363,12 @@ export default {
     primarySnippet: state => {
       return state.primarySnippet;
     },
+    primarySnippetObject: state => {
+      if (state.primarySnippet in state.snippets)
+        return state.snippets[state.primarySnippet];
+
+      return {};
+    },
     activatedSnippets: state => {
       return state.activatedSnippets;
     },
@@ -360,6 +390,9 @@ export default {
       return state.samples
         .filter(sample => sample.selected)
         .map(sample => sample.idx);
+    },
+    relevanceThreshold: state => {
+      return state.relevanceThreshold;
     }
   },
   mutations: {
@@ -1034,13 +1067,11 @@ export default {
       // these are all based on the current primary snippet (doesn't make much sense to
       // allow multiple filters at the same time at the moment).)
       if (context.state.autoFilterMode === AUTO_FILTER_MODE.IMPACT) {
-        const params = await driver.identifyHighImpactParams(
-          context.getters.primarySnippet,
-          normalizeVector(
-            context.getters.paramsAsArray,
-            context.getters.params
-          ),
-          { magnitudeThreshold: 0.75 }
+        // impact can be measured via the lengthscale parameters of the selected
+        // snippet.
+        const params = filterByImpact(
+          context.getters.primarySnippetObject,
+          context.getters.relevanceThreshold
         );
 
         context.commit(MUTATION.SET_NONE_ACTIVE);

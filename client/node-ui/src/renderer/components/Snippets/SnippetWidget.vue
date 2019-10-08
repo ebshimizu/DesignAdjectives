@@ -26,7 +26,6 @@
           <menu-item menuStyle="compact" @click.native="selectDefaultFilter()">Auto-Detect Used</menu-item>
           <menu-item menuStyle="compact" @click.native="setSelectedAsFilter()">Use Selected</menu-item>
           <menu-item menuStyle="compact" @click.native="filterByImpact()">Filter by Impact</menu-item>
-          <menu-item menuStyle="compact" @click.native="filterByBest()">Filter by Best</menu-item>
         </menu-group>
         <menu-group name="Axis" menuStyle="compact">
           <menu-item menuStyle="compact" @click.native="addWithScoreVisible = true">Add Samples...</menu-item>
