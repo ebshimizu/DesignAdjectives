@@ -6,9 +6,10 @@
   >
     <div class="flex">
       <div
-        class="label w-full text-xs cursor-pointer hover:text-yellow-500"
+        class="label w-3/4 text-xs cursor-pointer hover:text-yellow-500"
         @click="displayExtents()"
       >{{ param.name }}</div>
+      <div class="w-1/4 text-right text-xs">{{ lengthscale }}</div>
     </div>
     <div class="flex">
       <div
@@ -106,6 +107,24 @@ export default {
       }
 
       return { background: 'rgba(27, 28, 29, 0.81)' };
+    },
+    lengthscale() {
+      const snippet = this.$store.getters.primarySnippetObject;
+      if ('trained' in snippet) {
+        // locate the parameter index (id)
+        const rawLs =
+          snippet.trainData.state[
+            'covar_module.base_kernel.raw_lengthscale'
+          ][0];
+
+        const idIndex = snippet.filter.indexOf(this.param.id);
+
+        if (idIndex >= 0) {
+          return `rel: ${Math.log(1 + Math.exp(rawLs[idIndex])).toFixed(4)}`;
+        }
+      }
+
+      return null;
     }
   },
   methods: {
