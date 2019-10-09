@@ -390,6 +390,31 @@ def jitterSample(args):
     return None, samples
 
 
-sio.connect("http://localhost:5234")
+# command line args
+# manual parse for optional args
+host = "localhost"
+port = 5234
+
+# search args
+args = sys.argv[1:]
+
+# check host
+try:
+    hLoc = args.index("-h")
+    host = args[hLoc + 1]
+except:
+    print("Using default host 'localhost'")
+
+# check port
+try:
+    pLoc = args.index("-p")
+    port = int(args[pLoc + 1])
+except:
+    print("Using default port '5234'")
+
+url = "http://" + host + ":" + str(port)
+print("Connecting to Server at {0}".format(url))
+
+sio.connect(url)
 
 logger.info("Design Snippets server launched")

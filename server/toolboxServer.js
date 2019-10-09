@@ -46,7 +46,7 @@ logger.info(
 
 if (!args.detached) {
   // spawn child process for server
-  const snippetServer = spawn(args.python, ['./dsServer.py']);
+  const snippetServer = spawn(args.python, ['./dsServer.py', '-p', args.port]);
   snippetServer.stdout.on('data', data => {
     console.log(`${data}`);
   });
@@ -135,4 +135,4 @@ io.on(ACTION.CONNECT, function(socket) {
   });
 });
 
-logger.info('Initialized Design Snippets relay server on port 5234');
+logger.info(`Initialized Design Snippets relay server on port ${args.port}`);
