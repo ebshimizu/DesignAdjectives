@@ -110,7 +110,7 @@ export default {
     },
     lengthscale() {
       const snippet = this.$store.getters.primarySnippetObject;
-      if ('trained' in snippet) {
+      if ('trained' in snippet && snippet.trained) {
         // locate the parameter index (id)
         const rawLs =
           snippet.trainData.state[

@@ -16,7 +16,7 @@
           type="range"
           v-model="relevanceThreshold"
           min="0"
-          max="2"
+          max="3"
           step="0.001"
         />
         <input
@@ -24,7 +24,7 @@
           type="number"
           v-model="relevanceThreshold"
           min="0"
-          max="1"
+          max="3"
           step="0.001"
         />
       </div>

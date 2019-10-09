@@ -218,7 +218,7 @@ export function createStore(backend, type) {
         // expects data to contain an id/index and an active flag
         Vue.set(state.parameters[data.id], 'active', data.active);
 
-        if (state.selectLinked) {
+        if (state.selectLinked && state.parameters[data.id].links) {
           for (const id of state.parameters[data.id].links) {
             Vue.set(state.parameters[id], 'active', data.active);
           }
@@ -229,9 +229,9 @@ export function createStore(backend, type) {
         for (const id of data.ids) {
           Vue.set(state.parameters[id], 'active', data.active);
 
-          if (state.selectLinked) {
-            for (const id of state.parameters[data.id].links) {
-              Vue.set(state.parameters[id], 'active', data.active);
+          if (state.selectLinked && state.parameters[id].links) {
+            for (const id2 of state.parameters[id].links) {
+              Vue.set(state.parameters[id2], 'active', data.active);
             }
           }
         }
