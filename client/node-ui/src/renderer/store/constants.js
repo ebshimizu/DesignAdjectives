@@ -120,7 +120,8 @@ export const MUTATION = {
   SET_EXEMPLAR_SCORE: 'Set Exemplar Score',
   SET_SPREAD_BASE: 'Set Parameter Spread Base',
   SET_SAMPLE_SELECTED: 'Set Sample Selected',
-  SET_RELEVANCE_THRESHOLD: 'Set Relevance Threshold'
+  SET_RELEVANCE_THRESHOLD: 'Set Relevance Threshold',
+  SET_LINKED_SELECTION: 'Set Linked Selection'
 };
 
 export const ACTION = {

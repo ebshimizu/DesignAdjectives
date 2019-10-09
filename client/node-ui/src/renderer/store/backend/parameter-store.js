@@ -30,6 +30,7 @@ export function createStore(backend, type) {
       extentsVectors: [],
       paramSets: {},
       hideNonActiveParams: false,
+      selectLinked: true,
       renderMode: RENDER_MODE.CANVAS
     },
     getters: {
@@ -92,6 +93,9 @@ export function createStore(backend, type) {
       },
       renderText: state => {
         return state.renderMode === RENDER_MODE.TEXT;
+      },
+      selectLinked: state => {
+        return state.selectLinked;
       }
     },
     mutations: {
@@ -213,11 +217,23 @@ export function createStore(backend, type) {
       [MUTATION.CHANGE_PARAM_ACTIVE](state, data) {
         // expects data to contain an id/index and an active flag
         Vue.set(state.parameters[data.id], 'active', data.active);
+
+        if (state.selectLinked) {
+          for (const id of state.parameters[data.id].links) {
+            Vue.set(state.parameters[id], 'active', data.active);
+          }
+        }
       },
       [MUTATION.CHANGE_PARAMS_ACTIVE](state, data) {
         // data.ids should be an array of parameter ids
         for (const id of data.ids) {
           Vue.set(state.parameters[id], 'active', data.active);
+
+          if (state.selectLinked) {
+            for (const id of state.parameters[data.id].links) {
+              Vue.set(state.parameters[id], 'active', data.active);
+            }
+          }
         }
       },
       [MUTATION.SET_ALL_ACTIVE](state) {
@@ -251,6 +267,9 @@ export function createStore(backend, type) {
             state.parameters[id].active = true;
           }
         }
+      },
+      [MUTATION.SET_LINKED_SELECTION](state, active) {
+        state.selectLinked = active;
       }
     },
     actions: {

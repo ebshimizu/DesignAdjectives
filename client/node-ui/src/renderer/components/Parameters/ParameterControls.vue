@@ -46,6 +46,9 @@
         <div class="wide selection-tool-button">
           <div @click="toggleHideInactive()">{{ hideInactiveText }}</div>
         </div>
+        <div class="wide selection-tool-button">
+          <div @click="toggleLinkedSelection">{{ linkedSelectionText }}</div>
+        </div>
         <div class="w-full text-center uppercase text-sm font-bold mb-1">Groups</div>
         <div class="w-5/6 pr-1">
           <select
@@ -170,6 +173,11 @@ export default {
       return (
         this.$store.state.snippets.autoFilterMode !== AUTO_FILTER_MODE.NO_FILTER
       );
+    },
+    linkedSelectionText() {
+      return this.$store.getters.selectLinked
+        ? 'Select Linked ON'
+        : 'Select Linked OFF';
     }
   },
   methods: {
@@ -224,6 +232,12 @@ export default {
       this.$store.dispatch(
         ACTION.SET_AUTO_FILTER_MODE,
         AUTO_FILTER_MODE.NO_FILTER
+      );
+    },
+    toggleLinkedSelection() {
+      this.$store.commit(
+        MUTATION.SET_LINKED_SELECTION,
+        !this.$store.getters.selectLinked
       );
     }
   }
