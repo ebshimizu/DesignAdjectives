@@ -172,7 +172,7 @@ function filterByImpact(snippet, threshold) {
     // snippet server)
     const ids =
       snippet.filter.length > 0
-        ? snippet.filter.length
+        ? snippet.filter
         : snippet.trainData.defaultFilter;
 
     // convert to lengthscale (softmax)
