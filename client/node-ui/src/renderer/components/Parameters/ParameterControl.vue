@@ -117,7 +117,11 @@ export default {
             'covar_module.base_kernel.raw_lengthscale'
           ][0];
 
-        const idIndex = snippet.filter.indexOf(this.param.id);
+        // Either we have a manual filter, or we should use the default. Indices should match up either way
+        const idIndex =
+          snippet.filter.length > 0
+            ? snippet.filter.indexOf(this.param.id)
+            : snippet.trainData.defaultFilter.indexOf(this.param.id);
 
         if (idIndex >= 0) {
           return `rel: ${Math.log(1 + Math.exp(rawLs[idIndex])).toFixed(4)}`;

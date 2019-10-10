@@ -221,6 +221,7 @@ class Snippet:
         retData["code"] = 0
         retData["losses"] = self.losses
         retData["message"] = "Snippet {0} training complete".format(self.name)
+        retData["defaultFilter"] = self.getDefaultFilter()
 
         return retData
 

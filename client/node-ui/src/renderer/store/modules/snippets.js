@@ -167,7 +167,13 @@ function filterByImpact(snippet, threshold) {
   if (snippet && snippet.trained) {
     const rawLs =
       snippet.trainData.state['covar_module.base_kernel.raw_lengthscale'][0];
-    const ids = snippet.filter;
+
+    // Either we have a manual filter, or the snippet was trained with the default (returned by the
+    // snippet server)
+    const ids =
+      snippet.filter.length > 0
+        ? snippet.filter.length
+        : snippet.trainData.defaultFilter;
 
     // convert to lengthscale (softmax)
     const ls = rawLs.map(x => Math.log(1 + Math.exp(x)));
