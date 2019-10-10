@@ -39,7 +39,7 @@
           <canvas ref="canvas" class="exemplarCanvas" @click="toggleSelected" />
         </div>
         <div
-          class="text-container flex content-center items-center justify-center"
+          class="text-container flex content-center items-center justify-center text-gray-200"
           ref="textContainer"
           v-if="$store.getters.renderText"
           :style="fontStyles"
@@ -159,7 +159,7 @@ export default {
     },
     renderText() {
       // placeholder text
-      return this.$store.state.getters.snippetSettings.fontPreviewPhrase.value;
+      return this.$store.getters.snippetSettings.fontPreviewPhrase.value;
     },
     identifier() {
       return `exemplar-${this.id}`;
@@ -269,7 +269,8 @@ export default {
   background-color: #b83280 !important;
 }
 
-.exemplarCanvas {
+.exemplarCanvas,
+.text-container {
   min-height: 110px;
 }
 </style>
