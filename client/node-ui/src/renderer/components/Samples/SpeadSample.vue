@@ -47,8 +47,9 @@
           <canvas ref="canvas" class="sampleCanvas" />
         </div>
         <div
-          class="text-container"
+          class="text-container w-full text-gray-200 flex content-center items-center justify-center"
           ref="textContainer"
+          :style="fontStyles"
           v-if="$store.getters.renderText"
         >{{ renderText }}</div>
         <div
@@ -115,10 +116,18 @@ export default {
       return this.$store.getters.primarySnippet;
     },
     renderText() {
-      return 'Lorem Ipsum';
+      return this.$store.getters.snippetSettings.fontPreviewPhrase.value;
     },
     identifier() {
       return `extents-${this.id}-${this.label}`;
+    },
+    fontStyles() {
+      const settings = this.$store.getters.snippetSettings;
+
+      return {
+        fontFamily: `"${this.identifier}"`,
+        fontSize: settings.sampleFontSize.value
+      };
     }
   },
   methods: {
@@ -225,5 +234,9 @@ export default {
 
 .id-label {
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.text-container {
+  min-height: 110px;
 }
 </style>

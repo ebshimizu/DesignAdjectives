@@ -52,6 +52,7 @@
           ref="textContainer"
           :style="fontStyles"
           v-if="$store.getters.renderText"
+          @click="select"
         >{{ renderText }}</div>
         <div
           class="absolute left-0 top-0 p-1 text-center font-mono text-xs z-10 text-gray-200 id-label rounded border-gray-200 border-r border-b"

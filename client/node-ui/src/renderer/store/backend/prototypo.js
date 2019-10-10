@@ -66,11 +66,11 @@ function getParams() {
     { id: 7, name: 'thickness', min: 50, max: 160, value: 70, links: [] },
     { id: 8, name: 'aperture', min: 0.5, max: 1.6, value: 1, links: [] },
     { id: 9, name: 'curviness', min: 0.4, max: 1.0, value: 0.5, links: [] },
-    { id: 10, name: 'serifWidth', min: 1, max: 90, value: 1, links: [] },
-    { id: 11, name: 'serifHeight', min: 0, max: 70, value: 0, links: [] },
+    { id: 10, name: 'serifWidth', min: 1, max: 150, value: 1, links: [] },
+    { id: 11, name: 'serifHeight', min: 0, max: 100, value: 0, links: [] },
     { id: 12, name: 'minWidth', min: 0.5, max: 1.2, value: 0.8, links: [] },
     { id: 13, name: 'serifMedian', min: 0.2, max: 1.3, value: 0.5, links: [] },
-    { id: 14, name: 'serifCurve', min: 0, max: 100, value: 0, links: [] },
+    { id: 14, name: 'serifCurve', min: 0, max: 250, value: 65, links: [] },
     { id: 15, name: 'serifRoundness', min: 0, max: 1.8, value: 0, links: [] },
     { id: 16, name: 'serifArc', min: 0, max: 0.1, value: 0, links: [] },
     { id: 17, name: 'serifTerminal', min: 0, max: 0.7, value: 0, links: [] },
@@ -81,7 +81,21 @@ function getParams() {
       max: 1.5,
       value: 0,
       links: []
-    }
+    },
+    { id: 19, name: 'opticThickness', min: 0.7, max: 1.3, value: 1, links: [] },
+    { id: 20, name: 'overshoot', min: 0, max: 20, value: 5, links: [] },
+    { id: 21, name: 'spacing', min: -0.6, max: 3, value: 0, links: [] },
+    { id: 22, name: 'serifRotate', min: 0, max: 2, value: 1, links: [] },
+    { id: 23, name: 'spurHeight', min: 0, max: 2, value: 1, links: [] },
+    {
+      id: 24,
+      name: 'diacriticHeight',
+      min: 20,
+      max: 150,
+      value: 35,
+      links: []
+    },
+    { id: 25, name: 'midWidth', min: 0.9, max: 1.1, value: 1, links: [] }
   ];
 }
 
