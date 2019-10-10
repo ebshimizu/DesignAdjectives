@@ -385,7 +385,7 @@ export default {
       this.$store.dispatch(ACTION.SET_ALL_EXEMPLAR_SCORES, {
         name: this.name,
         ids: this.selectedExemplars,
-        score: this.groupScore
+        score: parseFloat(this.groupScore)
       });
 
       this.editGroupScoreVisible = false;
