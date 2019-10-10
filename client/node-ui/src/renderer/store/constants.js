@@ -121,7 +121,9 @@ export const MUTATION = {
   SET_SPREAD_BASE: 'Set Parameter Spread Base',
   SET_SAMPLE_SELECTED: 'Set Sample Selected',
   SET_RELEVANCE_THRESHOLD: 'Set Relevance Threshold',
-  SET_LINKED_SELECTION: 'Set Linked Selection'
+  SET_LINKED_SELECTION: 'Set Linked Selection',
+  SQUASH_SCORES: 'Squash Snippet Scores',
+  STRETCH_SCORES: 'Stretch Snippet Scores'
 };
 
 export const ACTION = {
@@ -160,5 +162,7 @@ export const ACTION = {
   SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode',
   SET_EXEMPLAR_SCORE: 'Set Exemplar Score',
   REFINE_SNIPPET: 'Start Refinement Sampler',
-  SET_ALL_EXEMPLAR_SCORES: 'Set Exemplar Scores [Batch]'
+  SET_ALL_EXEMPLAR_SCORES: 'Set Exemplar Scores [Batch]',
+  SQUASH_SCORES: 'Squash Snippet Scores',
+  STRETCH_SCORES: 'Stretch Snippet Scores'
 };

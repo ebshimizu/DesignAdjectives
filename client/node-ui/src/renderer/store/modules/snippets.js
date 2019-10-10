@@ -20,6 +20,10 @@ let driver = null;
 // external counter, can't be accessed during runtime
 let randIDStart = 0;
 
+function clamp(val, min, max) {
+  return Math.max(min, Math.min(max, val));
+}
+
 /**
  * Shuffles array in place.
  * https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
@@ -694,6 +698,29 @@ export default {
     },
     [MUTATION.SET_RELEVANCE_THRESHOLD](state, val) {
       state.relevanceThreshold = val;
+    },
+    [MUTATION.SQUASH_SCORES](state, snippetName) {
+      if (snippetName in state.snippets) {
+        // re-scale snippets to be between range [0.9, 0.1]
+        const snippet = state.snippets[snippetName];
+        for (let i = 0; i < snippet.data.length; i++) {
+          snippet.data[i].y = snippet.data[i].y * 0.8 + 0.1;
+        }
+
+        snippet.trained = false;
+      }
+    },
+    [MUTATION.STRETCH_SCORES](state, snippetName) {
+      if (snippetName in state.snippets) {
+        // re-scale snippets to be between range [0, 1] assuming
+        // we just did a stretch operation
+        const snippet = state.snippets[snippetName];
+        for (let i = 0; i < snippet.data.length; i++) {
+          snippet.data[i].y = clamp((snippet.data[i].y - 0.1) / 0.8, 1, 0);
+        }
+
+        snippet.trained = false;
+      }
     }
   },
   actions: {
@@ -1125,6 +1152,14 @@ export default {
 
       context.commit(MUTATION.CACHE_SNIPPETS, context.state.cacheKey);
       context.dispatch(ACTION.TRAIN, data.name);
+    },
+    [ACTION.SQUASH_SCORES](context, snippetName) {
+      context.commit(MUTATION.SQUASH_SCORES, snippetName);
+      context.dispatch(ACTION.TRAIN, snippetName);
+    },
+    [ACTION.STRETCH_SCORES](context, snippetName) {
+      context.commit(MUTATION.SQUASH_SCORES, snippetName);
+      context.dispatch(ACTION.TRAIN, snippetName);
     }
   }
 };

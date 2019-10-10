@@ -30,6 +30,7 @@
         <menu-group name="Axis" menuStyle="compact">
           <menu-item menuStyle="compact" @click.native="addWithScoreVisible = true">Add Samples...</menu-item>
           <menu-item menuStyle="compact" @click.native="editGroupScoreVisible = true">Edit Scores...</menu-item>
+          <menu-item menuStyle="compact" @click.native="squash">Squash Scores</menu-item>
           <menu-item menuStyle="compact" @click.native="train()">Retrain</menu-item>
         </menu-group>
       </ul>
@@ -389,6 +390,9 @@ export default {
       });
 
       this.editGroupScoreVisible = false;
+    },
+    squash() {
+      this.$store.dispatch(ACTION.SQUASH_SCORES, this.name);
     }
   }
 };
