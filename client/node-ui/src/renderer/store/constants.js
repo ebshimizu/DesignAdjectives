@@ -164,5 +164,7 @@ export const ACTION = {
   REFINE_SNIPPET: 'Start Refinement Sampler',
   SET_ALL_EXEMPLAR_SCORES: 'Set Exemplar Scores [Batch]',
   SQUASH_SCORES: 'Squash Snippet Scores',
-  STRETCH_SCORES: 'Stretch Snippet Scores'
+  STRETCH_SCORES: 'Stretch Snippet Scores',
+  EXPORT_PARAM_STATE: 'Export Parameters',
+  IMPORT_PARAM_STATE: 'Import Parameters'
 };

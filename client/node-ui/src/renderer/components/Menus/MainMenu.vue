@@ -2,12 +2,15 @@
   <ul class="list-reset flex z-50 font-sans">
     <menu-group name="File">
       <menu-item @click.native="open()">Open</menu-item>
+      <hr />
+      <menu-item @click.native="exportParams">Export Param State</menu-item>
+      <menu-item @click.native="importParams">Import Param State</menu-item>
     </menu-group>
     <menu-group name="Params">
       <menu-item @click.native="$emit('show-param-spread')">Display Spread</menu-item>
     </menu-group>
     <menu-group name="Sample">
-      <menu-item @click.native="randomSample()">Random Sample...</menu-item>
+      <menu-item @click.native="randomSample()">Random Sampler...</menu-item>
       <menu-item @click.native="jitter()">Jitter...</menu-item>
       <menu-item @click.native="stopSampler()">Reset Sampler</menu-item>
     </menu-group>
@@ -103,6 +106,33 @@ export default {
         files => {
           if (files) {
             this.$store.commit(MUTATION.IMPORT_SNIPPETS, files[0]);
+          }
+        }
+      );
+    },
+    exportParams() {
+      this.$electron.remote.dialog.showSaveDialog(
+        {
+          title: 'Export Current State',
+          filters: [{ name: 'JSON', extensions: ['json'] }]
+        },
+        filename => {
+          if (filename) {
+            this.$store.dispatch(ACTION.EXPORT_PARAM_STATE, filename);
+          }
+        }
+      );
+    },
+    importParams() {
+      this.$electron.remote.dialog.showOpenDialog(
+        {
+          title: 'Import Parameter State',
+          properties: ['openFile'],
+          filters: [{ name: 'JSON', extension: ['json'] }]
+        },
+        files => {
+          if (files) {
+            this.$store.dispatch(ACTION.IMPORT_PARAM_STATE, files[0]);
           }
         }
       );

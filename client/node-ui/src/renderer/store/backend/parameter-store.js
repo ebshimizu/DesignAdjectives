@@ -5,6 +5,7 @@
 //   accordingly
 import path from 'path';
 import Vue from 'Vue';
+import fs from 'fs-extra';
 
 import SbsBackend from '../backend/substance';
 // import CmpBackend from '../backend/compositor';
@@ -331,6 +332,24 @@ export function createStore(backend, type) {
       [ACTION.LOAD_PARAM_SET](context, setName) {
         context.commit(MUTATION.SET_NONE_ACTIVE);
         context.commit(MUTATION.LOAD_PARAM_SET, setName);
+      },
+      [ACTION.EXPORT_PARAM_STATE](context, filename) {
+        try {
+          fs.writeFileSync(
+            filename,
+            JSON.stringify(context.getters.paramsAsArray)
+          );
+        } catch (e) {
+          console.log(e);
+        }
+      },
+      [ACTION.IMPORT_PARAM_STATE](context, filename) {
+        try {
+          const params = JSON.parse(fs.readFileSync(filename));
+          context.commit(MUTATION.SET_PARAMS, params);
+        } catch (e) {
+          console.log(e);
+        }
       }
     }
   };

@@ -31,7 +31,7 @@ let currentFile = '';
 let params = [];
 let renderers = {};
 
-let mesh = new THREE.SphereGeometry(10, 64, 64);
+let mesh = new THREE.SphereGeometry(10, 128, 128);
 const threeLoader = new THREE.TextureLoader();
 
 let renderer2D = null;
@@ -57,7 +57,7 @@ const substanceSettings = {
   modelType: {
     type: 'enum',
     value: 'sphere',
-    values: ['sphere', 'box', 'torus', 'knot'],
+    values: ['sphere', 'box', 'torus', 'knot', 'cylinder'],
     name: 'Model'
   },
   maxRenderThreads: {
@@ -266,13 +266,15 @@ function loadParams(file) {
 function updateMesh() {
   const type = substanceSettings.modelType.value;
   if (type === 'sphere') {
-    mesh = new THREE.SphereGeometry(10, 64, 64);
+    mesh = new THREE.SphereGeometry(10, 128, 128);
   } else if (type === 'box') {
     mesh = new THREE.BoxGeometry(18, 18, 18);
   } else if (type === 'torus') {
     mesh = new THREE.TorusGeometry(10, 3, 32, 100);
   } else if (type === 'knot') {
     mesh = new THREE.TorusKnotGeometry(7, 2, 100, 32);
+  } else if (type === 'cylinder') {
+    mesh = new THREE.CylinderGeometry(10, 10, 10, 64, 64);
   }
 
   // update geometry in active renderers
