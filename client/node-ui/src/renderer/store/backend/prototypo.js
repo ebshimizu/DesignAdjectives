@@ -117,7 +117,7 @@ export default {
     if (!Ptypo) {
       Ptypo = config.window.Ptypo;
       // eslint-disable-next-line new-cap
-      prototypoFontFactory = new Ptypo.default(process.env.PTYPO_API_KEY);
+      prototypoFontFactory = new Ptypo.default(); // process.env.PTYPO_API_KEY);
     }
 
     // load backend settings
