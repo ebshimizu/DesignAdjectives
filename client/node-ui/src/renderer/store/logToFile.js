@@ -30,10 +30,14 @@ export default function createLogger({ file } = {}) {
       };
 
       // render
-      const objStr = JSON.stringify(logObj) + '\n';
-      fs.write(fd, objStr, function(err) {
-        if (err) console.log(err);
-      });
+      try {
+        const objStr = JSON.stringify(logObj) + '\n';
+        fs.write(fd, objStr, function(err) {
+          if (err) console.log(err);
+        });
+      } catch (e) {
+        console.log(e);
+      }
     });
   };
 }

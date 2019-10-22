@@ -132,6 +132,7 @@ async function trainSnippet(driver, context, name) {
 
     // train
     const filter =
+      context.state.snippets[name].filter &&
       context.state.snippets[name].filter.length > 0
         ? context.state.snippets[name].filter
         : null;
@@ -175,7 +176,7 @@ function filterByImpact(snippet, threshold) {
     // Either we have a manual filter, or the snippet was trained with the default (returned by the
     // snippet server)
     const ids =
-      snippet.filter.length > 0
+      snippet.filter && snippet.filter.length > 0
         ? snippet.filter
         : snippet.trainData.defaultFilter;
 
