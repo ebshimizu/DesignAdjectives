@@ -74,7 +74,7 @@
         <div @click="setMixB">Set Mix Element B</div>
       </div>
     </div>
-    <div class="popupMenu flex flex-col overflow-hidden" ref="posSnippetMenu">
+    <!-- <div class="popupMenu flex flex-col overflow-hidden" ref="posSnippetMenu">
       <div class="title">Add Positive To</div>
       <div class="h-full overflow-auto">
         <div
@@ -83,8 +83,18 @@
           @click="addPositive(snippet)"
         >{{ snippet }}</div>
       </div>
+    </div>-->
+    <div class="popupMenu flex flex-col overflow-hidden" ref="posSnippetMenu">
+      <div class="title">Add With Score</div>
+      <div class="h-full overflow-auto">
+        <div @click="addWithScore(primarySnippet, 0.9)">90%</div>
+        <div @click="addWithScore(primarySnippet, 0.8)">80%</div>
+        <div @click="addWithScore(primarySnippet, 0.7)">70%</div>
+        <div @click="addWithScore(primarySnippet, 0.6)">60%</div>
+        <div @click="addWithScore(primarySnippet, 0.5)">50%</div>
+      </div>
     </div>
-    <div class="popupMenu flex flex-col overflow-hidden" ref="negSnippetMenu">
+    <!-- <div class="popupMenu flex flex-col overflow-hidden" ref="negSnippetMenu">
       <div class="title">Add Negative To</div>
       <div class="h-full overflow-auto">
         <div
@@ -92,6 +102,16 @@
           :key="snippet"
           @click="addNegative(snippet)"
         >{{ snippet }}</div>
+      </div>
+    </div>-->
+    <div class="popupMenu flex flex-col overflow-hidden" ref="negSnippetMenu">
+      <div class="title">Add With Score</div>
+      <div class="h-full overflow-auto">
+        <div @click="addWithScore(primarySnippet, 0.1)">10%</div>
+        <div @click="addWithScore(primarySnippet, 0.2)">20%</div>
+        <div @click="addWithScore(primarySnippet, 0.3)">30%</div>
+        <div @click="addWithScore(primarySnippet, 0.4)">40%</div>
+        <div @click="addWithScore(primarySnippet, 0.5)">50%</div>
       </div>
     </div>
   </div>
@@ -223,6 +243,13 @@ export default {
     onHoverStop() {
       this.showActions = false;
       this.$store.dispatch(ACTION.HIDE_TEMPORARY_STATE);
+    },
+    addWithScore(snippet, y) {
+      this.$store.dispatch(ACTION.ADD_EXAMPLE, {
+        name: snippet,
+        point: { x: this.x, y: y, affected: this.affected }
+      });
+      this.hideMenus();
     },
     addPositive(snippet) {
       this.$store.dispatch(ACTION.ADD_EXAMPLE, {
