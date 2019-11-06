@@ -279,7 +279,7 @@ class Snippet:
     def posExamples(self):
         pos = []
         for i in self.data:
-            if i.score > 0:
+            if i.score > 0.5:
                 pos.append(i.data)
 
         return pos
