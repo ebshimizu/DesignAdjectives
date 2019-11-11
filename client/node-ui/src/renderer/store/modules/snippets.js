@@ -284,7 +284,8 @@ export default {
     },
     autoFilterMode: AUTO_FILTER_MODE.NO_FILTER,
     paramSpreadBase: [],
-    relevanceThreshold: 0.62
+    relevanceThreshold: 0.62,
+    logPath: ''
   },
   getters: {
     ready: state => {
@@ -722,6 +723,17 @@ export default {
 
         snippet.trained = false;
       }
+    },
+    [MUTATION.START_TRIAL](state) {
+      // this is basically a no-op to log a start event
+      console.log('Trial Started');
+    },
+    [MUTATION.END_TRIAL](state) {
+      // also a no-op to log things
+      console.log('Trial Ended');
+    },
+    [MUTATION.SET_LOG_PATH](state, path) {
+      state.logPath = path;
     }
   },
   actions: {

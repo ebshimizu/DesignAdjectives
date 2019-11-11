@@ -4,7 +4,7 @@
       <tab title="Params">
         <parameter-controls></parameter-controls>
       </tab>
-      <tab title="Custom Axes">
+      <tab title="Adjectives">
         <snippets-panel />
       </tab>
       <tab title="Settings">

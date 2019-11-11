@@ -123,7 +123,10 @@ export const MUTATION = {
   SET_RELEVANCE_THRESHOLD: 'Set Relevance Threshold',
   SET_LINKED_SELECTION: 'Set Linked Selection',
   SQUASH_SCORES: 'Squash Snippet Scores',
-  STRETCH_SCORES: 'Stretch Snippet Scores'
+  STRETCH_SCORES: 'Stretch Snippet Scores',
+  START_TRIAL: 'Trial Started',
+  END_TRIAL: 'Trial Ended',
+  SET_LOG_PATH: 'Set Log Path'
 };
 
 export const ACTION = {

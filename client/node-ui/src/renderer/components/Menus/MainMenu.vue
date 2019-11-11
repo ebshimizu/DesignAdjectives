@@ -20,6 +20,11 @@
       <menu-item @click.native="importSnippets()">Import Snippets...</menu-item>
       <menu-item @click.native="clearCache()">Clear Snippet Cache</menu-item>
     </menu-group>
+    <menu-group name="Study">
+      <menu-item @click.native="startTrial">Start Trial</menu-item>
+      <menu-item @click.native="endTrial">End Trial</menu-item>
+      <menu-item @click.native="exportTrialData">Export Data...</menu-item>
+    </menu-group>
   </ul>
 </template>
 
@@ -27,6 +32,7 @@
 import MenuGroup from './MenuGroup';
 import MenuItem from './MenuItem';
 import path from 'path';
+import fs from 'fs-extra';
 import { ACTION, MUTATION } from '../../store/constants';
 
 export default {
@@ -168,6 +174,56 @@ export default {
           freeParams: 10
         });
       }
+    },
+    startTrial() {
+      this.$store.commit(MUTATION.START_TRIAL);
+    },
+    endTrial() {
+      this.$store.commit(MUTATION.END_TRIAL);
+    },
+    exportTrialData() {
+      this.$electron.remote.dialog.showOpenDialog(
+        {
+          title: 'Export Trial Data',
+          properties: ['openDirectory']
+        },
+        filename => {
+          const dir = filename[0];
+
+          try {
+            // copy log file
+            fs.copySync(
+              this.$store.state.snippets.logPath,
+              path.join(dir, 'actions.log')
+            );
+
+            // snapshot image of canvas
+            const dataUrl = document
+              .getElementById('mainRenderCanvas')
+              .toDataURL('image/png');
+            const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
+            fs.writeFileSync(
+              path.join(dir, 'canvas.png'),
+              base64Data,
+              'base64'
+            );
+          } catch (e) {
+            console.log(e);
+          }
+
+          // export snippet defs
+          this.$store.commit(
+            MUTATION.EXPORT_SNIPPETS,
+            path.join(dir, 'snippets.json')
+          );
+
+          // export current state
+          this.$store.dispatch(
+            ACTION.EXPORT_PARAM_STATE,
+            path.join(dir, 'design.json')
+          );
+        }
+      );
     }
   }
 };

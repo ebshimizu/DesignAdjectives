@@ -13,6 +13,8 @@ export default function createLogger({ file } = {}) {
       console.log(e);
     }
 
+    store.commit('Set Log Path', file);
+
     store.subscribe(mutation => {
       const time = new Date();
       const formattedTime = `${pad(time.getHours(), 2)}:${pad(
