@@ -191,6 +191,7 @@ export default {
 .mixCanvas {
   width: 100%;
   height: auto;
+  min-height: 150px;
 }
 
 input[type='range'] {
