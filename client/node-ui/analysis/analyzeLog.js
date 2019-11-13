@@ -66,7 +66,53 @@ const MUTATION = {
   SET_RELEVANCE_THRESHOLD: 'Set Relevance Threshold',
   SET_LINKED_SELECTION: 'Set Linked Selection',
   SQUASH_SCORES: 'Squash Snippet Scores',
-  STRETCH_SCORES: 'Stretch Snippet Scores'
+  STRETCH_SCORES: 'Stretch Snippet Scores',
+  START_TRIAL: 'Trial Started',
+  END_TRIAL: 'Trial Ended',
+  SET_LOG_PATH: 'Set Log Path'
+};
+
+const ACTION = {
+  NEW_SNIPPET: 'New Snippet',
+  DELETE_SNIPPET: 'Delete Snippet',
+  TRAIN: 'Train Snippet',
+  LOAD_SNIPPET: 'Load Snippet',
+  ADD_EXAMPLE: 'Add Example',
+  DELETE_EXAMPLE: 'Delete Example',
+  SYNC: 'Sync with Snippet Server',
+  CONNECT: 'Connect to Snippet Server',
+  START_SAMPLER: 'Start Sampling',
+  STOP_SAMPLER: 'Stop Sampling',
+  DISCONNECT: 'Disconnect from Snippet Server',
+  LOAD_SNIPPETS: 'Load Snippets',
+  EVAL_CURRENT: 'Evaluate Current State with Current Snippet',
+  LOAD_PARAM_COLOR_DATA: 'Load Preference Data for Current Parameters',
+  SET_PARAM: 'Set Parameter',
+  COMMIT_PARAMS: 'Commit Parameters',
+  SHOW_TEMPORARY_STATE: 'Show Temporary Snapshot State',
+  HIDE_TEMPORARY_STATE: 'Hide Temporary Snapshot State',
+  LOCK_TEMPORARY_STATE: 'Lock Temporary Snapshot State',
+  COPY_SNIPPET: 'Copy Snippet',
+  RENAME_SNIPPET: 'Rename Snippet',
+  GENERATE_RANDOM: 'Generate Random Set',
+  GENERATE_EXTENTS: 'Generate Parameter Extents',
+  MIX: 'Run Parameter Mix',
+  LOAD_PARAM_SET: 'Load Parameter Group',
+  MIX_AXES: 'Run Axis Mixer',
+  SET_PRIMARY_SNIPPET: 'Set Primary Snippet',
+  EVAL_THEN_EXECUTE: 'Evaluate Target Snippet then Execute Callback',
+  JITTER_SAMPLE: 'Run Jitter Sampler',
+  SELECT_DEFAULT_FILTER: 'Select Default Filter',
+  SET_SELECTED_AS_FILTER: 'Set Selected Parameters as Filter',
+  UPDATE_AUTO_FILTER_PARAMS: 'Update Auto-Filtered Params',
+  SET_AUTO_FILTER_MODE: 'Set Auto-Filter Mode',
+  SET_EXEMPLAR_SCORE: 'Set Exemplar Score',
+  REFINE_SNIPPET: 'Start Refinement Sampler',
+  SET_ALL_EXEMPLAR_SCORES: 'Set Exemplar Scores [Batch]',
+  SQUASH_SCORES: 'Squash Snippet Scores',
+  STRETCH_SCORES: 'Stretch Snippet Scores',
+  EXPORT_PARAM_STATE: 'Export Parameters',
+  IMPORT_PARAM_STATE: 'Import Parameters'
 };
 
 const readline = require('readline');
@@ -81,6 +127,7 @@ const readInterface = readline.createInterface({
 });
 
 const actionGroups = {};
+let start, end;
 
 readInterface.on('line', function(line) {
   const obj = JSON.parse(line);
@@ -90,17 +137,59 @@ readInterface.on('line', function(line) {
   }
 
   actionGroups[obj.type].push(obj);
+
+  if (obj.type === MUTATION.START_TRIAL) {
+    start = new Date(obj.time);
+  }
+
+  if (obj.type === MUTATION.END_TRIAL) {
+    end = new Date(obj.time);
+  }
 });
 
 readInterface.on('close', function() {
   // demo
   console.log(
-    `Manual Param Changes: ${actionGroups[MUTATION.SET_PARAM].length}`
+    `Manual Param Changes: ${
+      actionGroups[MUTATION.SET_PARAM]
+        ? actionGroups[MUTATION.SET_PARAM].length
+        : 0
+    }`
   );
   console.log(
-    `Samples Hovered: ${actionGroups[MUTATION.RESET_SNAPSHOT].length}`
+    `Random Samples Initiated: ${
+      actionGroups[ACTION.GENERATE_RANDOM]
+        ? actionGroups[ACTION.GENERATE_RANDOM].length
+        : 0
+    }`
   );
   console.log(
-    `Sampling Operations Initiated: ${actionGroups[MUTATION.SET_ALL_SAMPLER_OPTIONS].length}`
+    `Samples Hovered: ${
+      actionGroups[MUTATION.RESET_SNAPSHOT]
+        ? actionGroups[MUTATION.RESET_SNAPSHOT].length
+        : 0
+    }`
   );
+  console.log(
+    `Sampling Operations Initiated: ${
+      actionGroups[MUTATION.SET_ALL_SAMPLER_OPTIONS]
+        ? actionGroups[MUTATION.SET_ALL_SAMPLER_OPTIONS].length
+        : 0
+    }`
+  );
+  console.log(
+    `Examples Added: ${
+      actionGroups[ACTION.ADD_EXAMPLE]
+        ? actionGroups[ACTION.ADD_EXAMPLE].length
+        : 0
+    }`
+  );
+  console.log(
+    `Extents viewed: ${
+      actionGroups[ACTION.GENERATE_EXTENTS]
+        ? actionGroups[ACTION.GENERATE_EXTENTS].length
+        : 0
+    }`
+  );
+  console.log(`Trial Duration: ${(end.getTime() - start.getTime()) / 1000}`);
 });

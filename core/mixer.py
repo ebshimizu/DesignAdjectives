@@ -48,7 +48,7 @@ def isDuplicate(x, results):
 # - the vector itself
 # - the bitvector that created it
 # a snippet parameter may be required in the future
-def mix(a, b, count, bias=0.5, attempts=100):
+def mix(a, b, count, bias=0.5, attempts=100, paramInfo=[]):
     results = []
     logger.mixer("Mixer starting")
 
@@ -58,6 +58,19 @@ def mix(a, b, count, bias=0.5, attempts=100):
     for i in range(0, len(a)):
         if not math.isclose(a[i], b[i], rel_tol=1e-3):
             activeParams.append(i)
+
+    # ok so a little complicated, if a param is linked, we want the lowest integer id to represent
+    # all of the params
+    linkedActiveParams = []
+    for i in activeParams:
+        if len(paramInfo[i]["links"]) > 0:
+            minLink = min(paramInfo[i]["links"])
+            if minLink not in linkedActiveParams:
+                linkedActiveParams.append(minLink)
+        else:
+            linkedActiveParams.append(i)
+
+    activeParams = linkedActiveParams
 
     length = len(activeParams)
     logger.mixer("Identified {0} different params: {1}".format(length, activeParams))
@@ -76,10 +89,18 @@ def mix(a, b, count, bias=0.5, attempts=100):
                 # pick elements from other vectors
                 rvec = list(a)
                 for j in range(0, length):
-                    if zvec[j] == 0:
-                        rvec[activeParams[j]] = a[activeParams[j]]
-                    elif zvec[j] == 1:
-                        rvec[activeParams[j]] = b[activeParams[j]]
+                    # check for linked params
+                    if len(paramInfo[activeParams[j]]["links"]) > 0:
+                        for l in paramInfo[activeParams[j]]["links"]:
+                            if zvec[j] == 0:
+                                rvec[l] = a[l]
+                            elif zvec[j] == 1:
+                                rvec[l] = b[l]
+                    else:
+                        if zvec[j] == 0:
+                            rvec[activeParams[j]] = a[activeParams[j]]
+                        elif zvec[j] == 1:
+                            rvec[activeParams[j]] = b[activeParams[j]]
 
                 results.append({"generator": zvec, "x": rvec})
 
