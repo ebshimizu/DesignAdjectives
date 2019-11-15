@@ -8,7 +8,9 @@
       <div
         class="label w-3/4 text-xs cursor-pointer hover:text-yellow-500"
         @click="displayExtents()"
-      >{{ param.name }}</div>
+      >
+        {{ param.name }}
+      </div>
       <div class="w-1/4 text-right text-xs">{{ lengthscale }}</div>
     </div>
     <div class="flex">
@@ -137,10 +139,12 @@ export default {
     },
     displayExtents() {
       // show the extents tab for the currently selected paramter
-      this.$store.dispatch(ACTION.GENERATE_EXTENTS, {
-        id: this.param.id,
-        count: 10
-      });
+      if (!this.$store.getters.snippetSettings.disableExtents.value) {
+        this.$store.dispatch(ACTION.GENERATE_EXTENTS, {
+          id: this.param.id,
+          count: 10
+        });
+      }
     },
     toggleActive() {
       this.$store.commit(MUTATION.CHANGE_PARAM_ACTIVE, {

@@ -250,6 +250,11 @@ export default {
         type: 'string',
         value: 'HAMBURGEFONTSIV 123',
         name: 'Font Preview String'
+      },
+      disableExtents: {
+        type: 'boolean',
+        value: false,
+        name: 'Disable Extents'
       }
     },
     snippets: {},
