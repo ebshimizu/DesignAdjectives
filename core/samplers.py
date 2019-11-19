@@ -435,8 +435,8 @@ class Rejection(SamplerThread):
                 count = count + 1
                 attempts = 0
 
-                if currentFreeParams < self.freeParams:
-                    currentFreeParams = currentFreeParams + 1
+                if currentFreeParams < int(self.freeParams):
+                    currentFreeParams = int(self.freeParams)
                     logger.sample(
                         "[{0}] Sample accepted. Raising free param limit to {1}.".format(
                             self.name, currentFreeParams
