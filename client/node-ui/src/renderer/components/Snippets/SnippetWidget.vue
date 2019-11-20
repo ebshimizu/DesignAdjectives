@@ -19,7 +19,7 @@
           <menu-item menuStyle="compact" @click.native="sampleAway()">Away</menu-item>
           <menu-item menuStyle="compact" @click.native="sampleNearby()">Nearby</menu-item>
           <menu-item menuStyle="compact" @click.native="sampleAxis()">Axis</menu-item>
-          <menu-item menuStyle="compact" @click.native="refine()">Refine</menu-item>
+          <!-- <menu-item menuStyle="compact" @click.native="refine()">Refine</menu-item> -->
         </menu-group>
         <menu-group name="Params" menuStyle="compact">
           <menu-item menuStyle="compact" @click.native="selectAffected()">Select Affected</menu-item>

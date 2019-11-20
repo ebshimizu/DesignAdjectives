@@ -21,6 +21,7 @@
         <div
           class="text-container"
           ref="textContainerA"
+          :style="fontStylesA"
           v-if="$store.getters.renderText"
         >{{ renderText }}</div>
       </div>
@@ -71,6 +72,7 @@
         <div
           class="text-container"
           ref="textContainerB"
+          :style="fontStylesB"
           v-if="$store.getters.renderText"
         >{{ renderText }}</div>
       </div>
@@ -123,7 +125,25 @@ export default {
       return samples;
     },
     renderText() {
-      return 'Lorem Ipsum';
+      return this.$store.getters.snippetSettings.fontPreviewPhrase.value;
+    },
+    fontStylesA() {
+      const settings = this.$store.getters.snippetSettings;
+
+      return {
+        fontFamily: 'mixA',
+        fontSize: settings.sampleFontSize.value,
+        color: '#FFF'
+      };
+    },
+    fontStylesB() {
+      const settings = this.$store.getters.snippetSettings;
+
+      return {
+        fontFamily: 'mixB',
+        fontSize: settings.sampleFontSize.value,
+        color: '#FFF'
+      };
     }
   },
   methods: {
