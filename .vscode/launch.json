@@ -79,6 +79,12 @@
       "request": "launch",
       "program": "${file}",
       "console": "externalTerminal"
+    },
+    {
+      "name": "Node: Current File",
+      "type": "node",
+      "request": "launch",
+      "program": "${file}"
     }
   ]
 }
