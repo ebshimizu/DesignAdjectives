@@ -9,7 +9,7 @@ import fs from 'fs-extra';
 
 import SbsBackend from '../backend/substance';
 // import CmpBackend from '../backend/compositor';
-import RltBackend from '../backend/relighter';
+// import RltBackend from '../backend/relighter';
 import PjsBackend from '../backend/particles';
 import PtpBackend from '../backend/prototypo';
 
@@ -136,15 +136,15 @@ export function createStore(backend, type) {
           state.type = 'substance';
           state.renderMode = RENDER_MODE.CANVAS;
         }
-        if (ext === '.png') {
-          if (state.type === 'substance') {
-            state.backend.stopUpdateLoop();
-          }
+        // if (ext === '.png') {
+        //   if (state.type === 'substance') {
+        //     state.backend.stopUpdateLoop();
+        //   }
 
-          state.backend = RltBackend;
-          state.type = 'relighter';
-          state.renderMode = RENDER_MODE.CANVAS;
-        }
+        //   state.backend = RltBackend;
+        //   state.type = 'relighter';
+        //   state.renderMode = RENDER_MODE.CANVAS;
+        // }
         if (ext === '.pjs') {
           if (state.type === 'substance') {
             state.backend.stopUpdateLoop();

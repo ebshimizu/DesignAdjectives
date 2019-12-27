@@ -91,6 +91,7 @@ function timeline(log, outFile, combinedSVG, offset) {
   }
 
   // analyze interval
+  // remove param events that are adjacent.
   // timings
   // black box for pre-timeline ops
   canvas

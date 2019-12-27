@@ -74,7 +74,6 @@
     "lodash": "^4.17.15",
     "particles.js": "https://github.com/ebshimizu/particles.js.git",
     "rgb-hex": "^3.0.0",
-    "simple-relighter": "https://github.com/ebshimizu/simple-relighter.git",
     "socket.io-client": "^2.2.0",
     "svgdom": "^0.0.21",
     "three": "^0.103.0",
