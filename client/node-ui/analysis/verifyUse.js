@@ -4,7 +4,7 @@ const path = require('path');
 const timeline = require('./timeline').timeline;
 
 const ids = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'];
-const tasks = ['task-1', 'task-2'];
+const tasks = ['task-2'];
 const root = process.argv[2];
 
 // svg setup
