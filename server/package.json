@@ -6,7 +6,7 @@
   "dependencies": {
     "winston": "^3.2.1",
     "logform": "^2.1.2",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.3",
     "socket.io": "^2.2.0"
   }
 }
