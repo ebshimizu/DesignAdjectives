@@ -12,8 +12,10 @@ Prereqs:
     - gpytorch current
     - Pyro current
     - matplotlib current
-    - express
-    - python-socketio
+    - python-socketio 4.x
+    - eventlet
+    - scipy
+    - requests
 - UI and Communication Server
   - node.js 10+ (Tested on 10 and 12)
   - yarn v1 (untested on yarn 2)
