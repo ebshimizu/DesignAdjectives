@@ -13,7 +13,7 @@ import path from 'path';
 const userFolder =
   process.env.APPDATA ||
   (process.platform === 'darwin'
-    ? process.env.HOME + 'Library/Preferences'
+    ? process.env.HOME + '/Library/Preferences'
     : process.env.HOME + '/.local/share');
 
 // duplicating stuff for full app access

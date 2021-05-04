@@ -13,7 +13,7 @@ Vue.use(Vuex);
 const userFolder =
   process.env.APPDATA ||
   (process.platform === 'darwin'
-    ? process.env.HOME + 'Library/Preferences'
+    ? process.env.HOME + '/Library/Preferences'
     : process.env.HOME + '/.local/share');
 
 fs.ensureDirSync(path.join(userFolder, 'parameter-toolbox', 'logs'));
