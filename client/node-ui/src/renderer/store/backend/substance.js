@@ -12,7 +12,7 @@ let tkDir = 'C:/Program Files/Allegorithmic/Substance Automation Toolkit';
 const userFolder =
   process.env.APPDATA ||
   (process.platform === 'darwin'
-    ? process.env.HOME + 'Library/Preferences'
+    ? process.env.HOME + '/Library/Preferences'
     : process.env.HOME + '/.local/share');
 const renderDir = path.join(userFolder, 'parameter-toolbox', 'sbsRender');
 
